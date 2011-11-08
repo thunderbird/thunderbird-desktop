@@ -25,7 +25,7 @@ DEFAULTS = {
   'VENKMAN_REPO': 'http://hg.mozilla.org/venkman/',
 
   # URL of the default hg repository to clone for Mozilla.
-  'MOZILLA_REPO': 'http://hg.mozilla.org/mozilla-central/',
+  'MOZILLA_REPO': 'http://hg.mozilla.org/releases/mozilla-aurora/',
 }
 
 REPO_SHORT_NAMES = {
