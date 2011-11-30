@@ -1401,8 +1401,6 @@ function BrowserOpenFileWindow()
 function updateCloseItems()
 {
   var browser = getBrowser();
-  var ss = Components.classes["@mozilla.org/suite/sessionstore;1"]
-                     .getService(Components.interfaces.nsISessionStore);
 
   var hideCloseWindow = Services.prefs.getBoolPref("browser.tabs.closeWindowWithLastTab") &&
                         (!browser || browser.tabContainer.childNodes.length <= 1);
@@ -1420,6 +1418,15 @@ function updateCloseItems()
   document.getElementById("menu_closeOtherTabs").hidden = hideCloseOtherTabs;
   if (!hideCloseOtherTabs)
     document.getElementById("cmd_closeOtherTabs").setAttribute("disabled", hideCloseWindow);
+
+  updateRecentMenuItems();
+}
+
+function updateRecentMenuItems()
+{
+  var browser = getBrowser();
+  var ss = Components.classes["@mozilla.org/suite/sessionstore;1"]
+                     .getService(Components.interfaces.nsISessionStore);
 
   var recentTabsItem = document.getElementById("menu_recentTabs");
   recentTabsItem.setAttribute("disabled", !browser || browser.getUndoList().length == 0);
