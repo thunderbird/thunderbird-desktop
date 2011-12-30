@@ -52,7 +52,6 @@ var gMimeHeaderParser = null;
  *
  
  var sPrefs;
- var gPromptService;
  var gMsgCompose;
  
  */
@@ -828,7 +827,7 @@ function awRecipientErrorCommand(errItem, element)
 	specificErrString = "Internal error";
     }
 
-    gPromptService.alert(window, generalErrString, specificErrString);
+    Services.prompt.alert(window, generalErrString, specificErrString);
 }
 
 function awRecipientKeyPress(event, element)
