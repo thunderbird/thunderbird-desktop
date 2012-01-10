@@ -67,6 +67,12 @@ function commonInitCalendar() {
 
     // Set up the category colors
     categoryManagement.initCategories();
+
+    // Ensure the new items commands state can be setup properly even when no
+    // calendar support refreshes (i.e. the "onLoad" notification)
+    if (!cal.getCalendarManager().getCalendars({}).some(function(x) x.canRefresh)) {
+        calendarUpdateNewItemsCommand();
+    }
 }
 
 /**
