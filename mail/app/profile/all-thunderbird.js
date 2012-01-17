@@ -743,7 +743,7 @@ pref("gfx.direct2d.disabled", true);
 // Account provisioner.
 pref("mail.provider.providerList", "https://broker-live.mozillamessaging.com/provider/list");
 pref("mail.provider.suggestFromName", "https://broker-live.mozillamessaging.com/provider/suggest");
-pref("mail.provider.enabled", true);
+pref("mail.provider.enabled", false);
 
 pref("mail.websearch.open_externally", false);
 
