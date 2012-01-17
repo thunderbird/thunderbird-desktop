@@ -143,6 +143,8 @@ class ThunderTestProfile(mozrunner.ThunderbirdProfile):
         'extensions.checkCompatibility.nightly': False,
         'extensions.checkCompatibility.10.0a': False,
         'extensions.checkCompatibility.10.0': False,
+        # Stop any pings to AMO on add-on install
+        'extensions.getAddons.cache.enabled': False,
         # Disable test pilot new tab (this can be set to anything currently, just needs to be set).
         'extensions.testpilot.lastversion': '1.0',
         # In case a developer is working on a laptop without a network
