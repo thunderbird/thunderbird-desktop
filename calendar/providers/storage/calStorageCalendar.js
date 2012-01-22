@@ -2052,7 +2052,7 @@ calStorageCalendar.prototype = {
         ASSERT(!item.recurrenceId, "no parent item passed!", true);
 
         try {
-            this.deleteItemById(olditem ? olditem.id : item.id);
+            this.deleteItemById(olditem ? olditem.id : item.id, !!olditem);
             this.acquireTransaction();
             this.writeItem(item, olditem);
         } catch (e) {
@@ -2439,8 +2439,9 @@ calStorageCalendar.prototype = {
      * Deletes the item with the given item id.
      *
      * @param aID           The id of the item to delete.
+     * @param aIsModify     If true, then leave in metadata for the item
      */
-    deleteItemById: function cSC_deleteItemById(aID) {
+    deleteItemById: function cSC_deleteItemById(aID, aIsModify) {
         this.acquireTransaction();
         try {
             this.mDeleteAttendees(aID, this.id);
@@ -2450,8 +2451,9 @@ calStorageCalendar.prototype = {
             this.mDeleteTodo(aID, this.id);
             this.mDeleteAttachments(aID, this.id);
             this.mDeleteRelations(aID, this.id);
-            this.mDeleteMetaData(aID, this.id);
-            //this.mDeleteAllMetaData(aID, this.id);
+            if (!aIsModify) {
+                this.mDeleteMetaData(aID, this.id);
+            }
             this.mDeleteAlarms(aID, this.id);
         } catch (e) {
             this.releaseTransaction(e);
@@ -2499,14 +2501,11 @@ calStorageCalendar.prototype = {
             sp.item_id = id;
             sp.value = value;
             this.mInsertMetaData.execute();
-        } catch (e) {
+        } catch (e if e.result == Components.results.NS_ERROR_ILLEGAL_VALUE) {
             // The storage service throws an NS_ERROR_ILLEGAL_VALUE in
             // case pval is something complex (i.e not a string or
             // number). Swallow this error, leaving the value empty.
-            if (e.result != Components.results.NS_ERROR_ILLEGAL_VALUE) {
-                this.logError("Error setting metadata for id " + id + "!", e);
-                throw e;
-            }
+            this.logError("Error setting metadata for id " + id + "!", e);
         } finally {
             this.mInsertMetaData.reset();
         }
