@@ -920,24 +920,24 @@ checkout:
 	$(PYTHON) $(topsrcdir)/client.py checkout
 
 clean clobber realclean clobber_all:: $(SUBMAKEFILES)
-	-$(RM) $(ALL_TRASH)
-	-$(RM) -r $(ALL_TRASH_DIRS)
+	-rm -f $(ALL_TRASH)
+	-rm -rf $(ALL_TRASH_DIRS)
 	$(foreach dir,$(PARALLEL_DIRS) $(DIRS) $(STATIC_DIRS) $(TOOL_DIRS),-$(call SUBMAKE,$@,$(dir)))
 
 distclean:: $(SUBMAKEFILES)
 	$(foreach dir,$(PARALLEL_DIRS) $(DIRS) $(STATIC_DIRS) $(TOOL_DIRS),-$(call SUBMAKE,$@,$(dir)))
-	-$(RM) -r $(ALL_TRASH_DIRS) 
-	-$(RM) $(ALL_TRASH)  \
+	-rm -rf $(ALL_TRASH_DIRS) 
+	-rm -f $(ALL_TRASH)  \
 	Makefile .HSancillary \
 	$(wildcard *.$(OBJ_SUFFIX)) $(wildcard *.ho) $(wildcard host_*.o*) \
 	$(wildcard *.$(LIB_SUFFIX)) $(wildcard *$(DLL_SUFFIX)) \
 	$(wildcard *.$(IMPORT_LIB_SUFFIX))
 ifeq ($(OS_ARCH),OS2)
-	-$(RM) $(PROGRAM:.exe=.map)
+	-rm -f $(PROGRAM:.exe=.map)
 endif
 
 alltags:
-	$(RM) TAGS
+	rm -f TAGS
 	find $(topsrcdir) -name dist -prune -o \( -name '*.[hc]' -o -name '*.cp' -o -name '*.cpp' -o -name '*.idl' \) -print | $(TAG_PROGRAM)
 
 #
@@ -945,7 +945,7 @@ alltags:
 # creates OBJS, links with LIBS to create Foo
 #
 $(PROGRAM): $(PROGOBJS) $(LIBS_DEPS) $(EXTRA_DEPS) $(EXE_DEF_FILE) $(RESFILE) $(GLOBAL_DEPS)
-	@$(RM) $@.manifest
+	@rm -f $@.manifest
 ifeq (WINCE,$(OS_ARCH))
 	$(EXPAND_LD) -NOLOGO -OUT:$@ $(WIN32_EXE_LDFLAGS) $(LDFLAGS) $(MOZ_UTILS_PROGRAM_LDFLAGS) $(PROGOBJS) $(RESFILE) $(LIBS) $(EXTRA_LIBS) $(OS_LIBS)
 else
@@ -1038,7 +1038,7 @@ ifeq (_WINNT,$(GNU_CC)_$(OS_ARCH))
 ifdef MSMANIFEST_TOOL
 	@if test -f $@.manifest; then \
 		mt.exe -NOLOGO -MANIFEST $@.manifest -OUTPUTRESOURCE:$@\;1; \
-		$(RM) $@.manifest; \
+		rm -f $@.manifest; \
 	fi
 endif	# MSVC with manifest tool
 else
@@ -1102,7 +1102,7 @@ EXTRA_DEPS += $(DTRACE_PROBE_OBJ)
 endif
 
 $(filter %.$(LIB_SUFFIX),$(LIBRARY)): $(OBJS) $(LOBJS) $(SHARED_LIBRARY_LIBS_DEPS) $(EXTRA_DEPS) $(GLOBAL_DEPS)
-	$(RM) $(LIBRARY)
+	rm -f $(LIBRARY)
 	$(EXPAND_AR) $(AR_FLAGS) $(OBJS) $(LOBJS) $(SHARED_LIBRARY_LIBS)
 	$(RANLIB) $@
 
@@ -1117,7 +1117,7 @@ endif
 
 ifeq ($(OS_ARCH),OS2)
 $(DEF_FILE): $(OBJS) $(SHARED_LIBRARY_LIBS)
-	$(RM) $@
+	rm -f $@
 	echo LIBRARY $(SHARED_LIBRARY_NAME) INITINSTANCE TERMINSTANCE > $@
 	echo PROTMODE >> $@
 	echo CODE    LOADONCALL MOVEABLE DISCARDABLE >> $@
@@ -1131,13 +1131,13 @@ $(IMPORT_LIBRARY): $(SHARED_LIBRARY)
 else
 $(IMPORT_LIBRARY): $(DEF_FILE)
 endif
-	$(RM) $@
+	rm -f $@
 	$(IMPLIB) $@ $^
 	$(RANLIB) $@
 endif # OS/2
 
 $(HOST_LIBRARY): $(HOST_OBJS) Makefile
-	$(RM) $@
+	rm -f $@
 	$(HOST_AR) $(HOST_AR_FLAGS) $(HOST_OBJS)
 	$(HOST_RANLIB) $@
 
@@ -1159,7 +1159,7 @@ endif
 
 $(SHARED_LIBRARY): $(OBJS) $(LOBJS) $(DEF_FILE) $(RESFILE) $(SHARED_LIBRARY_LIBS_DEPS) $(LIBRARY) $(EXTRA_DEPS) $(DSO_LDOPTS_DEPS) $(GLOBAL_DEPS)
 ifndef INCREMENTAL_LINKER
-	$(RM) $@
+	rm -f $@
 endif
 ifeq ($(OS_ARCH),OpenVMS)
 	@if test ! -f $(VMS_SYMVEC_FILE); then \
@@ -1189,7 +1189,7 @@ ifdef MSMANIFEST_TOOL
 ifdef EMBED_MANIFEST_AT
 	@if test -f $@.manifest; then \
 		mt.exe -NOLOGO -MANIFEST $@.manifest -OUTPUTRESOURCE:$@\;$(EMBED_MANIFEST_AT); \
-		$(RM) $@.manifest; \
+		rm -f $@.manifest; \
 	fi
 endif   # EMBED_MANIFEST_AT
 endif	# MSVC with manifest tool
@@ -1197,7 +1197,7 @@ ifdef MOZ_PROFILE_GENERATE
 	touch -t `date +%Y%m%d%H%M.%S -d "now+5seconds"` pgo.relink
 endif
 endif	# WINNT && !GCC
-	@$(RM) foodummyfilefoo $(DELETE_AFTER_LINK)
+	@rm -f foodummyfilefoo $(DELETE_AFTER_LINK)
 	chmod +x $@
 ifdef ENABLE_STRIP
 	$(STRIP) $@
@@ -1303,7 +1303,7 @@ endif
 ifdef STRICT_CPLUSPLUS_SUFFIX
 	echo "#line 1 \"$*.cpp\"" | cat - $*.cpp > t_$*.cc
 	$(ELOG) $(CCC) -o $@ -c $(COMPILE_CXXFLAGS) t_$*.cc
-	$(RM) t_$*.cc
+	rm -f t_$*.cc
 else
 	$(ELOG) $(CCC) $(OUTOPTION)$@ -c $(COMPILE_CXXFLAGS) $(_VPATH_SRCS)
 endif #STRICT_CPLUSPLUS_SUFFIX
@@ -1353,12 +1353,12 @@ endif
 
 # need 3 separate lines for OS/2
 %:: %.pl
-	$(RM) $@
+	rm -f $@
 	cp $< $@
 	chmod +x $@
 
 %:: %.sh
-	$(RM) $@; cp $< $@; chmod +x $@
+	rm -f $@; cp $< $@; chmod +x $@
 
 # Cancel these implicit rules
 #
@@ -1519,8 +1519,8 @@ $(IDL_DIR)::
 # generate .h files from into $(XPIDL_GEN_DIR), then export to $(DIST)/include;
 # warn against overriding existing .h file. 
 $(XPIDL_GEN_DIR)/.done:
-	$(MKDIR) -p $(XPIDL_GEN_DIR)
-	@$(TOUCH) $@
+	@if test ! -d $(XPIDL_GEN_DIR); then echo Creating $(XPIDL_GEN_DIR)/.done; rm -rf $(XPIDL_GEN_DIR); mkdir $(XPIDL_GEN_DIR); fi
+	@touch $@
 
 # don't depend on $(XPIDL_GEN_DIR), because the modification date changes
 # with any addition to the directory, regenerating all .h files -> everything.
@@ -1859,7 +1859,7 @@ endif
 	$(LOOP_OVER_TOOL_DIRS)
 
 dependclean:: $(SUBMAKEFILES)
-	$(RM) $(MDDEPFILES)
+	rm -f $(MDDEPFILES)
 	$(LOOP_OVER_PARALLEL_DIRS)
 	$(LOOP_OVER_DIRS)
 	$(LOOP_OVER_TOOL_DIRS)
@@ -1882,7 +1882,7 @@ endif # COMPILER_DEPEND
 #   it.
 
 $(CURDIR)/$(MDDEPDIR):
-	$(MKDIR) -p $@
+	@if test ! -d $@; then echo Creating $@; rm -rf $@; mkdir $@; else true; fi
 
 ifneq (,$(filter-out all chrome default export realchrome tools clean clobber clobber_all distclean realclean,$(MAKECMDGOALS)))
 ifneq (,$(OBJS)$(XPIDLSRCS)$(SIMPLE_PROGRAMS))
@@ -2097,4 +2097,4 @@ libs export libs::
 	$(CHECK_FROZEN_VARIABLES)
 
 default all::
-	if test -d $(DIST)/bin ; then $(TOUCH) $(DIST)/bin/.purgecaches ; fi
+	if test -d $(DIST)/bin ; then touch $(DIST)/bin/.purgecaches ; fi
