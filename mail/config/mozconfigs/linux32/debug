@@ -5,7 +5,8 @@ ac_add_options --enable-tests
 
 ac_add_options --enable-trace-malloc
 
-. $topsrcdir/build/unix/mozconfig.linux
+CC=/tools/gcc-4.5-0moz3/bin/gcc
+CXX=/tools/gcc-4.5-0moz3/bin/g++
 
 # Avoid dependency on libstdc++ 4.5
 ac_add_options --enable-stdcxx-compat
