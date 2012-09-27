@@ -3,7 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /*
- * Test to ensure that imap fetchCustomMsgAttribute function works properly
+ * Test to ensure that, in case of GMail server, fetching of custom GMail
+ * attributes works properly.
+ *
+ * Bug 721316
+ *
+ * See https://bugzilla.mozilla.org/show_bug.cgi?id=721316
+ * for more info.
+ *
+ * Original Author: Atul Jangra<atuljangra66@gmail.com>
  */
 
 // async support
@@ -16,24 +24,24 @@ load("../../../resources/IMAPpump.js");
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 
-// Globals
-
 // Messages to load must have CRLF line endings, that is Windows style
 const gMessage = "bugmail10"; // message file used as the test message
 
-const gCustomValue = "Custom";
-const gCustomList = ["Custom1", "Custom2", "Custom3"];
+const gXGmMsgid = "1278455344230334865";
+const gXGmThrid = "1266894439832287888";
+const gXGmLabels = '(\\Inbox \\Sent Important "Muy Importante" foo)';
 
 var gMsgWindow = Cc["@mozilla.org/messenger/msgwindow;1"]
   .createInstance(Ci.nsIMsgWindow);
 
-setupIMAPPump("CUSTOM1");
+setupIMAPPump("GMail");
 
 // Definition of tests
 var tests = [
   loadImapMessage,
-  testFetchCustomValue,
-  testFetchCustomList,
+  testFetchXGmMsgid,
+  testFetchXGmThrid,
+  testFetchXGmLabels,
   endTest
 ]
 
@@ -42,55 +50,35 @@ function loadImapMessage()
 {
   let message = new imapMessage(specForFileName(gMessage),
                           gIMAPMailbox.uidnext++, []);
-  message.xCustomValue = gCustomValue;
-  message.xCustomList = gCustomList;
+  message.xGmMsgid = gXGmMsgid;
+  message.xGmThrid = gXGmThrid;
+  message.xGmLabels = gXGmLabels;
   gIMAPMailbox.addMessage(message);
   gIMAPInbox.updateFolderWithListener(null, asyncUrlListener);
   yield false;
 }
 
-// Used to verify that nsIServerResponseParser.msg_fetch() can handle
-// not in a parenthesis group - Bug 750012
-function testFetchCustomValue()
+function testFetchXGmMsgid()
 {
   let msgHdr = firstMsgHdr(gIMAPInbox);
-  let uri = gIMAPInbox.fetchCustomMsgAttribute("X-CUSTOM-VALUE", msgHdr.messageKey, gMsgWindow);
-  uri.QueryInterface(Ci.nsIMsgMailNewsUrl);
-  uri.RegisterListener(fetchCustomValueListener);
-  yield false;
+  let val = msgHdr.getStringProperty("X-GM-MSGID");
+  do_check_eq(val, gXGmMsgid);
 }
 
-// listens for resposne from fetchCustomMsgAttribute request for X-CUSTOM-VALUE
-var fetchCustomValueListener = {
-  OnStartRunningUrl: function (aUrl) {},
-
-  OnStopRunningUrl: function (aUrl, aExitCode) {
-    aUrl.QueryInterface(Ci.nsIImapUrl);
-    do_check_eq(aUrl.customAttributeResult, gCustomValue);
-    async_driver();
-  }
-};
-
-// Used to verify that nsIServerResponseParser.msg_fetch() can handle a parenthesis group - Bug 735542
-function testFetchCustomList()
+function testFetchXGmThrid()
 {
   let msgHdr = firstMsgHdr(gIMAPInbox);
-  let uri = gIMAPInbox.fetchCustomMsgAttribute("X-CUSTOM-LIST", msgHdr.messageKey, gMsgWindow);
-  uri.QueryInterface(Ci.nsIMsgMailNewsUrl);
-  uri.RegisterListener(fetchCustomListListener);
-  yield false;
+  let val = msgHdr.getStringProperty("X-GM-THRID");
+  do_check_eq(val, gXGmThrid);
 }
 
-// listens for response from fetchCustomMsgAttribute request for X-CUSTOM-LIST
-var fetchCustomListListener = {
-  OnStartRunningUrl: function (aUrl) {},
-
-  OnStopRunningUrl: function (aUrl, aExitCode) {
-    aUrl.QueryInterface(Ci.nsIImapUrl);
-    do_check_eq(aUrl.customAttributeResult, "(" + gCustomList.join(" ") + ")");
-    async_driver();
-  }
-};
+function testFetchXGmLabels()
+{
+  let msgHdr = firstMsgHdr(gIMAPInbox);
+  let val = msgHdr.getStringProperty("X-GM-LABELS");
+   // We need to remove the starting "(" and ending ")" from gXGmLabels while comparing
+  do_check_eq(val, gXGmLabels.substring(1 ,gXGmLabels.length - 1));
+}
 
 // Cleanup at end
 function endTest()
