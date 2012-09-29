@@ -884,7 +884,7 @@ function setupContextItemType(event, items) {
  */
 function minimonthPick(aNewDate) {
   if (cal.isSunbird() || gCurrentMode == "calendar" || gCurrentMode == "task") {
-      let cdt = jsDateToDateTime(aNewDate, currentView().timezone);
+      let cdt = cal.jsDateToDateTime(aNewDate, currentView().timezone);
       cdt.isDate = true;
       currentView().goToDay(cdt);
 
