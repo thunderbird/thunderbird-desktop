@@ -10,6 +10,9 @@
   <!ENTITY % lightningDTD SYSTEM "chrome://lightning/locale/lightning.dtd"> %lightningDTD;
   <!ENTITY % calendarDTD SYSTEM "chrome://calendar/locale/calendar.dtd" > %calendarDTD;
   <!ENTITY % toolbarDTD SYSTEM "chrome://lightning/locale/lightning-toolbar.dtd" > %toolbarDTD;
+  <!-- This two entities are to not break SM -->
+  <!ENTITY appmenuButton.label "AppMenu">
+  <!ENTITY appmenuButton.tooltip "Displays the Application Menu">
 ]>
 
 <?xml-stylesheet href="chrome://lightning/skin/lightning.css" type="text/css"?>
