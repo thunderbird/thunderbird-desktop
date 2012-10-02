@@ -2550,8 +2550,7 @@
                     key="key_goBack"/>
           <menuseparator id="goNextSeparator"/>
           <menuitem id="menu_goChat" label="&goChatCmd.label;"
-                    accesskey="&goChatCmd.accesskey;" oncommand="showChatTab();"
-                    key="key_goChat"/>
+                    accesskey="&goChatCmd.accesskey;" oncommand="showChatTab();"/>
           <menuseparator id="goChatSeparator"/>
           <menu id="goFolderMenu"
                 label="&folderMenu.label;"
