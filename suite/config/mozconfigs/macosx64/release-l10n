@@ -1,0 +1,4 @@
+ac_add_options --with-l10n-base=../../releases/l10n/mozilla-beta
+ac_add_options --enable-application=suite
+ac_add_options --enable-update-channel=beta
+ac_add_options --enable-update-packaging
