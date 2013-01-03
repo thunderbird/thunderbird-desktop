@@ -3938,7 +3938,7 @@ nsresult nsMsgDBView::GetFieldTypeAndLenForSort(nsMsgViewSortTypeValue sortType,
         }
         default:
         {
-           nsAutoCString message("unexpected switch value: sortType=");
+           nsCAutoString message("unexpected switch value: sortType=");
            message.AppendInt(sortType);
            NS_WARNING(message.get());
            return NS_ERROR_UNEXPECTED;
