@@ -578,3 +578,10 @@ treechildren::-moz-tree-cell-text(subjectCol) {
 #messengerWindow[tabsintitlebar][sizemode="maximized"] > #navigation-toolbox{
   margin-top: -12px;
 }
+
+@media not all and (-moz-windows-compositor) {
+  #mail-toolbar-menubar2[autohide="false"] +
+  #tabs-toolbar > .titlebar-placeholder {
+    display: none;
+  }
+}
