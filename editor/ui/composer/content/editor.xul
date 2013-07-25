@@ -321,8 +321,7 @@
         <editor editortype="html"
                 type="content-primary"
                 id="content-frame"
-                onclick="EditorClick(event);"
-                ondblclick="EditorDblClick(event);"
+                onclick="EditorClick(event); if (event.detail == 2) EditorDblClick(event);"
                 context="contentAreaContextMenu"
                 flex="1"
                 tooltip="aHTMLTooltip"/>
