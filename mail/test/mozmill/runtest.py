@@ -121,7 +121,7 @@ class ThunderTestProfile(mozrunner.ThunderbirdProfile):
         # Do not allow check new mail to be set
         'mail.startup.enabledMailCheckOnce' :  True,
         # Disable compatibility checking
-        'extensions.checkCompatibility.nightly': False,
+        'extensions.checkCompatibility.31.0a': False,
         # Stop any pings to AMO on add-on install
         'extensions.getAddons.cache.enabled': False,
         # In case a developer is working on a laptop without a network

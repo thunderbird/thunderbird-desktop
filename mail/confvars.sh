@@ -30,15 +30,15 @@ THUNDERBIRD_VERSION=$MOZ_APP_VERSION
 
 MOZ_UA_BUILDID=20100101
 
-MOZ_BRANDING_DIRECTORY=mail/branding/nightly
+MOZ_BRANDING_DIRECTORY=mail/branding/aurora
 MOZ_OFFICIAL_BRANDING_DIRECTORY=other-licenses/branding/thunderbird
 MOZ_APP_ID={3550f703-e582-4d05-9a08-453d09bdfdc6}
 # This should usually be the same as the value MAR_CHANNEL_ID.
 # If more than one ID is needed, then you should use a comma separated list
 # of values.
-ACCEPTED_MAR_CHANNEL_IDS=thunderbird-comm-central
+ACCEPTED_MAR_CHANNEL_IDS=thunderbird-comm-aurora
 # The MAR_CHANNEL_ID must not contain the following 3 characters: ",\t "
-MAR_CHANNEL_ID=thunderbird-comm-central
+MAR_CHANNEL_ID=thunderbird-comm-aurora
 if test "$OS_TARGET" = "WINNT" -o "$OS_TARGET" = "Darwin"; then
   MOZ_FOLD_LIBS=1
 fi
