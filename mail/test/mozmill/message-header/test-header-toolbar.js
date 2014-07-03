@@ -149,6 +149,7 @@ function test_customize_header_toolbar_reorder_buttons()
 {
   // To avoid undrawn buttons on the toolbar, change pane layout to wide view.
   setWideView();
+  Services.prefs.setBoolPref("toolkit.customization.unsafe_drag_events", true);
 
   let curMessage = select_message_in_folder(0);
 
@@ -193,6 +194,7 @@ function test_customize_header_toolbar_reorder_buttons()
 
   // Leave the toolbar in the default state.
   gCDHelper.restoreDefaultButtons(mc);
+  Services.prefs.clearUserPref("toolkit.customization.unsafe_drag_events");
 }
 
 /**
@@ -201,6 +203,7 @@ function test_customize_header_toolbar_reorder_buttons()
  */
 function test_customize_header_toolbar_separate_window()
 {
+  Services.prefs.setBoolPref("toolkit.customization.unsafe_drag_events", true);
   let curMessage = select_message_in_folder(0);
 
   // Restore the default buttons to get defined starting conditions.
@@ -265,6 +268,7 @@ function test_customize_header_toolbar_separate_window()
   // Leave the toolbar in the default state.
   gCDHelper.restoreDefaultButtons(msgc);
   close_window(msgc);
+  Services.prefs.clearUserPref("toolkit.customization.unsafe_drag_events");
 }
 
 /**
@@ -272,6 +276,7 @@ function test_customize_header_toolbar_separate_window()
  */
 function test_customize_header_toolbar_remove_buttons()
 {
+  Services.prefs.setBoolPref("toolkit.customization.unsafe_drag_events", true);
   // Save currentset of toolbar for adding the buttons back
   // at the end.
   let lCurrentset;
@@ -343,6 +348,7 @@ function test_customize_header_toolbar_remove_buttons()
   toolbar = mc.e("header-view-toolbar");
   assert_equals(toolbar.currentSet, hdrBarDefaultSet);
   assert_equals(toolbar.getAttribute("currentset"), hdrBarDefaultSet);
+  Services.prefs.clearUserPref("toolkit.customization.unsafe_drag_events");
 }
 
 /**
