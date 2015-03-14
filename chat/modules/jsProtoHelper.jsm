@@ -596,10 +596,8 @@ const GenericConvChatPrototype = {
   set left(aLeft) {
     if (aLeft == this._left)
       return;
-
     this._left = aLeft;
-    if (this._left)
-      this.notifyObservers(null, "update-conv-chatleft");
+    this.notifyObservers(null, "update-conv-chatleft");
   },
 
   _joining: false,
@@ -607,7 +605,6 @@ const GenericConvChatPrototype = {
   set joining(aJoining) {
     if (aJoining == this._joining)
       return;
-
     this._joining = aJoining;
     this.notifyObservers(null, "update-conv-chatjoining");
   },
