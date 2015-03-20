@@ -3,6 +3,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+FINAL_TARGET_FILES.components += [
+    'icaljs-manifest'
+]
+
+FINAL_TARGET_FILES['calendar-js'] += [
+    'calDateTime.js',
+    'calDuration.js',
+    'calICSService-worker.js',
+    'calICSService.js',
+    'calPeriod.js',
+    'calRecurrenceRule.js'
+]
+
 EXTRA_COMPONENTS += [
     'calICALJSComponents.js',
 ]
