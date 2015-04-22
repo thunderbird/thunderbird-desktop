@@ -30,7 +30,7 @@ DEFAULTS = {
       'INSPECTOR_REV':  'DOMI_LATEST_RELEASE',
 
     # URL of the default hg repository to clone for Mozilla.
-    'MOZILLA_REPO': 'https://hg.mozilla.org/releases/mozilla-beta/',
+    'MOZILLA_REPO': 'https://hg.mozilla.org/releases/mozilla-release/',
 }
 
 REPO_SHORT_NAMES = {
