@@ -93,13 +93,15 @@ langpack-en-US:
 # It wouldn't fit into mozharness to run compare-locales for calendar
 # separately, so we need to do it ourselves. Unfortunately compare-locales is
 # not installed globally on the slaves, so we need to hardcode the path.
-BUILD_COMPARE_LOCALES = $(wildcard $(topsrcdir)/../compare-locales/scripts/compare-locales)
-COMPARE_LOCALES = $(if $(BUILD_COMPARE_LOCALES),$(PYTHON) $(BUILD_COMPARE_LOCALES),compare-locales)
+BUILD_COMPARE_LOCALES = $(wildcard $(topsrcdir)/../compare-locales)
+COMPARE_LOCALES = $(if $(BUILD_COMPARE_LOCALES),$(PYTHON) $(BUILD_COMPARE_LOCALES)/scripts/compare-locales,compare-locales)
+COMPARE_LOCALES_PYTHONPATH = $(if $(BUILD_COMPARE_LOCALES),$(BUILD_COMPARE_LOCALES)/lib,)
 
 merge-%:
 ifdef LOCALE_MERGEDIR
 	$(RM) -rf $(LOCALE_MERGEDIR)/calendar
-	MACOSX_DEPLOYMENT_TARGET= $(COMPARE_LOCALES) -m $(LOCALE_MERGEDIR) $(topsrcdir)/calendar/locales/l10n.ini $(L10NBASEDIR) $*
+	MACOSX_DEPLOYMENT_TARGET= PYTHONPATH=$(COMPARE_LOCALES_PYTHONPATH) \
+	  $(COMPARE_LOCALES) -m $(LOCALE_MERGEDIR) $(topsrcdir)/calendar/locales/l10n.ini $(L10NBASEDIR) $*
 
 	# This file requires a bugfix with string changes, see bug 1154448
 	[ -f $(L10NBASEDIR)/$*/calendar/chrome/calendar/calendar-extract.properties ] && \
