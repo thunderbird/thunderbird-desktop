@@ -2250,8 +2250,9 @@ function deleteAllAttachments() {
         let child;
         let documentLink = document.getElementById("attachment-link");
         while (documentLink.hasChildNodes()) {
-            child = documentLink.lastChild.remove();
+            child = documentLink.lastChild;
             child.attachment = null;
+            child.remove();
         }
         gAttachMap = {};
     }
