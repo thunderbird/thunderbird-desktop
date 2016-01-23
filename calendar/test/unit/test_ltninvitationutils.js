@@ -190,42 +190,43 @@ add_task(function* createInvitationOverlay_test() {
                    "late\"><td><p class=\"itip-icon\"/></td><td class=\"attendee-name\"/></tr>" +
 
                    "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"Attendee 1 &lt;attendee1@e" +
-                   "xample.net&gt; is an optional participant and still needs to decide whether t" +
-                   "o attend.\"><td><p class=\"itip-icon\" role=\"OPT-PARTICIPANT\" usertype=\"IN" +
-                   "DIVIDUAL\" partstat=\"NEEDS-ACTION\"/></td><td class=\"attendee-name\">Attend" +
-                   "ee 1 &lt;attendee1@example.net&gt;</td></tr>" +
+                   "xample.net&gt; is an optional participant. Attendee 1 still needs to reply.\"" +
+                   "><td><p class=\"itip-icon\" role=\"OPT-PARTICIPANT\" usertype=\"INDIVIDUAL\" " +
+                   "partstat=\"NEEDS-ACTION\"/></td><td class=\"attendee-name\">Attendee 1 &lt;at" +
+                   "tendee1@example.net&gt;</td></tr>" +
 
-                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"Group attendee2@example.ne" +
-                   "t is a non participant and has confirmed to attend.\"><td><p class=\"itip-ico" +
-                   "n\" role=\"NON-PARTICIPANT\" usertype=\"GROUP\" partstat=\"ACCEPTED\"/></td><" +
-                   "td class=\"attendee-name\">attendee2@example.net</td></tr>" +
+                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee2@example.net (gro" +
+                   "up) is a non-participant. attendee2@example.net has confirmed attendance.\"><" +
+                   "td><p class=\"itip-icon\" role=\"NON-PARTICIPANT\" usertype=\"GROUP\" partsta" +
+                   "t=\"ACCEPTED\"/></td><td class=\"attendee-name\">attendee2@example.net</td><" +
+                   "/tr>" +
 
-                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"Resource attendee3@example" +
-                   ".net is a required participant and has tentatively confirmed to attend.\"><td" +
-                   "><p class=\"itip-icon\" role=\"REQ-PARTICIPANT\" usertype=\"RESOURCE\" partst" +
-                   "at=\"TENTATIVE\"/></td><td class=\"attendee-name\">attendee3@example.net</td>" +
-                   "</tr>" +
+                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee3@example.net (res" +
+                   "ource) is a required participant. attendee3@example.net has confirmed attenda" +
+                   "nce tentatively.\"><td><p class=\"itip-icon\" role=\"REQ-PARTICIPANT\" userty" +
+                   "pe=\"RESOURCE\" partstat=\"TENTATIVE\"/></td><td class=\"attendee-name\">atte" +
+                   "ndee3@example.net</td></tr>" +
 
-                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"Room attendee4@example.net" +
-                   " is an optional participant and has confirmed to not attend.\"><td><p class=" +
-                   "\"itip-icon\" role=\"OPT-PARTICIPANT\" usertype=\"ROOM\" partstat=\"DECLINED" +
-                   "\"/></td><td class=\"attendee-name\">attendee4@example.net (delegated from at" +
-                   "tendee5@example.net)</td></tr>" +
+                   "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee4@example.net (roo" +
+                   "m) is an optional participant. attendee4@example.net has declined attendance." +
+                   "\"><td><p class=\"itip-icon\" role=\"OPT-PARTICIPANT\" usertype=\"ROOM\" part" +
+                   "stat=\"DECLINED\"/></td><td class=\"attendee-name\">attendee4@example.net (de" +
+                   "legated from attendee5@example.net)</td></tr>" +
 
                    "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee5@example.net is a" +
-                   "n optional participant and has delegated the attendance to attendee4@example." +
-                   "net.\"><td><p class=\"itip-icon\" role=\"OPT-PARTICIPANT\" usertype=\"UNKNOWN" +
-                   "\" partstat=\"DELEGATED\"/></td><td class=\"attendee-name\">attendee5@example" +
-                   ".net</td></tr>" +
+                   "n optional participant. attendee5@example.net has delegated attendance to att" +
+                   "endee4@example.net.\"><td><p class=\"itip-icon\" role=\"OPT-PARTICIPANT\" use" +
+                   "rtype=\"UNKNOWN\" partstat=\"DELEGATED\"/></td><td class=\"attendee-name\">at" +
+                   "tendee5@example.net</td></tr>" +
 
                    "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee6@example.net is a" +
-                   " required participant and still needs to decide whether to attend.\"><td><p c" +
+                   " required participant. attendee6@example.net still needs to reply.\"><td><p c" +
                    "lass=\"itip-icon\" role=\"REQ-PARTICIPANT\" usertype=\"INDIVIDUAL\" partstat=" +
                    "\"NEEDS-ACTION\"/></td><td class=\"attendee-name\">attendee6@example.net</td>" +
                    "</tr>" +
 
                    "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"attendee7@example.net is a" +
-                   " required participant and still needs to decide whether to attend.\"><td><p c" +
+                   " required participant. attendee7@example.net still needs to reply.\"><td><p c" +
                    "lass=\"itip-icon\" role=\"REQ-PARTICIPANT\" usertype=\"INDIVIDUAL\" partstat=" +
                    "\"NEEDS-ACTION\"/></td><td class=\"attendee-name\">attendee7@example.net</td>" +
                    "</tr>"}
@@ -236,10 +237,10 @@ add_task(function* createInvitationOverlay_test() {
         expected: {
             node: "organizer-table",
             value: "<tr xmlns=\"http://www.w3.org/1999/xhtml\" title=\"The Organizer &lt;organize" +
-                   "r@example.net&gt; chairs the event and has confirmed to attend.\"><td><p clas" +
-                   "s=\"itip-icon\" role=\"CHAIR\" usertype=\"INDIVIDUAL\" partstat=\"ACCEPTED\"" +
-                   "/></td><td class=\"attendee-name\">The Organizer &lt;organizer@example.net&gt" +
-                   ";</td></tr>"}
+                   "r@example.net&gt; chairs the event. The Organizer has confirmed attendance.\"" +
+                   "><td><p class=\"itip-icon\" role=\"CHAIR\" usertype=\"INDIVIDUAL\" partstat=\"" +
+                   "ACCEPTED\"/></td><td class=\"attendee-name\">The Organizer &lt;organizer@exam" +
+                   "ple.net&gt;</td></tr>"}
     }];
     let i = 0;
     for (let test of data) {
