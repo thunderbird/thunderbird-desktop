@@ -545,9 +545,16 @@ NS_IMETHODIMP nsAbManager::ExportAddressBook(nsIDOMWindow *aParentWin, nsIAbDire
   rv = bundleService->CreateBundle("chrome://messenger/locale/addressbook/addressBook.properties", getter_AddRefs(bundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString dirName;
+  aDirectory->GetDirName(dirName);
+
   nsString title;
   rv = bundle->GetStringFromName(MOZ_UTF16("ExportAddressBookTitle"), getter_Copies(title));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // This is not properly localized but a proper version is already in trunk.
+  title.AppendLiteral(" - ");
+  title.Append(dirName);
 
   rv = filePicker->Init(aParentWin, title, nsIFilePicker::modeSave);
   NS_ENSURE_SUCCESS(rv, rv);
