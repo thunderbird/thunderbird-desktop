@@ -57,10 +57,18 @@
 
     <groupbox>
       <caption label="&defaultSearchEngine.label;"/>
-      <hbox>
+      <hbox align="center">
         <menulist id="defaultWebSearch">
           <menupopup id="defaultWebSearchPopup"/>
         </menulist>
+        <button id="addSearchEngine"
+                label="+"
+                style="min-width: 2.5em;"
+                oncommand="gGeneralPane.addSearchEngine();"/>
+        <button id="removeSearchEngine"
+                label="-"
+                style="min-width: 2.5em;"
+                oncommand="gGeneralPane.removeSearchEngine();"/>
       </hbox>
     </groupbox>
 
