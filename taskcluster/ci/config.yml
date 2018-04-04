@@ -15,6 +15,7 @@ treeherder:
         'L10n-Rpk': 'Localized Repackaged Repacks'
         'rs': 'Repackage signing'
         'BMR-L10n': 'Beetmover repackages for locales'
+        'c-Up': 'Balrog submission of complete updates'
 
 index:
     products:
@@ -31,3 +32,5 @@ scriptworker:
             - 'project:comm:thunderbird:releng:signing:cert:dep-signing'
         'scriptworker-prov-v1/tb-beetmover-dev':
             - 'project:comm:thunderbird:releng:beetmover:bucket:dep'
+        'scriptworker-prov-v1/tb-balrog-dev':
+            - 'project:comm:thunderbird:releng:balrog:server:dep'
