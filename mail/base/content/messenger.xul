@@ -61,6 +61,7 @@
 <stringbundleset id="stringbundleset">
   <stringbundle id="bundle_brand" src="chrome://branding/locale/brand.properties"/>
   <stringbundle id="bundle_search" src="chrome://messenger/locale/search.properties"/>
+  <stringbundle id="bundle_read_smime" src="chrome://messenger-smime/locale/msgReadSMIMEOverlay.properties"/>
 </stringbundleset>
 
 <script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>

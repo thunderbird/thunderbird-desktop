@@ -43,6 +43,7 @@
   <stringbundleset id="stringbundleset">
     <stringbundle id="bundle_brand" src="chrome://branding/locale/brand.properties"/>
     <stringbundle id="bundle_offlinePrompts" src="chrome://messenger/locale/offline.properties"/>
+    <stringbundle id="bundle_read_smime" src="chrome://messenger-smime/locale/msgReadSMIMEOverlay.properties"/>
   </stringbundleset>
 
   <script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>
