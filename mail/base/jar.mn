@@ -22,6 +22,7 @@ messenger.jar:
     content/messenger/extensionsOverlay.css         (content/extensionsOverlay.css)
     content/messenger/extensionsOverlay.xul         (content/extensionsOverlay.xul)
     content/messenger/folderDisplay.js              (content/folderDisplay.js)
+    content/messenger/mail-compacttheme.js          (content/mail-compacttheme.js)
     content/messenger/mailWindowOverlay.js          (content/mailWindowOverlay.js)
 *   content/messenger/mailWindowOverlay.xul         (content/mailWindowOverlay.xul)
     content/messenger/extraCustomizeItems.xul       (content/extraCustomizeItems.xul)
@@ -94,6 +95,8 @@ messenger.jar:
     content/messenger/threadPane.js                 (content/threadPane.js)
     content/messenger/threadPaneColumnPicker.xml    (content/threadPaneColumnPicker.xml)
     content/messenger/protovis-r2.6-modded.js       (content/protovis-r2.6-modded.js)
+    content/messenger/dark.icon.svg                 (content/dark.icon.svg)
+    content/messenger/light.icon.svg                (content/light.icon.svg)
 #ifdef XP_MACOSX
     content/messenger/macMessengerOverlay.xul       (content/macMessengerOverlay.xul)
     content/messenger/macMessengerOverlay.js        (content/macMessengerOverlay.js)

@@ -10,6 +10,7 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/tabmail.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/tabmail.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/compacttheme.css" type="text/css" alternate="yes" title="Light/Dark"?>
 
 <?xul-overlay href="chrome://communicator/content/utilityOverlay.xul"?>
 <?xul-overlay href="chrome://messenger/content/msgHdrViewOverlay.xul"?>
@@ -69,6 +70,7 @@
 <script type="application/javascript" src="chrome://messenger/content/shareglue.js"/>
 <script type="application/javascript" src="chrome://messenger/content/msgViewNavigation.js"/>
 <script type="application/javascript" src="chrome://messenger/content/mailWindow.js"/>
+<script type="application/javascript" src="chrome://messenger/content/mail-compacttheme.js"/>
 <script type="application/javascript" src="chrome://messenger/content/selectionsummaries.js"/>
 <script type="application/javascript" src="chrome://messenger/content/msgMail3PaneWindow.js"/>
 <script type="application/javascript" src="chrome://messenger/content/specialTabs.js"/>

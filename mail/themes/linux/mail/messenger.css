@@ -239,6 +239,10 @@ toolbox[labelalign="end"] .toolbarbutton-1[type="menu"] {
   color: inherit;
 }
 
+.toolbarbutton-1[type="menu-button"] {
+  -moz-appearance: none;
+}
+
 .findbar-button,
 .toolbarbutton-1:not([type="menu-button"]),
 .toolbarbutton-1 > .toolbarbutton-menubutton-button,
