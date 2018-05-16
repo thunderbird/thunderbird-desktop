@@ -40,6 +40,12 @@
 
   /* composer header fields bottom border */
   --composer-header-border-color: rgb(127, 127, 128);
+
+  /* autocomplete colors */
+  --autocomplete-popup-background: rgb(74, 74, 79);
+  --autocomplete-popup-color: rgb(249, 249, 250);
+  --autocomplete-popup-border-color: rgb(39, 39, 43);
+  --urlbar-popup-url-color: #0a84ff;
 }
 
 :root:-moz-lwtheme-darktext {
@@ -55,6 +61,12 @@
 
   /* composer header fields bottom border */
   --composer-header-border-color: #aaa;
+
+  /* autocomplete colors */
+  --autocomplete-popup-background: #fff;
+  --autocomplete-popup-color: #0c0c0d;
+  --autocomplete-popup-border-color: ThreeDShadow;
+  --urlbar-popup-url-color: hsl(210, 77%, 47%);
 }
 
 toolbar[brighttext] .toolbarbutton-1 {
@@ -114,6 +126,21 @@ textbox.editContactTextbox {
   border-color: var(--chrome-nav-bar-controls-border-color);
 }
 
+popupset > #PopupGlodaAutocomplete {
+  background: var(--autocomplete-popup-background);
+  color: var(--autocomplete-popup-color);
+  border-color: var(--autocomplete-popup-border-color);
+}
+
+#PopupGlodaAutocomplete > .autocomplete-richlistbox {
+  color: inherit;
+  background-color: inherit;
+}
+
+.ac-url:not([selected=true]) > .ac-url-text {
+  color: var(--urlbar-popup-url-color);
+}
+
 /* Composer header box styling */
 #headers-box:-moz-lwtheme-brighttext {
   --toolbarbutton-hover-background: var(--lwt-toolbarbutton-hover-background);
@@ -144,7 +171,7 @@ textbox.editContactTextbox {
 #msgSubject[focused="true"],
 .textbox-addressingWidget:hover,
 .textbox-addressingWidget[focused="true"] {
-  background-color: var(--lwt-toolbar-field-background-color);
+  background-color: var(--url-and-searchbar-background-color);
   color: var(--lwt-toolbar-field-color);
   border-color: var(--lwt-toolbar-field-border-color) !important;
 }
