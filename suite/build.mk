@@ -3,6 +3,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ifndef COMM_BUILD
+installer:
+	@$(MAKE) -C $(commtopobjdir)/suite/installer installer
+
 package:
 	@$(MAKE) -C $(commtopobjdir)/suite/installer
 

@@ -45,6 +45,7 @@ MOZ_PKG_MAC_EXTRA=--symlink '/Applications:/ '
 endif
 
 MOZ_SFX_PACKAGE=$(commtopsrcdir)/other-licenses/7zstub/seamonkey/7zSD.sfx
+MOZ_INSTALLER_PATH=$(commtopsrcdir)/suite/installer/windows
 
 NON_OMNIJAR_FILES = \
 	defaults/messenger/mailViews.dat \
@@ -156,10 +157,23 @@ endif
 	@$(MAKE) libs AB_CD=$* XPI_NAME=locale-$* PREF_DIR=defaults/pref
 	@$(MAKE) -C $(DEPTH)/$(MOZ_BRANDING_DIRECTORY)/locales AB_CD=$* XPI_NAME=locale-$*
 
+package-win32-installer: WIN32_INSTALLER_OUT=$(ABS_DIST)/$(PKG_INST_PATH)$(PKG_INST_BASENAME).exe
 package-win32-installer: $(SUBMAKEFILES)
-	$(MAKE) -C ../installer/windows CONFIG_DIR=l10ngen ZIP_IN='$(ZIP_OUT)' installer
+	@echo 'Packaging $(WIN32_INSTALLER_OUT).'
+	$(MAKE) -C ../installer/windows CONFIG_DIR=l10ngen l10ngen/setup.exe l10ngen/7zSD.sfx
+	$(RM) -r $(STAGEDIST)/uninstall
+	$(NSINSTALL) -D $(STAGEDIST)/uninstall
+	cp ../installer/windows/l10ngen/helper.exe $(STAGEDIST)/uninstall
+	$(RM) $(ABS_DIST)/l10n-stage/setup.exe
+	cp ../installer/windows/l10ngen/setup.exe $(ABS_DIST)/l10n-stage
+	$(NSINSTALL) -D '$(ABS_DIST)/$(PKG_INST_PATH)'
+	(cd $(DIST)/l10n-stage; \
+	  $(MAKE_PACKAGE))
+	mv -f '$(DIST)/l10n-stage/$(PACKAGE)' '$(WIN32_INSTALLER_OUT)'
+	if test -f '$(DIST)/l10n-stage/$(PACKAGE).asc'; then mv -f '$(DIST)/l10n-stage/$(PACKAGE).asc' '$(WIN32_INSTALLER_OUT).asc'; fi
 
 repackage-extensions: $(STAGEDIST)
+	@echo 'repackage-extensions'
 ifdef MOZ_IRC
 	$(MAKE) -C $(DEPTH)/extensions/irc/locales repackage-zip-$(AB_CD) STAGEDIST=$(STAGEDIST)
 endif
@@ -190,7 +204,7 @@ endif
 	@$(MAKE) repackage-zip-$*
 	@$(MAKE) repackage-extensions AB_CD=$*
 ifeq (WINNT,$(OS_ARCH))
-	@$(MAKE) package-win32-installer AB_CD=$*
+	@$(MAKE) package-win32-installer AB_CD=$* MOZ_PKG_FORMAT=SFX7Z
 endif
 	@echo 'repackaging done'
 
