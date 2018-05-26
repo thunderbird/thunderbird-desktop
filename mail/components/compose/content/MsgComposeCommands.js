@@ -5427,7 +5427,6 @@ function attachmentBucketOnSelect() {
   updateAttachmentItems();
 }
 
-
 function attachmentBucketUpdateTooltips() {
   let bucket = GetMsgAttachmentElement();
   let bucketHeader = document.getElementById("attachments-header-box");
@@ -5444,6 +5443,10 @@ function attachmentBucketUpdateTooltips() {
 
 function attachmentBucketHeaderOnClick() {
   toggleAttachmentPane("focus");
+}
+
+function attachmentBucketCloseButtonOnCommand() {
+  toggleAttachmentPane("hide");
 }
 
 function attachmentBucketSizerOnMouseUp() {
@@ -6438,6 +6441,10 @@ function SwitchElementFocus(event)
         break;
     }
   }
+}
+
+function sidebarCloseButtonOnCommand() {
+  toggleAddressPicker();
 }
 
 function toggleAddressPicker()
