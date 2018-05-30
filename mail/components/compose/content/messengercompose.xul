@@ -282,7 +282,7 @@
        command="cmd_reorderAttachments"/>
   <key id="key_toggleAttachmentPane"
        key="&toggleAttachmentPaneCmd.key;" modifiers="control"
-       command="cmd_toggleAttachmentPane"/>
+       command="keyToggleAttachmentPaneOnCommand();"/>
 #else
   <key id="key_delete" keycode="VK_DELETE" command="cmd_delete"/>
   <key id="key_renameAttachment" keycode="VK_F2"
@@ -292,7 +292,7 @@
        command="cmd_reorderAttachments"/>
   <key id="key_toggleAttachmentPane"
        key="&toggleAttachmentPaneCmd.key;" modifiers="alt"
-       command="cmd_toggleAttachmentPane"/>
+       oncommand="keyToggleAttachmentPaneOnCommand();"/>
 #endif
   <key id="key_selectAll" key="&selectAllCmd.key;" modifiers="accel"/>
   <key id="key_find" key="&findBarCmd.key;" command="cmd_find" modifiers="accel"/>
@@ -1227,8 +1227,8 @@
         <vbox id="attachments-box" collapsed="true" persist="width">
           <hbox id="attachments-header-box"
                 align="stretch"
-                tooltiptext="&attachmentBucketHeader.tooltip;"
-                onclick="attachmentBucketHeaderOnClick();"
+                tooltiptext="&attachmentBucketCloseButton.tooltip;"
+                onclick="attachmentBucketHeaderOnClick(event);"
                 context="attachmentHeaderContext">
             <hbox id="attachmentBucketCountBox"
                   align="center"
@@ -1261,11 +1261,12 @@
                           onclick="attachmentBucketOnClick(event);"
                           onkeypress="attachmentBucketOnKeyPress(event);"
                           onselect="attachmentBucketOnSelect();"
-                          ondragstart="nsDragAndDrop.startDrag(event, attachmentBucketDNDObserver);"
+                          ondragstart="attachmentBucketOnDragStart(event);"
                           onblur="attachmentBucketOnBlur();"/>
         </vbox>
         <vbox id="attachments-placeholder-box"
               hidden="true"
+              tooltiptext=""
               onclick="goDoCommand('cmd_toggleAttachmentPane')"/>
       </hbox>
     </toolbar>
