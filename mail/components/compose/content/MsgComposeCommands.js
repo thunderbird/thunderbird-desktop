@@ -6083,13 +6083,22 @@ var envelopeDragObserver = {
       {
         // Process attachments.
         case "application/x-moz-file": {
-          isValidAttachment = true;
           let fileHandler = Services.io
                                     .getProtocolHandler("file")
                                     .QueryInterface(Ci.nsIFileProtocolHandler);
+          if (!rawData.exists() || !rawData.isReadable()) {
+            // For some reason we couldn't read the file just dragged. Permission problem?
+            Cu.reportError("Couldn't access the dragged file " + rawData.leafName);
+            break;
+          }
 
-          size = rawData.fileSize;
-          rawData = fileHandler.getURLSpecFromFile(rawData);
+          try {
+            size = rawData.fileSize;
+            rawData = fileHandler.getURLSpecFromFile(rawData);
+            isValidAttachment = true;
+          } catch (e) {
+            Cu.reportError("Couldn't process the dragged file " + rawData.leafName + ":" + e);
+          }
           break;
         }
 
