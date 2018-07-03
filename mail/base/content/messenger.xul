@@ -138,6 +138,18 @@
 <menupopup id="phishingOptions"/>
 <menupopup id="folderPaneContext"/>
 
+<menupopup id="aboutPagesContext"
+           onpopupshowing="goUpdateCommand('cmd_copy');goUpdateCommand('cmd_selectAll');">
+  <menuitem id="aboutPagesContext-copy"
+            label="&copyCmd.label;"
+            accesskey="&copyCmd.accesskey;"
+            command="cmd_copy"/>
+  <menuitem id="aboutPagesContext-selectall"
+            label="&selectAllCmd.label;"
+            accesskey="&selectAllCmd.accesskey;"
+            command="cmd_selectAll"/>
+</menupopup>
+
 <!-- Popup menus provided by msgHdrViewOverlay.xul -->
 <menupopup id="messageIdContext"/>
 <menupopup id="attachmentListContext"/>
