@@ -1256,6 +1256,7 @@
                           orient="vertical"
                           flex="1"
                           height="0"
+                          role="listbox"
                           context="msgComposeAttachmentListContext"
                           itemcontext="msgComposeAttachmentItemContext"
                           onclick="attachmentBucketOnClick(event);"
