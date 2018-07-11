@@ -704,7 +704,7 @@ void WMSettings::SetSmtpServer(nsIDOMDocument *xmlDoc, nsIMsgIdentity *id,
       extgServer->GetKey(getter_Copies(smtpServerKey));
       id->SetSmtpServerKey(smtpServerKey);
 
-      IMPORT_LOG1("SMTP server already exists: %S\n", smtpName);
+      IMPORT_LOG1("SMTP server already exists: %s\n", NS_ConvertUTF16toUTF8(smtpName).get());
     }
     else {
       nsCOMPtr<nsISmtpServer> smtpServer;
@@ -744,7 +744,7 @@ void WMSettings::SetSmtpServer(nsIDOMDocument *xmlDoc, nsIMsgIdentity *id,
         smtpServer->GetKey(getter_Copies(smtpServerKey));
         id->SetSmtpServerKey(smtpServerKey);
 
-        IMPORT_LOG1("Created new SMTP server: %S\n", smtpName);
+        IMPORT_LOG1("Created new SMTP server: %s\n", NS_ConvertUTF16toUTF8(smtpName).get());
       }
     }
   }
