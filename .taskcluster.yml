@@ -98,7 +98,8 @@ tasks:
           $merge:
             - GECKO_BASE_REPOSITORY: 'https://hg.mozilla.org/mozilla-unified'
               GECKO_HEAD_REPOSITORY: 'https://hg.mozilla.org/releases/mozilla-esr60'
-              GECKO_HEAD_REF: 'default'
+              GECKO_HEAD_REF: 'THUNDERBIRD_60_VERBRANCH'
+              GECKO_HEAD_REV: 'feccfbf2922833dbd8ff0a3f1a9966ad63561c1e'
               COMM_BASE_REPOSITORY: 'https://hg.mozilla.org/comm-central'
               COMM_HEAD_REPOSITORY: '${repoUrl}'
               COMM_HEAD_REF: '${push.revision}'
