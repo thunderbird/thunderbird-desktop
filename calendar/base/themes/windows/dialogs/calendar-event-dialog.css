@@ -13,3 +13,7 @@
 #timezone-endtime {
     margin-inline-start: 16px;
 }
+
+listbox {
+    background-color: -moz-Field;
+}
