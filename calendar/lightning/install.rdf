@@ -38,7 +38,7 @@
 #endif
     <em:creator>Mozilla Calendar Project</em:creator>
     <em:homepageURL>https://www.mozilla.org/projects/calendar/</em:homepageURL>
-    <em:iconURL>chrome://calendar/skin/cal-icon32.png</em:iconURL>
+    <em:iconURL>chrome://calendar-common/skin/icons/icon32.svg</em:iconURL>
     <em:optionsURL>chrome://messenger/content/preferences/preferences.xul</em:optionsURL>
     <em:strictCompatibility>true</em:strictCompatibility>
   </Description>
