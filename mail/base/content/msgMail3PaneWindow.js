@@ -1912,6 +1912,16 @@ var TabsInTitlebar = {
       let maxTitlebarOrTabsHeight = Math.max(titlebarContentHeight, tabAndMenuHeight);
       titlebar.style.marginBottom = "-" + maxTitlebarOrTabsHeight + "px";
 
+      // Calculate the LW-backgroundBox height to place the images correctly.
+      let root = $("messengerWindow");
+      let bgBox = $("LW-background-box");
+      if (root.getAttribute("lwtheme-image")) {
+        let bgBoxHeight = rect($("navigation-toolbox")).height + rect($("mail-toolbox")).height;
+        bgBox.style.height = bgBoxHeight + "px";
+      } else {
+        bgBox.style.removeProperty("height");
+      }
+
       // Finally, size the placeholders:
       if (AppConstants.platform == "macosx") {
         this._sizePlaceholder("fullscreen-button", secondaryButtonsWidth);

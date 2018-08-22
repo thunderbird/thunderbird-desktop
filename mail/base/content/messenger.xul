@@ -252,6 +252,9 @@
 </vbox>
 #endif
 
+  <!-- Placeholder box for drawing additional background images. -->
+  <hbox id="LW-background-box"/>
+
   <!-- navigation-toolbox is augmented by mailWindowOverlay.xul -->
   <toolbox id="navigation-toolbox" class="toolbox-top">
 
