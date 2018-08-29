@@ -2214,11 +2214,11 @@ int32_t nsPop3Protocol::SendPassword()
   else if (m_currentAuthMethod == POP3_HAS_AUTH_CRAM_MD5)
   {
     MOZ_LOG(POP3LOGMODULE, LogLevel::Debug, (POP3LOG("CRAM login")));
-    char buffer[512]; // TODO nsAutoCString
+    char buffer[255 + 1 + 2 * DIGEST_LENGTH + 1];
     unsigned char digest[DIGEST_LENGTH];
 
     char *decodedChallenge = PL_Base64Decode(m_commandResponse.get(),
-    m_commandResponse.Length(), nullptr);
+                                             m_commandResponse.Length(), nullptr);
 
     if (decodedChallenge)
       rv = MSGCramMD5(decodedChallenge, strlen(decodedChallenge),
@@ -2228,20 +2228,21 @@ int32_t nsPop3Protocol::SendPassword()
 
     if (NS_SUCCEEDED(rv))
     {
-      nsAutoCString encodedDigest;
-      char hexVal[8];
+      // The encoded digest is the hexadecimal representation of
+      // DIGEST_LENGTH characters, so it will be twice that length.
+      nsAutoCStringN<2 * DIGEST_LENGTH> encodedDigest;
 
-      for (uint32_t j = 0; j < 16; j++)
+      for (uint32_t j = 0; j < DIGEST_LENGTH; j++)
       {
-        PR_snprintf (hexVal,8, "%.2x", 0x0ff & (unsigned short)digest[j]);
+        char hexVal[3];
+        PR_snprintf (hexVal, 3, "%.2x", 0x0ff & (unsigned short)digest[j]);
         encodedDigest.Append(hexVal);
       }
 
-      PR_snprintf(buffer, sizeof(buffer), "%s %s", m_username.get(),
+      PR_snprintf(buffer, sizeof(buffer), "%.255s %s", m_username.get(),
                   encodedDigest.get());
       char *base64Str = PL_Base64Encode(buffer, strlen(buffer), nullptr);
-      cmd = base64Str;
-      PR_Free(base64Str);
+      cmd.Adopt(base64Str);
     }
 
     if (NS_FAILED(rv))
@@ -2250,7 +2251,7 @@ int32_t nsPop3Protocol::SendPassword()
   else if (m_currentAuthMethod == POP3_HAS_AUTH_APOP)
   {
     MOZ_LOG(POP3LOGMODULE, LogLevel::Debug, (POP3LOG("APOP login")));
-    char buffer[512];
+    char buffer[5 + 255 + 1 + 2 * DIGEST_LENGTH + 1];
     unsigned char digest[DIGEST_LENGTH];
 
     rv = MSGApopMD5(m_ApopTimestamp.get(), m_ApopTimestamp.Length(),
@@ -2258,16 +2259,18 @@ int32_t nsPop3Protocol::SendPassword()
 
     if (NS_SUCCEEDED(rv))
     {
-      nsAutoCString encodedDigest;
-      char hexVal[8];
+      // The encoded digest is the hexadecimal representation of
+      // DIGEST_LENGTH characters, so it will be twice that length.
+      nsAutoCStringN<2 * DIGEST_LENGTH> encodedDigest;
 
-      for (uint32_t j=0; j<16; j++)
+      for (uint32_t j = 0; j < DIGEST_LENGTH; j++)
       {
-        PR_snprintf (hexVal,8, "%.2x", 0x0ff & (unsigned short)digest[j]);
+        char hexVal[3];
+        PR_snprintf (hexVal, 3, "%.2x", 0x0ff & (unsigned short)digest[j]);
         encodedDigest.Append(hexVal);
       }
 
-      PR_snprintf(buffer, sizeof(buffer), "APOP %s %s", m_username.get(),
+      PR_snprintf(buffer, sizeof(buffer), "APOP %.255s %s", m_username.get(),
                   encodedDigest.get());
       cmd = buffer;
     }
@@ -2294,32 +2297,31 @@ int32_t nsPop3Protocol::SendPassword()
       return 0;
     }
 
-    char plain_string[512]; // TODO nsCString
-    int len = 1; /* first <NUL> char */
-    memset(plain_string, 0, 512);
-    PR_snprintf(&plain_string[1], 510, "%s", m_username.get());
-    len += m_username.Length();
-    len++; /* second <NUL> char */
-    PR_snprintf(&plain_string[len], 511-len, "%s", passwordUTF8.get());
+    char plain_string[513];
+    memset(plain_string, 0, 513);
+    PR_snprintf(&plain_string[1], 256, "%.255s", m_username.get());
+    uint32_t len = std::min(m_username.Length(), 255u) + 2;  // We include two <NUL> characters.
+    NS_ConvertUTF16toUTF8 passwordUTF8(m_passwordResult);
+    if (passwordUTF8.Length() > 255)  // RFC 4616: passwd; up to 255 octets
+      passwordUTF8.Truncate(255);
+    PR_snprintf(&plain_string[len], 256, "%s", passwordUTF8.get());
     len += passwordUTF8.Length();
 
     char *base64Str = PL_Base64Encode(plain_string, len, nullptr);
-    cmd = base64Str;
-    PR_Free(base64Str);
+    cmd.Adopt(base64Str);
   }
   else if (m_currentAuthMethod == POP3_HAS_AUTH_LOGIN)
   {
     MOZ_LOG(POP3LOGMODULE, LogLevel::Debug, (POP3LOG("LOGIN password")));
     char *base64Str = PL_Base64Encode(passwordUTF8.get(),
                                       passwordUTF8.Length(), nullptr);
-    cmd = base64Str;
-    PR_Free(base64Str);
+    cmd.Adopt(base64Str);
   }
   else if (m_currentAuthMethod == POP3_HAS_AUTH_USER)
   {
     MOZ_LOG(POP3LOGMODULE, LogLevel::Debug, (POP3LOG("PASS password")));
     cmd = "PASS ";
-    cmd += passwordUTF8.get();
+    cmd += passwordUTF8;
   }
   else
   {
