@@ -51,8 +51,11 @@ job-defaults:
                 default: beta
         last-watershed:
             by-project:
-                comm-beta: "56.0b3"
-                comm-esr60: "60.0"
+                comm-beta:
+                    by-platform:
+                        win64.*: "60.0b7"
+                        default: "56.0b3"
+                comm-esr60: "52.0"
                 default: null
 
 jobs:
