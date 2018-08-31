@@ -99,7 +99,7 @@ tasks:
             - GECKO_BASE_REPOSITORY: 'https://hg.mozilla.org/mozilla-unified'
               GECKO_HEAD_REPOSITORY: 'https://hg.mozilla.org/releases/mozilla-esr60'
               GECKO_HEAD_REF: 'THUNDERBIRD_60_VERBRANCH'
-              GECKO_HEAD_REV: 'abae8941234801d8aa5b6cfd8cc49ef62bc48e62'
+              GECKO_HEAD_REV: '88613057c07dbcb2b5be036c5b5e76faeb8fd91d'
               COMM_BASE_REPOSITORY: 'https://hg.mozilla.org/comm-central'
               COMM_HEAD_REPOSITORY: '${repoUrl}'
               COMM_HEAD_REF: '${push.revision}'
