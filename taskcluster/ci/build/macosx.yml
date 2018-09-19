@@ -16,7 +16,7 @@ macosx64/debug:
     run:
         using: mozharness
         comm-checkout: true
-        actions: [build update]
+        actions: [build]
         config-paths:
             - comm/mozharness
         config:
@@ -52,7 +52,7 @@ macosx64/opt:
     run:
         using: mozharness
         comm-checkout: true
-        actions: [build update]
+        actions: [build]
         config-paths:
             - comm/mozharness
         config:
@@ -93,7 +93,7 @@ macosx64-nightly/opt:
     run:
         using: mozharness
         comm-checkout: true
-        actions: [build update]
+        actions: [build]
         config-paths:
             - comm/mozharness
         config:
