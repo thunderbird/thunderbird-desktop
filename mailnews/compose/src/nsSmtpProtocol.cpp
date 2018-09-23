@@ -1517,7 +1517,7 @@ nsresult nsSmtpProtocol::AuthLoginStep1()
     len += username.Length();
     len++; /* second <NUL> char */
     PR_snprintf(&plain_string[len], 511-len, "%s", uniPassword.get());
-    len += password.Length();
+    len += uniPassword.Length();
 
     base64Str = PL_Base64Encode(plain_string, len, nullptr);
     PR_snprintf(buffer, sizeof(buffer), "AUTH PLAIN %.256s" CRLF, base64Str);
