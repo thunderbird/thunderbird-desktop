@@ -22,7 +22,7 @@
   <label value="&name.label;" accesskey="&name.accesskey;" control="name"/>
   <hbox>
     <textbox id="name" oninput="doEnabling();" flex="1"/>
-    <colorpicker class="small-margin" type="button" id="tagColorPicker" palettename="standard"/>
+    <colorpicker type="button" id="tagColorPicker" palettename="standard"/>
   </hbox>
   <separator/>
 </dialog>

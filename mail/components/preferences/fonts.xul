@@ -114,7 +114,7 @@
                      control="sizeVar"/>
             </hbox>
 
-            <menulist id="sizeVar" class="small-margin">
+            <menulist id="sizeVar">
               <menupopup>
                 <menuitem value="9" label="9"/>
                 <menuitem value="10" label="10"/>
@@ -173,7 +173,7 @@
               <label accesskey="&sizeMonospace.accesskey;"
                      control="sizeMono">&size.label;</label>
             </hbox>
-            <menulist id="sizeMono" class="small-margin">
+            <menulist id="sizeMono">
               <menupopup>
                 <menuitem value="9" label="9"/>
                 <menuitem value="10" label="10"/>
