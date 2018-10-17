@@ -3141,7 +3141,7 @@ nsresult nsImapMailFolder::NormalEndHeaderParseStream(nsIImapProtocol *aProtocol
         {
           GetMoveCoalescer();  // not sure why we're doing this here.
           m_filterList->ApplyFiltersToHdr(nsMsgFilterType::InboxRule, newMsgHdr,
-                                          this, mDatabase, nsDependentCString(headers, headersSize),
+                                          this, mDatabase, nsDependentCSubstring(headers, headersSize),
                                           this, msgWindow);
           NotifyFolderEvent(kFiltersApplied);
         }
