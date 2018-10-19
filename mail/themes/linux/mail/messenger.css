@@ -183,7 +183,7 @@ toolbar:not(.inline-toolbar):not(:-moz-lwtheme) {
 
 .inline-toolbar {
   -moz-appearance: none;
-  min-height: 0;
+  min-height: 15px;
   padding: 0;
 }
 
