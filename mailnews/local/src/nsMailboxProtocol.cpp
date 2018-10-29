@@ -54,13 +54,10 @@ static LazyLogModule MAILBOX("Mailbox");
 nsMailboxProtocol::nsMailboxProtocol(nsIURI * aURI)
     : nsMsgProtocol(aURI)
 {
-  m_lineStreamBuffer =nullptr;
 }
 
 nsMailboxProtocol::~nsMailboxProtocol()
 {
-  // free our local state
-  delete m_lineStreamBuffer;
 }
 
 nsresult nsMailboxProtocol::OpenMultipleMsgTransport(uint64_t offset, int64_t size)

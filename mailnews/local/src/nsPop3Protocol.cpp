@@ -454,7 +454,6 @@ nsPop3Protocol::nsPop3Protocol(nsIURI* aURL)
   m_totalFolderSize(0),
   m_totalDownloadSize(0),
   m_totalBytesReceived(0),
-  m_lineStreamBuffer(nullptr),
   m_pop3ConData(nullptr)
 {
 }
@@ -615,9 +614,6 @@ void nsPop3Protocol::Cleanup()
   FreeMsgInfo();
   PR_Free(m_pop3ConData->only_uidl);
   PR_Free(m_pop3ConData);
-
-  delete m_lineStreamBuffer;
-  m_lineStreamBuffer = nullptr;
 }
 
 void nsPop3Protocol::SetCapFlag(uint32_t flag)

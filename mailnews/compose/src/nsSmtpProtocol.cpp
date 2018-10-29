@@ -230,7 +230,6 @@ nsSmtpProtocol::~nsSmtpProtocol()
 {
   // free our local state
   PR_Free(m_dataBuf);
-  delete m_lineStreamBuffer;
 }
 
 nsresult nsSmtpProtocol::Initialize(nsIURI * aURL)
