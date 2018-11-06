@@ -24,12 +24,12 @@
 
 /* Quick-Filter-Bar */
 #quick-filter-bar-main-bar:-moz-lwtheme {
-  background: transparent;
+  background: transparent !important;
 }
 
 #quick-filter-bar-expando:-moz-lwtheme {
   border-bottom-color: var(--toolbox-border-bottom-color);
-  background: transparent;
+  background: transparent !important;
 }
 
 #headers-box {
