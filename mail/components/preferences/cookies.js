@@ -66,8 +66,8 @@ var gCookiesWindow = {
     return aCookieA.rawHost == aStrippedHost &&
            aCookieA.name == aCookieB.name &&
            aCookieA.path == aCookieB.path &&
-           !ChromeUtils.isOriginAttributesEqual(aCookieA.originAttributes,
-                                                aCookieB.originAttributes);
+           ChromeUtils.isOriginAttributesEqual(aCookieA.originAttributes,
+                                               aCookieB.originAttributes);
   },
 
   observe: function (aCookie, aTopic, aData)
@@ -286,8 +286,8 @@ var gCookiesWindow = {
           if (item.rawHost == cookie.rawHost &&
               item.name == cookie.name &&
               item.path == cookie.path &&
-              !ChromeUtils.isOriginAttributesEqual(item.originAttributes,
-                                                   cookie.originAttributes)) {
+              ChromeUtils.isOriginAttributesEqual(item.originAttributes,
+                                                  cookie.originAttributes)) {
             parent.cookies.splice(i, removeCount);
           }
         }
