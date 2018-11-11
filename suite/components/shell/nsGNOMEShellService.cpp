@@ -269,7 +269,8 @@ nsGNOMEShellService::GetCanSetDesktopBackground(bool* aResult)
 
 NS_IMETHODIMP
 nsGNOMEShellService::SetDesktopBackground(nsIDOMElement* aElement,
-                                          int32_t aPosition)
+                                          int32_t aPosition,
+                                          const nsACString& aImageName)
 {
   nsCString brandName;
   nsresult rv = GetBrandName(brandName);
