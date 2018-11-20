@@ -16,7 +16,9 @@ function run_test() {
 
 // Tests that directories have UIDs.
 add_test(function directoryUID() {
-  for (let book of MailServices.ab.directories) {
+  let books = MailServices.ab.directories;
+  while (books.hasMoreElements()) {
+    let book = books.getNext().QueryInterface(Ci.nsIAbDirectory);
     equal(36, book.UID.length, "Existing directory has a UID");
   }
 
@@ -31,7 +33,10 @@ add_test(function directoryUID() {
 // saved to the database so that the same UID is used next time.
 add_task(async function existingContactUID() {
   let book = MailServices.ab.getDirectory(kPABData.URI);
-  let bookCards = [...book.childCards];
+  let bookCards = [];
+  let childCards = book.childCards;
+  while (childCards.hasMoreElements())
+    bookCards.push(childCards.getNext().QueryInterface(Ci.nsIAbCard));
   equal(2, bookCards.length, "Loaded test address book");
 
   let card = bookCards[0];
