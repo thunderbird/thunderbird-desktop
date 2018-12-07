@@ -183,10 +183,7 @@ var mailTabType = {
       },
       restoreTab: function(aTabmail, aPersistedState) {
       try {
-        let rdfService = Cc['@mozilla.org/rdf/rdf-service;1']
-                           .getService(Ci.nsIRDFService);
-        let folder = rdfService.GetResource(aPersistedState.folderURI)
-                       .QueryInterface(Ci.nsIMsgFolder);
+        let folder = MailUtils.getFolderForURI(aPersistedState.folderURI, true);
         // if the folder no longer exists, we can't restore the tab
         if (folder) {
           let folderPaneVisible = ("folderPaneVisible" in aPersistedState) ?

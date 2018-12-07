@@ -69,6 +69,14 @@ folderLookupService.prototype = {
     // really exist---use the parent property to see if the folder is a real
     // folder.
     if (folder == null) {
+      // Check that aUrl has an active scheme, in case this folder is from
+      // an extension that is currently disabled or hasn't started up yet.
+      // Extract the scheme in the same way that the RDF service does.
+      let scheme = aUrl.match(/\w*/)[0];
+      let contractID = "@mozilla.org/rdf/resource-factory;1?name=" + scheme;
+      if (!(contractID in Components.classes))
+        return null;
+
       let rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
                   .getService(Ci.nsIRDFService);
       try {
