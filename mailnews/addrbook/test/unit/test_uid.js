@@ -46,7 +46,10 @@ add_task(async function existingContactUID() {
   equal(36, card.UID.length, "Existing contact has a UID");
 
   let existingUID = card.UID;
-  bookCards = [...book.childCards];
+  bookCards = [];
+  childCards = book.childCards;
+  while (childCards.hasMoreElements())
+    bookCards.push(childCards.getNext().QueryInterface(Ci.nsIAbCard));
   card = bookCards[0];
   if (card.isMailList) {
     card = bookCards[1];
