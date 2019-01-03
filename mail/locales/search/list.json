@@ -1,7 +1,7 @@
 {
   "default": {
     "visibleDefaultEngines": [
-      "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo"
+      "amazondotcom", "bing", "ddg", "google", "twitter", "wikipedia", "yahoo"
     ]
   },
   "regionOverrides": {},
@@ -9,7 +9,7 @@
     "en-US": {
       "default": {
         "visibleDefaultEngines": [
-           "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo"
+           "amazondotcom", "bing", "ddg", "google", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
@@ -23,7 +23,7 @@
     "ast": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia-ast", "yahoo"
+          "amazondotcom", "bing", "twitter", "wikipedia-ast", "yahoo"
         ]
       }
     },
@@ -37,7 +37,7 @@
     "br": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "google", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "google", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
@@ -51,7 +51,7 @@
     "cak": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
@@ -79,7 +79,7 @@
     "en-GB": {
       "default": {
         "visibleDefaultEngines": [
-          "amazon-en-GB", "aol-en-GB", "bing", "google", "twitter", "wikipedia", "yahoo-en-GB"
+          "amazon-en-GB", "aol-en-GB", "bing", "ddg", "google", "twitter", "wikipedia", "yahoo-en-GB"
         ]
       }
     },
@@ -142,14 +142,14 @@
     "he": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "google", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "google", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
     "hr": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "google", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "google", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
@@ -198,14 +198,14 @@
     "kab": {
       "default": {
         "visibleDefaultEngines": [
-           "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo"
+           "amazondotcom", "bing", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
     "kk": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
@@ -233,7 +233,7 @@
     "nb-NO": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "google", "twitter", "wikipedia", "yahoo", "gulesider-NO"
+          "amazondotcom", "bing", "google", "twitter", "wikipedia", "yahoo", "gulesider-NO"
         ]
       }
     },
@@ -247,7 +247,7 @@
     "nn-NO": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "twitter", "wikipedia", "yahoo", "gulesider-NO"
+          "amazondotcom", "bing", "twitter", "wikipedia", "yahoo", "gulesider-NO"
         ]
       }
     },
@@ -331,7 +331,7 @@
     "vi": {
       "default": {
         "visibleDefaultEngines": [
-          "amazondotcom", "aol-web-search", "bing", "google", "twitter", "wikipedia", "yahoo"
+          "amazondotcom", "bing", "google", "twitter", "wikipedia", "yahoo"
         ]
       }
     },
