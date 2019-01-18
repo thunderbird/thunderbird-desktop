@@ -207,7 +207,7 @@
     </implementation>
   </binding>
 
-  <binding id="calendar-snooze-popup">
+  <binding id="calendar-snooze-popup" extends="chrome://global/content/bindings/popup.xml#popup">
     <content ignorekeys="true">
       <xul:menuitem label="&calendar.alarm.snooze.5minutes.label;"
                     value="5"
