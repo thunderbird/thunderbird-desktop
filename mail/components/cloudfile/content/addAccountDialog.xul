@@ -16,7 +16,6 @@
 <dialog id="addCloudFileAccount"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         buttons="accept,cancel"
-        buttonlabelaccept="&addAccountDialog.acceptButton.label;"
         buttondisabledaccept="true"
         onload="return addAccountDialog.onInit();"
         ondialogaccept="return addAccountDialog.onOK();"

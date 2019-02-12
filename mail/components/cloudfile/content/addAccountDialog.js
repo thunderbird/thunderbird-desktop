@@ -291,7 +291,7 @@ var addAccountDialog = {
     this._messages.selectedIndex = -1;
 
     // Load up the correct XHTML page for this provider.
-    this.setIFrameSource(provider.settingsURL);
+    this.setIFrameSource(provider.settingsURL || "about:blank");
   },
 
   onClickLink: function AAD_onClickLink(e) {
