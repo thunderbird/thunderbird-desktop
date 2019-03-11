@@ -37,6 +37,9 @@ FINAL_TARGET_FILES.webextension._locales.cs += [
 FINAL_TARGET_FILES.webextension._locales.cy += [
     'webextension/_locales/cy/messages.json',
 ]
+FINAL_TARGET_FILES.webextension._locales.de += [
+    'webextension/_locales/de/messages.json',
+]
 FINAL_TARGET_FILES.webextension._locales.dsb += [
     'webextension/_locales/dsb/messages.json',
 ]
@@ -79,6 +82,9 @@ FINAL_TARGET_FILES.webextension._locales.hsb += [
 FINAL_TARGET_FILES.webextension._locales.hu += [
     'webextension/_locales/hu/messages.json',
 ]
+FINAL_TARGET_FILES.webextension._locales.ia += [
+    'webextension/_locales/ia/messages.json',
+]
 FINAL_TARGET_FILES.webextension._locales.id += [
     'webextension/_locales/id/messages.json',
 ]
@@ -99,6 +105,9 @@ FINAL_TARGET_FILES.webextension._locales.kk += [
 ]
 FINAL_TARGET_FILES.webextension._locales.ko += [
     'webextension/_locales/ko/messages.json',
+]
+FINAL_TARGET_FILES.webextension._locales.nb_NO += [
+    'webextension/_locales/nb_NO/messages.json',
 ]
 FINAL_TARGET_FILES.webextension._locales.nl += [
     'webextension/_locales/nl/messages.json',
@@ -124,6 +133,9 @@ FINAL_TARGET_FILES.webextension._locales.ro += [
 FINAL_TARGET_FILES.webextension._locales.ru += [
     'webextension/_locales/ru/messages.json',
 ]
+FINAL_TARGET_FILES.webextension._locales.si += [
+    'webextension/_locales/si/messages.json',
+]
 FINAL_TARGET_FILES.webextension._locales.sk += [
     'webextension/_locales/sk/messages.json',
 ]
@@ -141,6 +153,12 @@ FINAL_TARGET_FILES.webextension._locales.th += [
 ]
 FINAL_TARGET_FILES.webextension._locales.tr += [
     'webextension/_locales/tr/messages.json',
+]
+FINAL_TARGET_FILES.webextension._locales.uk += [
+    'webextension/_locales/uk/messages.json',
+]
+FINAL_TARGET_FILES.webextension._locales.vi += [
+    'webextension/_locales/vi/messages.json',
 ]
 FINAL_TARGET_FILES.webextension._locales.zh_CN += [
     'webextension/_locales/zh_CN/messages.json',
