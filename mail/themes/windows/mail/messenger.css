@@ -271,7 +271,7 @@ button[type="menu-button"] > button {
   }
 }
 
-.notification-button {
+button.notification-button {
   margin-bottom: 1px;
 }
 
