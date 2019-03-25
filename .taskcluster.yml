@@ -145,11 +145,7 @@ tasks:
           # checkout-gecko uses these to check out the source; the inputs
           # to `mach taskgraph decision` are all on the command line.
           $merge:
-            - GECKO_BASE_REPOSITORY: 'https://hg.mozilla.org/mozilla-unified'
-              GECKO_HEAD_REPOSITORY: 'https://hg.mozilla.org/releases/mozilla-esr60'
-              GECKO_HEAD_REF: 'THUNDERBIRD_60_VERBRANCH'
-              GECKO_HEAD_REV: 'ac46edc9c4223fb6613501d3287705f49d1dfc57'
-              COMM_BASE_REPOSITORY: 'https://hg.mozilla.org/comm-central'
+            - COMM_BASE_REPOSITORY: 'https://hg.mozilla.org/comm-central'
               COMM_HEAD_REPOSITORY: '${repoUrl}'
               COMM_HEAD_REF: '${push.revision}'
               COMM_HEAD_REV: '${push.revision}'
@@ -184,6 +180,7 @@ tasks:
         # TODO use mozilla-unified for the base repository once the tc-vcs
         # tar.gz archives are created or tc-vcs isn't being used.
         command:
+          - /builds/worker/bin/comm-task-env
           - /builds/worker/bin/run-task
           - '--vcs-checkout=/builds/worker/checkouts/gecko'
           - '--sparse-profile=build/sparse-profiles/taskgraph'
