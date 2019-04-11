@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /* import-globals-from editBookmarkOverlay.js */
-/* import-globals-from ../../../../toolkit/content/contentAreaUtils.js */
+/* import-globals-from ../../../../../toolkit/content/contentAreaUtils.js */
 
 ChromeUtils.import("resource://gre/modules/AppConstants.jsm");
 ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
