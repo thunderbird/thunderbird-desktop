@@ -537,6 +537,11 @@ statusbarpanel label {
   }
 }
 
+.progressmeter-statusbar {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
 /* Status panel */
 
 .statusbarpanel-iconic {
