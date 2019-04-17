@@ -287,9 +287,10 @@ var gGeneralPane = {
     for (let i = 0; i < engineList.itemCount; i++) {
       let item = engineList.getItemAtIndex(i);
       if (item.engine == Services.search.currentEngine) {
+        Services.search.removeEngine(item.engine);
         item.remove();
         engineList.selectedIndex = 0;
-        Services.search.removeEngine(item.engine);
+        Services.search.currentEngine = engineList.selectedItem.engine;
         this.updateRemoveButton();
         break;
       }
