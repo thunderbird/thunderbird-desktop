@@ -4,7 +4,6 @@
 
 ac_add_options --enable-update-channel="${MOZ_UPDATE_CHANNEL}"
 ac_add_options --disable-install-strip
-ac_add_options --enable-profiling
 
 # For NSS symbols
 export MOZ_DEBUG_SYMBOLS=1
