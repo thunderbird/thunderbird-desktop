@@ -91,6 +91,8 @@ task-priority:
         'comm-central': 'medium'
         'default': 'low'
 
+version-directory: comm/mail/config
+
 workers:
     aliases:
         b-linux.*:
