@@ -2181,8 +2181,5 @@
                                               'before_start');">
       </toolbarbutton>
     </hbox>
-    <hbox class="statusbarpanel statusbar-resizerpanel">
-      <resizer dir="bottomend"/>
-    </hbox>
   </hbox>
 </window>
