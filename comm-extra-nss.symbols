@@ -1,2 +1,3 @@
+CERT_GetCertNicknames
 NSS_CMSSignedData_GetDigestAlgs
 NSS_CMSSignedData_HasDigests
