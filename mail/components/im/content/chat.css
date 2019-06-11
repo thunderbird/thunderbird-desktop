@@ -8,7 +8,8 @@ imconversation {
   -moz-binding: url("chrome://messenger/content/chat/imconversation.xml#conversation");
 }
 
-richlistitem[is="chat-group"] {
+imgroup {
+  -moz-binding: url("chrome://messenger/content/chat/imgroup.xml#group");
   -moz-box-align: center;
 }
 

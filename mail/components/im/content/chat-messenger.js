@@ -628,8 +628,7 @@ var chatHandler = {
   onListItemSelected() {
     let contactlistbox = document.getElementById("contactlistbox");
     let item = contactlistbox.selectedItem;
-    if (!item || item.hidden ||
-        (item.localName == "richlistitem" && item.getAttribute("is") == "chat-group")) {
+    if (!item || item.hidden || item.localName == "imgroup") {
       this._hideContextPane(true);
       document.getElementById("conversationsDeck").selectedPanel =
         document.getElementById("noConvScreen");
@@ -906,10 +905,8 @@ var chatHandler = {
     // No unread messages, select the first conversation, but only if
     // the existing selection is uninteresting (a section header).
     if (firstConv) {
-      if (!selectedItem ||
-          (selectedItem.localName == "richlistitem" && selectedItem.getAttribute("is") == "chat-group")) {
+      if (!selectedItem || selectedItem.localName == "imgroup")
         list.selectedItem = firstConv;
-      }
       return;
     }
 

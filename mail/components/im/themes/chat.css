@@ -96,25 +96,25 @@
 
 /* move the scrollbar to the left */
 #contactlistbox:-moz-locale-dir(ltr),
-#contactlistbox:-moz-locale-dir(rtl) > :-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]) {
+#contactlistbox:-moz-locale-dir(rtl) > :-moz-any(imconv, richlistitem[is="chat-contact"], imgroup) {
   direction: rtl;
 }
 
 #contactlistbox:-moz-locale-dir(rtl),
-#contactlistbox:-moz-locale-dir(ltr) > :-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]) {
+#contactlistbox:-moz-locale-dir(ltr) > :-moz-any(imconv, richlistitem[is="chat-contact"], imgroup) {
   direction: ltr;
 }
 
-richlistitem[is="chat-group"] {
+imgroup {
   padding-inline-start: 4px;
   margin-inline-end: 1px;
 }
 
-richlistitem[is="chat-group"] > label {
+imgroup > label {
   margin-inline-start: 4px;
 }
 
-richlistitem[is="chat-group"],
+imgroup,
 imconv[unread] {
   font-weight: bold;
 }
@@ -123,7 +123,7 @@ imconv[attention] {
   color: blue;
 }
 
-richlistitem[is="chat-group"][selected] {
+imgroup[selected] {
   background-color: var(--imgroup-selected-background-color);
   color: var(--imbox-selected-text-color);
 }
@@ -148,15 +148,15 @@ richlistitem[is="chat-contact"] > .box-line {
   background-color: var(--tabline-color);
 }
 
-:-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]) {
+:-moz-any(imconv, richlistitem[is="chat-contact"], imgroup) {
   pointer-events: auto;
 }
 
-:-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]):not([selected=true]):hover {
+:-moz-any(imconv, richlistitem[is="chat-contact"], imgroup):not([selected=true]):hover {
   background-color: rgba(0,0,0,.1);
 }
 
-:root[lwt-tree] richlistitem[is="chat-group"],
+:root[lwt-tree] imgroup,
 :root[lwt-tree] imconv:not([selected]),
 :root[lwt-tree] richlistitem[is="chat-contact"]:not([selected]) {
   color: var(--sidebar-text-color);
@@ -169,14 +169,14 @@ richlistitem[is="chat-contact"][selected=true] {
   color: var(--imbox-selected-text-color);
 }
 
-:root[lwt-tree] richlistitem[is="chat-group"][selected],
-:root[lwt-tree] :-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]):not([selected=true]):hover {
+:root[lwt-tree] imgroup[selected],
+:root[lwt-tree] :-moz-any(imconv, richlistitem[is="chat-contact"], imgroup):not([selected=true]):hover {
   background-color: var(--sidebar-highlight-background-color, hsla(0,0%,80%,.3));
   color: var(--sidebar-highlight-text-color, var(--sidebar-text-color));
 }
 
-:root[lwt-tree-brighttext] richlistitem[is="chat-group"][selected],
-:root[lwt-tree-brighttext] :-moz-any(imconv, richlistitem[is="chat-contact"], richlistitem[is="chat-group"]):not([selected=true]):hover {
+:root[lwt-tree-brighttext] imgroup[selected],
+:root[lwt-tree-brighttext] :-moz-any(imconv, richlistitem[is="chat-contact"], imgroup):not([selected=true]):hover {
   background-color: var(--sidebar-highlight-background-color, rgba(249,249,250,.1));
 }
 
@@ -743,7 +743,7 @@ richlistitem[state="disconnected"] .accountStateIcon {
 }
 
 /* from instantbird/themes/blist.css */
-richlistitem[is="chat-group"] .twisty {
+imgroup .twisty {
   padding-top: 1px;
   width: 8px; /* The image's width is 8 pixels */
   height: 8px;
@@ -758,11 +758,11 @@ richlistitem[is="chat-group"] .twisty {
   fill: currentColor;
 }
 
-richlistitem[is="chat-group"].closed .twisty {
+imgroup[closed] .twisty {
   background: url("chrome://global/skin/icons/twisty-collapsed.svg") no-repeat center;
 }
 
-richlistitem[is="chat-group"].closed:-moz-locale-dir(rtl) .twisty {
+imgroup[closed]:-moz-locale-dir(rtl) .twisty {
   background: url("chrome://global/skin/icons/twisty-collapsed-rtl.svg");
 }
 
