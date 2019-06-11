@@ -101,8 +101,7 @@
                              tooltip="imTooltip" flex="1">
                   <richlistitem is="chat-group" id="conversationsGroup"
                                 name="&conversationsHeader.label;"/>
-                  <richlistitem is="chat-imconv" id="searchResultConv"
-                                displayname="&searchResultConversation.label;" hidden="true"/>
+                  <imconv id="searchResultConv" displayname="&searchResultConversation.label;" hidden="true"/>
                   <richlistitem is="chat-group" id="onlinecontactsGroup"
                                 name="&onlineContactsHeader.label;"/>
                   <richlistitem is="chat-group" id="offlinecontactsGroup"

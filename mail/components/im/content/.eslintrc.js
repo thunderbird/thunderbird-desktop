@@ -3,6 +3,7 @@
 module.exports = {
   overrides: [{
     files: [
+      "imconv.xml",
       "imconversation.xml",
     ],
     globals: {

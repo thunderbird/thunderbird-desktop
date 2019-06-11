@@ -88,7 +88,7 @@ class MozChatGroup extends MozElements.MozRichlistitem {
 
     let contactElt;
     if (tagName) {
-      contactElt = document.createXULElement("richlistitem", { is: "chat-imconv" });
+      contactElt = document.createXULElement(tagName);
     } else {
       contactElt = document.createXULElement("richlistitem", { is: "chat-contact" });
     }
