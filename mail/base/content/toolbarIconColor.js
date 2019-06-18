@@ -59,18 +59,26 @@ var ToolbarIconColor = {
       return rgb.map(x => parseInt(x));
     }
 
-    let toolbarSelector = "toolbox > toolbar:not([collapsed=true])";
-    if (AppConstants.platform == "macosx") {
-      toolbarSelector += ":not([type=menubar])";
-    }
-
-    for (let toolbar of document.querySelectorAll(toolbarSelector)) {
+    function checkTextColor(toolbar) {
       let [r, g, b] = parseRGB(getComputedStyle(toolbar).color);
       let luminance = 0.2125 * r + 0.7154 * g + 0.0721 * b;
       if (luminance <= 110)
         toolbar.removeAttribute("brighttext");
       else
         toolbar.setAttribute("brighttext", "true");
+    }
+
+    let toolbarSelector = "toolbox > toolbar:not([collapsed=true])";
+    if (AppConstants.platform == "macosx") {
+      toolbarSelector += ":not([type=menubar])";
+    }
+
+    for (let toolbar of document.querySelectorAll(toolbarSelector)) {
+      checkTextColor(toolbar);
+    }
+
+    for (let toolbar of document.getElementsByClassName("toolbar")) {
+      checkTextColor(toolbar);
     }
   },
 };
