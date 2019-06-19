@@ -21,6 +21,6 @@ job-template:
     attributes:
         artifact_prefix: public
         artifact_map:
-            by-project:
-                comm-(beta|esr60|esr68): comm/taskcluster/comm_taskgraph/manifests/thunderbird_candidates_checksums.yml
+            by-release-type:
+                beta|release.*|esr.*: comm/taskcluster/comm_taskgraph/manifests/thunderbird_candidates_checksums.yml
                 default: comm/taskcluster/comm_taskgraph/manifests/thunderbird_nightly_checksums.yml

@@ -41,6 +41,6 @@ job-template:
     shipping-phase: promote
     attributes:
         artifact_map:
-            by-project:
-                comm-(beta|esr60|esr68): comm/taskcluster/comm_taskgraph/manifests/thunderbird_candidates.yml
+            by-release-type:
+                beta|release.*|esr.*: comm/taskcluster/comm_taskgraph/manifests/thunderbird_candidates.yml
                 default: comm/taskcluster/comm_taskgraph/manifests/thunderbird_nightly.yml
