@@ -646,7 +646,7 @@ function UpdateMailPaneConfig() {
   }
 }
 
-const MailPrefObserver = {
+var MailPrefObserver = {
   observe: function observe(subject, topic, prefName) {
     if (topic == "nsPref:changed") {
       if (prefName == "mail.pane_config.dynamic") {
