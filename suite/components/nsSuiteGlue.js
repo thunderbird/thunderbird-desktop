@@ -1166,7 +1166,7 @@ SuiteGlue.prototype = {
     var dictList = o1.value;
     // If the preference contains an invalid dictionary, set it to a valid
     // dictionary, any dictionary will do.
-    if (dictList.length && dictList.indexOf(prefValue) < 0)
+    if (dictList.length && !dictList.includes(prefValue))
       Services.prefs.setCharPref(prefName, dictList[0]);
   },
 
