@@ -204,7 +204,7 @@ function openLinkText(event, what) {
 }
 
 function openWhatsNew() {
-  openContentTab(Services.urlFormatter.formatURLPref("mailnews.start_page.override_url"));
+  openLinkExternally(Services.urlFormatter.formatURLPref("mailnews.start_page.override_url"));
 }
 
 /**
