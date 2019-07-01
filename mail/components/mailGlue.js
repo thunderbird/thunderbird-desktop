@@ -25,6 +25,9 @@ XPCOMUtils.defineLazyGetter(this, "gMailBundle", function() {
   return Services.strings.createBundle("chrome://messenger/locale/messenger.properties");
 });
 
+ChromeUtils.defineModuleGetter(this, "DateTimePickerParent",
+                               "resource://gre/modules/DateTimePickerParent.jsm");
+
 ChromeUtils.defineModuleGetter(this, "ActorManagerParent",
                                "resource://gre/modules/ActorManagerParent.jsm");
 
@@ -182,6 +185,8 @@ MailGlue.prototype = {
 
     const {ExtensionsUI} = ChromeUtils.import("resource:///modules/ExtensionsUI.jsm");
     ExtensionsUI.checkForSideloadedExtensions();
+
+    DateTimePickerParent.init();
   },
 
   _handleLink(aSubject, aData) {
