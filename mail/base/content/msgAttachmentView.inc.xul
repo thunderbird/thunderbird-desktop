@@ -96,6 +96,7 @@
                                      class="attachmentList"
                                      orient="horizontal"
                                      seltype="multiple"
+                                     flex="1"
                                      context="attachmentListContext"
                                      itemcontext="attachmentItemContext"
                                      role="listbox"
