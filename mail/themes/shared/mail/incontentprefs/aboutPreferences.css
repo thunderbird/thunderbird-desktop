@@ -474,11 +474,6 @@ tabs {
  * Font dialog menulist fixes
  */
 
-#selectLangs {
-  font-weight: normal;
-  font-size: .877em;
-}
-
 #defaultFontType,
 #serif,
 #sans-serif,
