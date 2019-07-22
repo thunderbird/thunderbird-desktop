@@ -324,6 +324,7 @@ load_dnsapi.prototype = {
   _mapAnswer(aTypeID, aData) {
     if (aTypeID == NS_T_SRV) {
       let srvdata = ctypes.cast(aData, this.DNS_SRV_DATA);
+
       return new SRVRecord(
         srvdata.wPriority,
         srvdata.wWeight,
