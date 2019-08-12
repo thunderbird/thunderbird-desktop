@@ -38,10 +38,10 @@ async function test_it(extensionDetails, toolbarId) {
   let composeWindow = await openComposeWindow();
   let composeDocument = composeWindow.document;
   await promiseAnimationFrame(composeWindow);
+  await new Promise(resolve => composeWindow.setTimeout(resolve));
 
   try {
     let toolbar = composeDocument.getElementById(toolbarId);
-    ok(!toolbar.getAttribute("currentset"), "No toolbar current set");
 
     let button = composeDocument.getElementById(buttonId);
     ok(button, "Button created");
@@ -49,6 +49,14 @@ async function test_it(extensionDetails, toolbarId) {
       `url("chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-badged")`);
     is(toolbar.id, button.parentNode.id, "Button added to toolbar");
     ok(toolbar.currentSet.split(",").includes(buttonId), "Button added to toolbar current set");
+    if (toolbarId != "FormatToolbar") {
+      ok(toolbar.getAttribute("currentset").split(",").includes(buttonId),
+         "Button added to toolbar current set attribute");
+      ok(Services.xulStore.getValue(composeWindow.location.href, toolbarId, "currentset")
+                          .split(",")
+                          .includes(buttonId),
+         "Button added to toolbar current set persistence");
+    }
 
     let icon = composeDocument.getAnonymousElementByAttribute(button, "class", "toolbarbutton-icon");
     is(getComputedStyle(icon).listStyleImage,
@@ -59,7 +67,7 @@ async function test_it(extensionDetails, toolbarId) {
     is(label.value, "This is a test", "Correct label");
 
     EventUtils.synthesizeMouseAtCenter(button, { clickCount: 1 }, composeWindow);
-    await extension.awaitFinish("composeAction");
+    await extension.awaitMessage("composeAction");
     await promiseAnimationFrame(composeWindow);
 
     is(composeDocument.getElementById(buttonId), button);
@@ -70,7 +78,14 @@ async function test_it(extensionDetails, toolbarId) {
   } finally {
     await extension.unload();
     await promiseAnimationFrame(composeWindow);
+
     ok(!composeDocument.getElementById(buttonId), "Button destroyed");
+    if (toolbarId != "FormatToolbar") {
+      ok(!Services.xulStore.getValue(composeWindow.location.href, toolbarId, "currentset")
+                           .split(",")
+                           .includes(buttonId),
+        "Button removed from toolbar current set persistence");
+    }
     composeWindow.close();
   }
 }
@@ -90,8 +105,9 @@ add_task(async function the_test() {
     browser.composeAction.onClicked.addListener(async () => {
       await browser.composeAction.setTitle({ title: "New title" });
       await new Promise(setTimeout);
-      browser.test.notifyPass("composeAction");
+      browser.test.sendMessage("composeAction");
     });
+
     browser.test.sendMessage();
   }
 
@@ -101,8 +117,9 @@ add_task(async function the_test() {
       browser.test.assertEq("popup.html", msg);
       await browser.composeAction.setTitle({ title: "New title" });
       await new Promise(setTimeout);
-      browser.test.notifyPass("composeAction");
+      browser.test.sendMessage("composeAction");
     });
+
     browser.test.sendMessage();
   }
 
@@ -118,6 +135,8 @@ add_task(async function the_test() {
         </html>`,
       "popup.js": function() {
         window.onload = async () => {
+          // eslint-disable-next-line mozilla/no-arbitrary-setTimeout
+          await new Promise(resolve => setTimeout(resolve, 1000));
           await browser.runtime.sendMessage("popup.html");
           window.close();
         };
@@ -133,6 +152,7 @@ add_task(async function the_test() {
         default_title: "This is a test",
       },
     },
+    useAddonManager: "temporary",
   };
 
   await test_it(extensionDetails, "composeToolbar2");
@@ -149,4 +169,6 @@ add_task(async function the_test() {
   extensionDetails.background = background_popup;
   extensionDetails.manifest.compose_action.default_popup = "popup.html";
   await test_it(extensionDetails, "FormatToolbar");
+
+  Services.xulStore.removeDocument("chrome://messenger/content/messengercompose/messengercompose.xul");
 });
