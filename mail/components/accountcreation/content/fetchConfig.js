@@ -176,12 +176,12 @@ function fetchConfigFromDB(domain, successCallback, errorCallback) {
  *
  * Params @see fetchConfigFromISP()
  */
-async function fetchConfigForMX(domain, successCallback, errorCallback) {
+function fetchConfigForMX(domain, successCallback, errorCallback) {
   const sanitizedDomain = sanitize.hostname(domain);
   const sucAbortable = new SuccessiveAbortable();
   const time = Date.now();
 
-  await getMX(
+  sucAbortable.current = getMX(
     sanitizedDomain,
     function(mxHostname) {
       // success
@@ -246,20 +246,25 @@ async function fetchConfigForMX(domain, successCallback, errorCallback) {
  *   For |hostname|, see description above.
  * @param {function({Exception|string})}  errorCallback @see fetchConfigFromISP()
  */
-async function getMX(sanitizedDomain, successCallback, errorCallback) {
-  try {
-    const records = await DNS.mx(sanitizedDomain);
-    const filteredRecs = records.filter(record => record.host);
+function getMX(sanitizedDomain, successCallback, errorCallback) {
+  return new PromiseAbortable(
+    DNS.mx(sanitizedDomain),
+    function(records) {
+      const filteredRecs = records.filter(record => record.host);
 
-    if (filteredRecs.length > 0) {
-      const sortedRecs = filteredRecs.sort((a, b) => a.prio > b.prio);
-      const firstHost = sortedRecs[0].host;
-      successCallback(firstHost);
-    } else {
-      errorCallback(new Exception(
-        "No hostname found in MX records for sanitizedDomain=" + sanitizedDomain));
-    }
-  } catch (error) {
-    errorCallback(error);
-  }
+      if (filteredRecs.length > 0) {
+        const sortedRecs = filteredRecs.sort((a, b) => a.prio > b.prio);
+        const firstHost = sortedRecs[0].host;
+        successCallback(firstHost);
+      } else {
+        errorCallback(
+          new Exception(
+            "No hostname found in MX records for sanitizedDomain=" +
+              sanitizedDomain
+          )
+        );
+      }
+    },
+    errorCallback
+  );
 }
