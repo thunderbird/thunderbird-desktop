@@ -45,7 +45,7 @@ void
 morkCell::GetYarn(morkEnv* ev, mdbYarn* outYarn) const
 {
   MORK_USED_1(ev);
-  mCell_Atom->GetYarn(outYarn);
+  morkAtom::GetYarn(mCell_Atom, outYarn);
 }
 
 void

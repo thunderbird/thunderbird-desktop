@@ -332,7 +332,7 @@ NS_IMETHODIMP morkCellObject::GetYarn(nsIMdbEnv* mev,
   if ( ev )
   {
     morkAtom* atom = cell->GetAtom();
-    atom->GetYarn(outYarn);
+    morkAtom::GetYarn(atom, outYarn);
     outErr = ev->AsErr();
   }
 

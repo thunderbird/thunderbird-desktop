@@ -29,40 +29,42 @@
 
 //3456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789
 
-mork_bool
-morkAtom::GetYarn(mdbYarn* outYarn) const
+/* static */
+mork_bool morkAtom::GetYarn(const morkAtom* atom, mdbYarn* outYarn)
 {
   const void* source = 0;
   mdb_fill fill = 0;
   mdb_cscode form = 0;
   outYarn->mYarn_More = 0;
 
-    if ( this->IsWeeBook() )
+  if (atom) {
+    if ( atom->IsWeeBook() )
     {
-      morkWeeBookAtom* weeBook = (morkWeeBookAtom*) this;
+      morkWeeBookAtom* weeBook = (morkWeeBookAtom*) atom;
       source = weeBook->mWeeBookAtom_Body;
       fill = weeBook->mAtom_Size;
     }
-    else if ( this->IsBigBook() )
+    else if ( atom->IsBigBook() )
     {
-      morkBigBookAtom* bigBook = (morkBigBookAtom*) this;
+      morkBigBookAtom* bigBook = (morkBigBookAtom*) atom;
       source = bigBook->mBigBookAtom_Body;
       fill = bigBook->mBigBookAtom_Size;
       form = bigBook->mBigBookAtom_Form;
     }
-    else if ( this->IsWeeAnon() )
+    else if ( atom->IsWeeAnon() )
     {
-      morkWeeAnonAtom* weeAnon = (morkWeeAnonAtom*) this;
+      morkWeeAnonAtom* weeAnon = (morkWeeAnonAtom*) atom;
       source = weeAnon->mWeeAnonAtom_Body;
       fill = weeAnon->mAtom_Size;
     }
-    else if ( this->IsBigAnon() )
+    else if ( atom->IsBigAnon() )
     {
-      morkBigAnonAtom* bigAnon = (morkBigAnonAtom*) this;
+      morkBigAnonAtom* bigAnon = (morkBigAnonAtom*) atom;
       source = bigAnon->mBigAnonAtom_Body;
       fill = bigAnon->mBigAnonAtom_Size;
       form = bigAnon->mBigAnonAtom_Form;
     }
+  }
 
   if ( source && fill ) // have an atom with nonempty content?
   {
