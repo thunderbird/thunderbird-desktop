@@ -90,6 +90,8 @@ MimeSunAttachment_check_boundary(MimeObject *obj, const char *line,
 static int
 MimeSunAttachment_create_child(MimeObject *obj)
 {
+  if (obj->options) obj->options->is_child = true;
+
   MimeMultipart *mult = (MimeMultipart *) obj;
   int status = 0;
 
