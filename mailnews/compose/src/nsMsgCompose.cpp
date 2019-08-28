@@ -243,6 +243,14 @@ GetNodeLocation(nsIDOMNode *inChild, nsCOMPtr<nsINode> *outParent, int32_t *outO
   return result;
 }
 
+void MsgRemoveQueryPart(nsCString &aSpec) {
+  // Truncate path at the first of /; or ?
+  int32_t ind = aSpec.FindChar('?');
+  if (ind != kNotFound) aSpec.SetLength(ind);
+  ind = aSpec.Find("/;");
+  if (ind != kNotFound) aSpec.SetLength(ind);
+}
+
 bool nsMsgCompose::IsEmbeddedObjectSafe(const char * originalScheme,
                                         const char * originalHost,
                                         const char * originalPath,
@@ -287,9 +295,22 @@ bool nsMsgCompose::IsEmbeddedObjectSafe(const char * originalScheme,
           rv = uri->GetPathQueryRef(path);
           if (NS_SUCCEEDED(rv))
           {
-            const char * query = strrchr(path.get(), '?');
-            if (query && PL_strncasecmp(path.get(), originalPath, query - path.get()) == 0)
-              return true; // This object is a part of the original message, we can send it safely.
+            nsAutoCString orgPath(originalPath);
+            MsgRemoveQueryPart(orgPath);
+            MsgRemoveQueryPart(path);
+            // mailbox: and JS Account URLs have a message number in
+            // the query part of "path query ref". We removed this so
+            // we're not comparing down to the message but down to the folder.
+            // Code in the frontend (in the "error" event listener in
+            // MsgComposeCommands.js that deals with unblocking images) will
+            // prompt if a part of another message is referenced.
+            // A saved message opened for reply or forwarding has a
+            // mailbox: URL.
+            // imap: URLs don't have the message number in the query, so we do
+            // compare it here.
+            // news: URLs use group and key in the query, but it's OK to compare
+            // without them.
+            return path.Equals(orgPath, nsCaseInsensitiveCStringComparator());
           }
         }
       }
