@@ -1391,7 +1391,9 @@ NS_IMETHODIMP nsImapIncomingServer::DiscoveryDone() {
             // without the kImapXListTrash flag. For normal servers, we clear
             // the trash folder flag if the folder name doesn't match the
             // pref trash folder name.
-            if (isGMailServer) {
+            nsAutoString retval;
+            rv = GetUnicharValue(PREF_TRASH_FOLDER_PATH, retval);
+            if (isGMailServer && (NS_FAILED(rv) || retval.IsEmpty())) {
               nsCOMPtr<nsIMsgImapMailFolder> imapFolder(
                   do_QueryInterface(trashFolder));
               int32_t boxFlags;
@@ -1424,6 +1426,8 @@ NS_IMETHODIMP nsImapIncomingServer::DiscoveryDone() {
                 continue;
               }
             }
+            // We clear the trash folder flag if the trash folder path doesn't
+            // match mail.server.serverX.trash_folder_name.
             trashFolder->ClearFlag(nsMsgFolderFlags::Trash);
           }
         }
