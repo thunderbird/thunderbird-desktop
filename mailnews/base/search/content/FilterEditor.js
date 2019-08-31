@@ -778,9 +778,11 @@ function SetBusyCursor(window, enable) {
       window.setCursor("auto");
     }
   }
-} // suite/components/helpviewer/content/contextHelp.js
+}
 
-/* globals openHelp */ function doHelpButton() {
+/* globals openHelp */
+// suite/components/helpviewer/content/contextHelp.js
+function doHelpButton() {
   openHelp("mail-filters");
 }
 
