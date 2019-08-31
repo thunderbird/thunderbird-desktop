@@ -529,8 +529,9 @@ var nsOpenCommand = {
     // Direct user to prefer HTML files and/or text files depending on whether
     // loading into Composer or Text editor, so we call separately to control
     // the order of the filter list.
-    if (fileType == "html")
+    if (fileType == "html") {
       fp.appendFilters(nsIFilePicker.filterHTML);
+    }
     fp.appendFilters(nsIFilePicker.filterText);
     fp.appendFilters(nsIFilePicker.filterAll);
 
@@ -703,8 +704,9 @@ var nsPublishCommand = {
         publishData = CreatePublishDataFromUrl(docUrl);
 
         // If none, use default publishing site? Need a pref for this
-        // if (!publishData)
+        // if (!publishData) {
         //  publishData = GetPublishDataFromSiteName(GetDefaultPublishSiteName(), filename);
+        // }
       }
 
       if (showPublishDialog || !publishData) {
@@ -714,11 +716,13 @@ var nsPublishCommand = {
         let oldTitle = GetDocumentTitle();
         window.openDialog("chrome://editor/content/EditorPublish.xul", "_blank",
                           "chrome,close,titlebar,modal", "", "", publishData);
-        if (GetDocumentTitle() != oldTitle)
+        if (GetDocumentTitle() != oldTitle) {
           UpdateWindowTitle();
+        }
 
-        if (!window.ok)
+        if (!window.ok) {
           return false;
+        }
       }
       if (publishData) {
         SetEditMode(gPreviousNonSourceDisplayMode);
@@ -1111,33 +1115,36 @@ var gEditorOutputProgressListener = {
       var channel = aRequest.QueryInterface(nsIChannel);
       requestSpec = StripUsernamePasswordFromURI(channel.URI);
     } catch (e) {
-      if (gShowDebugOutputStateChange)
+      if (gShowDebugOutputStateChange) {
         dump("***** onStateChange; NO REQUEST CHANNEL\n");
+      }
     }
 
     var pubSpec;
-    if (gPublishData)
+    if (gPublishData) {
       pubSpec = gPublishData.publishUrl + gPublishData.docDir + gPublishData.filename;
-
+    }
     if (gShowDebugOutputStateChange) {
       dump("\n***** onStateChange request: " + requestSpec + "\n");
       dump("      state flags: ");
 
-      if (aStateFlags & nsIWebProgressListener.STATE_START)
+      if (aStateFlags & nsIWebProgressListener.STATE_START) {
         dump(" STATE_START, ");
-      if (aStateFlags & nsIWebProgressListener.STATE_STOP)
+      }
+      if (aStateFlags & nsIWebProgressListener.STATE_STOP) {
         dump(" STATE_STOP, ");
-      if (aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK)
+      }
+      if (aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK) {
         dump(" STATE_IS_NETWORK ");
-
+      }
       dump("\n * requestSpec=" + requestSpec + ", pubSpec=" + pubSpec + ", aStatus=" + aStatus + "\n");
 
       DumpDebugStatus(aStatus);
     }
     // The rest only concerns publishing, so bail out if no dialog
-    if (!gProgressDialog)
+    if (!gProgressDialog) {
       return;
-
+    }
     // Detect start of file upload of any file:
     // (We ignore any START messages after gPersistObj says publishing is finished
     if ((aStateFlags & nsIWebProgressListener.STATE_START)
@@ -1156,16 +1163,19 @@ var gEditorOutputProgressListener = {
         // check http channel for response: 200 range is ok; other ranges are not
         var httpChannel = aRequest.QueryInterface(Ci.nsIHttpChannel);
         var httpResponse = httpChannel.responseStatus;
-        if (httpResponse < 200 || httpResponse >= 300)
+        if (httpResponse < 200 || httpResponse >= 300) {
           aStatus = httpResponse;   // not a real error but enough to pass check below
-        else if (aStatus == kErrorBindingAborted)
+        } else if (aStatus == kErrorBindingAborted) {
           aStatus = 0;
+        }
 
-        if (gShowDebugOutputStateChange)
+        if (gShowDebugOutputStateChange) {
           dump("http response is: " + httpResponse + "\n");
+        }
       } catch (e) {
-        if (aStatus == kErrorBindingAborted)
+        if (aStatus == kErrorBindingAborted) {
           aStatus = 0;
+        }
       }
 
       // We abort publishing for all errors except if image src file is not found
@@ -1288,8 +1298,9 @@ var gEditorOutputProgressListener = {
 
   onProgressChange(aWebProgress, aRequest, aCurSelfProgress,
                               aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
-    if (!gPersistObj)
+    if (!gPersistObj) {
       return;
+    }
 
     if (gShowDebugOutputProgress) {
       dump("\n onProgressChange: gPersistObj.result=" + gPersistObj.result + "\n");
@@ -1300,12 +1311,13 @@ var gEditorOutputProgressListener = {
       dump("*****       self:  " + aCurSelfProgress + " / " + aMaxSelfProgress + "\n");
       dump("*****       total: " + aCurTotalProgress + " / " + aMaxTotalProgress + "\n\n");
 
-      if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_READY)
+      if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_READY) {
         dump(" Persister is ready to save data\n\n");
-      else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_SAVING)
+      } else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_SAVING) {
         dump(" Persister is saving data.\n\n");
-      else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_FINISHED)
+      } else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_FINISHED) {
         dump(" PERSISTER HAS FINISHED SAVING DATA\n\n\n");
+      }
     }
   },
 
@@ -1332,12 +1344,13 @@ var gEditorOutputProgressListener = {
       DumpDebugStatus(aStatus);
 
       if (gPersistObj) {
-        if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_READY)
+        if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_READY) {
           dump(" Persister is ready to save data\n\n");
-        else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_SAVING)
+        } else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_SAVING) {
           dump(" Persister is saving data.\n\n");
-        else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_FINISHED)
+        } else if (gPersistObj.currentState == gPersistObj.PERSIST_STATE_FINISHED) {
           dump(" PERSISTER HAS FINISHED SAVING DATA\n\n\n");
+        }
       }
     }
   },
@@ -1432,15 +1445,17 @@ var gEditorOutputProgressListener = {
   prompt(dlgTitle, text, pwrealm, savePW, defaultText, result) {
     var ret = Services.prompt.prompt(gProgressDialog ? gProgressDialog : window,
                                      dlgTitle, text, defaultText, pwrealm, savePWObj);
-    if (!ret)
+    if (!ret) {
       setTimeout(CancelPublishing, 0);
+    }
     return ret;
   },
 
   promptUsernameAndPassword(dlgTitle, text, pwrealm, savePW, userObj, pwObj) {
     var ret = PromptUsernameAndPassword(dlgTitle, text, savePW, userObj, pwObj);
-    if (!ret)
+    if (!ret) {
       setTimeout(CancelPublishing, 0);
+    }
     return ret;
   },
 
@@ -1453,17 +1468,20 @@ var gEditorOutputProgressListener = {
       // Initialize with user's previous preference for this site
       var savePWObj = {value: savePW};
       // Initialize with user's previous preference for this site
-      if (gPublishData)
+      if (gPublishData) {
         savePWObj.value = gPublishData.savePassword;
+      }
 
       ret = Services.prompt.promptPassword(gProgressDialog ? gProgressDialog : window,
                                            dlgTitle, text, pwObj, GetString("SavePassword"), savePWObj);
 
-      if (!ret)
+      if (!ret) {
         setTimeout(CancelPublishing, 0);
+      }
 
-      if (ret && gPublishData)
+      if (ret && gPublishData) {
         UpdateUsernamePasswordFromPrompt(gPublishData, gPublishData.username, pwObj.value, savePWObj.value);
+      }
     } catch (e) {}
 
     return ret;
@@ -1661,34 +1679,34 @@ function IsSupportedTextMimeType(aMimeType) {
 // throws an error or returns true if user attempted save; false if user canceled save
 async function SaveDocument(aSaveAs, aSaveCopy, aMimeType) {
   var editor = GetCurrentEditor();
-  if (!aMimeType || !editor)
+  if (!aMimeType || !editor) {
     throw Cr.NS_ERROR_NOT_INITIALIZED;
-
+  }
   var editorDoc = editor.document;
-  if (!editorDoc)
+  if (!editorDoc) {
     throw Cr.NS_ERROR_NOT_INITIALIZED;
-
+  }
   // if we don't have the right editor type bail (we handle text and html)
   var editorType = GetCurrentEditorType();
-  if (!["text", "html", "htmlmail", "textmail"].includes(editorType))
+  if (!["text", "html", "htmlmail", "textmail"].includes(editorType)) {
     throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
+  }
   var saveAsTextFile = IsSupportedTextMimeType(aMimeType);
 
   // check if the file is to be saved is a format we don't understand; if so, bail
-  if (aMimeType != kHTMLMimeType && aMimeType != kXHTMLMimeType && !saveAsTextFile)
+  if (aMimeType != kHTMLMimeType && aMimeType != kXHTMLMimeType && !saveAsTextFile) {
     throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-
-  if (saveAsTextFile)
+  }
+  if (saveAsTextFile) {
     aMimeType = "text/plain";
-
+  }
   var urlstring = GetDocumentUrl();
   var mustShowFileDialog = (aSaveAs || IsUrlAboutBlank(urlstring) || (urlstring == ""));
 
   // If editing a remote URL, force SaveAs dialog
-  if (!mustShowFileDialog && GetScheme(urlstring) != "file")
+  if (!mustShowFileDialog && GetScheme(urlstring) != "file") {
     mustShowFileDialog = true;
-
+  }
   var doUpdateURI = false;
   var tempLocalFile = null;
 
@@ -1697,21 +1715,23 @@ async function SaveDocument(aSaveAs, aSaveCopy, aMimeType) {
       // Prompt for title if we are saving to HTML
       if (!saveAsTextFile && (editorType == "html")) {
         var userContinuing = PromptAndSetTitleIfNone(); // not cancel
-        if (!userContinuing)
+        if (!userContinuing) {
           return false;
+        }
       }
 
       var dialogResult = await PromptForSaveLocation(saveAsTextFile, editorType, aMimeType, urlstring);
-      if (!dialogResult)
+      if (!dialogResult) {
         return false;
-
+      }
       replacing = (dialogResult.filepickerClick == nsIFilePicker.returnReplace);
       urlstring = dialogResult.resultingURIString;
       tempLocalFile = dialogResult.resultingLocalFile;
 
       // update the new URL for the webshell unless we are saving a copy
-      if (!aSaveCopy)
+      if (!aSaveCopy) {
         doUpdateURI = true;
+      }
     } catch (e) {
        Cu.reportError(e);
        return false;
@@ -1745,17 +1765,19 @@ async function SaveDocument(aSaveAs, aSaveCopy, aMimeType) {
           // grab new location, chop off file, compare
           var oldLocation = GetDocumentUrl();
           var oldLocationLastSlash = oldLocation.lastIndexOf("\/");
-          if (oldLocationLastSlash != -1)
+          if (oldLocationLastSlash != -1) {
             oldLocation = oldLocation.slice(0, oldLocationLastSlash);
-
+          }
           var relatedFilesDirStr = urlstring;
           var newLocationLastSlash = relatedFilesDirStr.lastIndexOf("\/");
-          if (newLocationLastSlash != -1)
+          if (newLocationLastSlash != -1) {
             relatedFilesDirStr = relatedFilesDirStr.slice(0, newLocationLastSlash);
-          if (oldLocation == relatedFilesDirStr || IsUrlAboutBlank(oldLocation))
+          }
+          if (oldLocation == relatedFilesDirStr || IsUrlAboutBlank(oldLocation)) {
             relatedFilesDir = null;
-          else
+          } else {
             relatedFilesDir = tempLocalFile.parent;
+          }
         } else {
           var lastSlash = urlstring.lastIndexOf("\/");
           if (lastSlash != -1) {
@@ -1779,9 +1801,9 @@ async function SaveDocument(aSaveAs, aSaveCopy, aMimeType) {
     try {
       if (doUpdateURI) {
          // If a local file, we must create a new uri from nsIFile
-        if (tempLocalFile)
+        if (tempLocalFile) {
           docURI = GetFileProtocolHandler().newFileURI(tempLocalFile);
-
+        }
         // We need to set new document uri before notifying listeners
         SetDocumentURI(docURI);
       }
@@ -1791,8 +1813,9 @@ async function SaveDocument(aSaveAs, aSaveCopy, aMimeType) {
       //   window title loses the extra [filename] part that this adds
       UpdateWindowTitle();
 
-      if (!aSaveCopy)
+      if (!aSaveCopy) {
         editor.resetModificationCount();
+      }
       // this should cause notification to listeners that document has changed
 
       // Set UI based on whether we're editing a remote or local url
@@ -1891,8 +1914,9 @@ function Publish(publishData) {
         pwObj
       )
     ) {
+      // User canceled out of dialog.
       return false;
-    } // User canceled out of dialog
+    }
 
     // Reset data in URI objects
     gPublishData.docURI.username = publishData.username;
@@ -1988,23 +2012,25 @@ function FinishPublishing() {
 /* eslint-disable */
 // Create a nsIURI object filled in with all required publishing info
 function CreateURIFromPublishData(publishData, doDocUri) {
-  if (!publishData || !publishData.publishUrl)
+  if (!publishData || !publishData.publishUrl) {
     return null;
-
+  }
   var URI;
   try {
     var spec = publishData.publishUrl;
-    if (doDocUri)
+    if (doDocUri) {
       spec += FormatDirForPublishing(publishData.docDir) + publishData.filename;
-    else
+    } else {
       spec += FormatDirForPublishing(publishData.otherDir);
-
+    }
     URI = Services.io.newURI(spec, GetCurrentEditor().documentCharacterSet);
 
-    if (publishData.username)
+    if (publishData.username) {
       URI.username = publishData.username;
-    if (publishData.password)
+    }
+    if (publishData.password) {
       URI.password = publishData.password;
+    }
   } catch (e) {}
 
   return URI;
@@ -2012,25 +2038,25 @@ function CreateURIFromPublishData(publishData, doDocUri) {
 
 // Resolve the correct "http:" document URL when publishing via ftp
 function GetDocUrlFromPublishData(publishData) {
-  if (!publishData || !publishData.filename || !publishData.publishUrl)
+  if (!publishData || !publishData.filename || !publishData.publishUrl) {
     return "";
-
+  }
   // If user was previously editing an "ftp" url, then keep that as the new scheme
   var url;
 
   // Always use the "HTTP" address if available
   // XXX Should we do some more validation here for bad urls???
   // Let's at least check for a scheme!
-  if (!GetScheme(publishData.browseUrl))
+  if (!GetScheme(publishData.browseUrl)) {
     url = publishData.publishUrl;
-  else
+  } else {
     url = publishData.browseUrl;
-
+  }
   url += FormatDirForPublishing(publishData.docDir) + publishData.filename;
 
-  if (GetScheme(url) == "ftp")
+  if (GetScheme(url) == "ftp") {
     url = InsertUsernameIntoUrl(url, publishData.username);
-
+  }
   return url;
 }
 /* eslint-enable */
@@ -2262,9 +2288,9 @@ var nsSendPageCommand = {
   async doCommand(aCommand) {
     // Don't continue if user canceled during prompt for saving
     // DocumentHasBeenSaved will test if we have a URL and suppress "Don't Save" button if not
-    if (!(await CheckAndSaveDocument("cmd_editSendPage", DocumentHasBeenSaved())))
+    if (!(await CheckAndSaveDocument("cmd_editSendPage", DocumentHasBeenSaved()))) {
       return;
-
+    }
     // Check if we saved again just in case?
     if (DocumentHasBeenSaved()) {
       // Launch Messenger Composer window with current page as contents
@@ -3259,8 +3285,9 @@ var nsEditLinkCommand = {
   doCommand(aCommand) {
     try {
       var element = GetCurrentEditor().getSelectedElement("href");
-      if (element)
+      if (element) {
         editPage(element.href);
+      }
     } catch (e) {}
     window.content.focus();
   },
