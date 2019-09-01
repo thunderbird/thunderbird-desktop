@@ -94,7 +94,6 @@ function SetupTextEditorCommands()
   commandTable.registerCommand("cmd_rewrap",     nsRewrapCommand);
   commandTable.registerCommand("cmd_spelling",   nsSpellingCommand);
   commandTable.registerCommand("cmd_validate",   nsValidateCommand);
-  commandTable.registerCommand("cmd_checkLinks", nsCheckLinksCommand);
   commandTable.registerCommand("cmd_insertChars", nsInsertCharsCommand);
 }
 
@@ -2408,22 +2407,6 @@ var nsValidateCommand =
   validateFilePageLoaded: function(event)
   {
     event.target.forms[0].uploaded_file.value = URL2Validate;
-  }
-};
-
-var nsCheckLinksCommand =
-{
-  isCommandEnabled: function(aCommand, dummy)
-  {
-    return (IsDocumentEditable());
-  },
-
-  getCommandStateParams: function(aCommand, aParams, aRefCon) {},
-  doCommandParams: function(aCommand, aParams, aRefCon) {},
-
-  doCommand: function(aCommand)
-  {
-    window.openDialog("chrome://editor/content/EdLinkChecker.xul","_blank", "chrome,close,titlebar,modal");
   }
 };
 
