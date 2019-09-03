@@ -260,7 +260,8 @@ nsContextMenu.prototype = {
                        content.document.imageIsResized ? "true" : null);
     }
 
-    this.showItem("context-reloadimage", this.onImage);
+    // Reload image depends on an image that's not fully loaded
+    this.showItem("context-reloadimage", (this.onImage && !this.onCompletedImage));
 
     // View image depends on having an image that's not standalone
     // (or is in a frame), or a canvas.
@@ -544,6 +545,7 @@ nsContextMenu.prototype = {
     // Initialize contextual info.
     this.onImage               = false;
     this.onLoadedImage         = false;
+    this.onCompletedImage      = false;
     this.onStandaloneImage     = false;
     this.onCanvas              = false;
     this.onVideo               = false;
@@ -597,6 +599,11 @@ nsContextMenu.prototype = {
           this.target.getRequest(Ci.nsIImageLoadingContent.CURRENT_REQUEST);
         if (request && (request.imageStatus & request.STATUS_SIZE_AVAILABLE))
           this.onLoadedImage = true;
+        if (request &&
+            (request.imageStatus & request.STATUS_LOAD_COMPLETE) &&
+            !(request.imageStatus & request.STATUS_ERROR)) {
+          this.onCompletedImage = true;
+        }
 
         this.mediaURL = this.target.currentURI.spec;
 
@@ -773,6 +780,7 @@ nsContextMenu.prototype = {
         this.onKeywordField    = false;
         this.onImage           = false;
         this.onLoadedImage     = false;
+        this.onCompletedImage  = false;
         this.onMathML          = false;
         this.inFrame           = false;
         this.hasBGImage        = false;
