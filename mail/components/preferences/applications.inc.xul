@@ -45,7 +45,7 @@
                      flex="1"
                      placeholder="&filter.placeholder;"
                      aria-controls="handlersView"
-                     oncommand="gApplicationsPane.rebuildView();"/>
+                     oncommand="gApplicationsPane._rebuildView();"/>
           </hbox>
 
           <separator class="thin"/>
