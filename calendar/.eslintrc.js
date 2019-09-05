@@ -453,14 +453,38 @@ module.exports = {
     "id-length": [2, {
       min: 3,
       exceptions: [
-        /* sorting */ "a", "b",
-        /* exceptions */ "e", "ex",
-        /* loop indices */ "i", "j", "k", "n",
-        /* coordinates */ "x", "y",
-        /* regexes */ "re",
-        /* known words */ "rc", "rv", "id", "OS", "os", "db", "is",
-        /* mail/calendar words */ "to", "cc",
-        /* Components */ "Ci", "Cc", "Cu", "Cr",
+        /* sorting */
+        "a",
+        "b",
+        /* exceptions */
+        "e",
+        "ex",
+        /* loop indices */
+        "i",
+        "j",
+        "k",
+        "n",
+        /* coordinates */
+        "x",
+        "y",
+        /* regexes */
+        "re",
+        /* known words */
+        "rc",
+        "rv",
+        "id",
+        "OS",
+        "os",
+        "db",
+        "is",
+        /* mail/calendar words */
+        "to",
+        "cc",
+        /* Components */
+        "Ci",
+        "Cc",
+        "Cu",
+        "Cr",
       ]
     }],
 
