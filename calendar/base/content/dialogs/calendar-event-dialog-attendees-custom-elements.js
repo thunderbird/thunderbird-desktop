@@ -1397,7 +1397,6 @@ class MozCalendarEventFreebusyRow extends MozXULElement {
             this.containerNodeElem = document.createXULElement("calendar-event-scroll-container");
             this.containerNodeElem.setAttribute("flex", "1");
             this.hoursNodeElem = document.createXULElement("box");
-            this.hoursNodeElem.setAttribute("equalsize", "always");
             this.containerNodeElem.appendChild(this.hoursNodeElem);
             this.appendChild(this.containerNodeElem);
         }
@@ -1868,8 +1867,6 @@ class MozCalendarEventFreebusyDay extends MozXULElement {
             this.text.style.fontWeight = "bold";
 
             this.box = document.createXULElement("box");
-            this.box.setAttribute("equalsize", "always");
-
             wrapper.appendChild(this.text);
             wrapper.appendChild(this.box);
             this.appendChild(wrapper);
