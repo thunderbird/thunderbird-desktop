@@ -97,6 +97,17 @@ function run_test() {
       displayString: '"Yatter King7 <a@a.a.a>" <b@b.b.b>',
       addresses: [['"Yatter King7 <a@a.a.a>"', "b@b.b.b"]],
     },
+    // Handle invalid mailbox separation with semicolons gracefully.
+    {
+      displayString:
+        'Bart <bart@example.com> ; lisa@example.com;  "Homer, J; President" <pres@example.com>, Marge <marge@example.com>; ',
+      addresses: [
+        ["Bart", "bart@example.com"],
+        ["", "lisa@example.com"],
+        ['"Homer, J; President"', "pres@example.com"],
+        ["Marge", "marge@example.com"],
+      ],
+    },
   ];
 
   // Test -  strings
