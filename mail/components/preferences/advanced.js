@@ -242,6 +242,10 @@ var gAdvancedPane = {
       Services.obs.addObserver(this, AUTO_UPDATE_CHANGED_TOPIC);
     }
 
+    if (!Services.policies.isAllowed("about:config")) {
+      document.getElementById("configEditor").disabled = true;
+    }
+
     this.mInitialized = true;
   },
 
