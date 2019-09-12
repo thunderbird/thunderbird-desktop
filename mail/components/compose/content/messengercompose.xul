@@ -2041,7 +2041,6 @@
                          completeselectedindex="true"
                          minresultsforpopup="2" ignoreblurwhilesearching="true"
                          onfocus="awRecipientOnFocus(this);"
-                         ontextentered="awRecipientTextCommand(param, this)"
                          onchange="onRecipientsChanged();"
                          oninput="onRecipientsChanged();"
                          onkeypress="awRecipientKeyPress(event, this)"
