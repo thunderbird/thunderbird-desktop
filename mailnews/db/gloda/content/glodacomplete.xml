@@ -19,8 +19,9 @@
 
           // Process maxRows per chunk to improve performance and user experience
           for (let i = 0; i < this.maxRows; i++) {
-            if (this._currentIndex >= this.matchCount)
+            if (this._currentIndex >= this.matchCount) {
               return;
+            }
 
             var item;
 
@@ -60,8 +61,9 @@
           setTimeout(() => this.adjustHeight(), 0);
 
           // remove all child nodes because we never want to reuse them.
-          while (this.richlistbox.hasChildNodes())
+          while (this.richlistbox.hasChildNodes()) {
             this.richlistbox.lastChild.remove();
+          }
 
           this._currentIndex = 0;
           this._appendCurrentResult();
