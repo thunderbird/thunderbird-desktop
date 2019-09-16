@@ -1,10 +1,8 @@
 "use strict";
 
 module.exports = {
-  "extends": [
-    "../../toolkit/.eslintrc.js"
-  ],
-  "rules": {
+  extends: ["../../toolkit/.eslintrc.js"],
+  rules: {
     // Enforce one true brace style (opening brace on the same line)
     // Allow single line (for now) because of the vast number of changes needed
     "brace-style": [2, "1tbs", { allowSingleLine: true }],
@@ -26,10 +24,10 @@ module.exports = {
     "comma-style": [2, "last"],
 
     // We should get better at complexity, but at the moment it is what it is
-    "complexity": [2, 90],
+    complexity: [2, 90],
 
     // Enforce curly brace conventions for all control statements.
-    "curly": 2,
+    curly: 2,
 
     // Require space before/after arrow function's arrow
     "arrow-spacing": [2, { before: true, after: true }],
@@ -131,13 +129,13 @@ module.exports = {
     "no-void": 2,
 
     // Disallow Yoda conditions (where literal value comes first).
-    "yoda": 2,
+    yoda: 2,
 
     // Require a space immediately following the // in a line comment.
     "spaced-comment": [2, "always"],
 
     // Require use of the second argument for parseInt().
-    "radix": 2,
+    radix: 2,
 
     // Require spaces before/after unary operators (words on by default,
     // nonwords off by default).
@@ -193,7 +191,7 @@ module.exports = {
     "no-unreachable": 2,
 
     // Always require use of semicolons wherever they are valid.
-    "semi": [2, "always"],
+    semi: [2, "always"],
 
     // Disallow empty statements. This will report an error for:
     // try { something(); } catch (e) {}
@@ -367,7 +365,7 @@ module.exports = {
     // "no-extra-parens": [2, "all", { "conditionalAssign": false, "returnAssign": false, "nestedBinaryExpressions": false }],
 
     // Double quotes should be used.
-    "quotes": [2, "double", { avoidEscape: true }],
+    quotes: [2, "double", { avoidEscape: true }],
 
     // Disallow if as the only statement in an else block.
     "no-lonely-if": 2,
@@ -411,15 +409,18 @@ module.exports = {
     "no-useless-escape": 2,
 
     // Disallow mixes of different operators, but allow simple math operations.
-    "no-mixed-operators": [2, {
-      groups: [
-                /* ["+", "-", "*", "/", "%", "**"], */
-                ["&", "|", "^", "~", "<<", ">>", ">>>"],
-                ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
-                ["&&", "||"],
-                ["in", "instanceof"]
-      ]
-    }],
+    "no-mixed-operators": [
+      2,
+      {
+        groups: [
+          /* ["+", "-", "*", "/", "%", "**"], */
+          ["&", "|", "^", "~", "<<", ">>", ">>>"],
+          ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+          ["&&", "||"],
+          ["in", "instanceof"],
+        ],
+      },
+    ],
 
     // Disallow unnecessary concatenation of strings
     "no-useless-concat": 2,
@@ -446,43 +447,46 @@ module.exports = {
     "no-lone-blocks": 2,
 
     // Enforce minimum identifier length
-    "id-length": [2, {
-      min: 3,
-      exceptions: [
-        /* sorting */
-        "a",
-        "b",
-        /* exceptions */
-        "e",
-        "ex",
-        /* loop indices */
-        "i",
-        "j",
-        "k",
-        "n",
-        /* coordinates */
-        "x",
-        "y",
-        /* regexes */
-        "re",
-        /* known words */
-        "rc",
-        "rv",
-        "id",
-        "OS",
-        "os",
-        "db",
-        "is",
-        /* mail/calendar words */
-        "to",
-        "cc",
-        /* Components */
-        "Ci",
-        "Cc",
-        "Cu",
-        "Cr",
-      ]
-    }],
+    "id-length": [
+      2,
+      {
+        min: 3,
+        exceptions: [
+          /* sorting */
+          "a",
+          "b",
+          /* exceptions */
+          "e",
+          "ex",
+          /* loop indices */
+          "i",
+          "j",
+          "k",
+          "n",
+          /* coordinates */
+          "x",
+          "y",
+          /* regexes */
+          "re",
+          /* known words */
+          "rc",
+          "rv",
+          "id",
+          "OS",
+          "os",
+          "db",
+          "is",
+          /* mail/calendar words */
+          "to",
+          "cc",
+          /* Components */
+          "Ci",
+          "Cc",
+          "Cu",
+          "Cr",
+        ],
+      },
+    ],
 
     // Disallow lexical declarations in case/default clauses
     "no-case-declarations": 2,
@@ -491,33 +495,38 @@ module.exports = {
     // easier updates in the future.
     "no-else-return": 0,
   },
-  "overrides": [{
-    files: [
-      "base/modules/utils/calAuthUtils.jsm",
-      "base/modules/utils/calEmailUtils.jsm",
-      "base/modules/utils/calIteratorUtils.jsm",
-      "base/modules/utils/calItipUtils.jsm",
-      "base/modules/utils/calL10NUtils.jsm",
-      "base/modules/utils/calProviderUtils.jsm",
-      "base/modules/utils/calUnifinderUtils.jsm",
-    ],
-    rules: {
-      "require-jsdoc": [2, { require: { ClassDeclaration: true } }],
+  overrides: [
+    {
+      files: [
+        "base/modules/utils/calAuthUtils.jsm",
+        "base/modules/utils/calEmailUtils.jsm",
+        "base/modules/utils/calIteratorUtils.jsm",
+        "base/modules/utils/calItipUtils.jsm",
+        "base/modules/utils/calL10NUtils.jsm",
+        "base/modules/utils/calProviderUtils.jsm",
+        "base/modules/utils/calUnifinderUtils.jsm",
+      ],
+      rules: {
+        "require-jsdoc": [2, { require: { ClassDeclaration: true } }],
 
-      "valid-jsdoc": [2, {
-        prefer: { returns: "return" },
-        preferType: {
-          "boolean": "Boolean",
-          "string": "String",
-          "number": "Number",
-          "object": "Object",
-          "function": "Function",
-          "map": "Map",
-          "set": "Set",
-          "date": "Date",
-        },
-        requireReturn: false
-      }],
-    }
-  }]
+        "valid-jsdoc": [
+          2,
+          {
+            prefer: { returns: "return" },
+            preferType: {
+              boolean: "Boolean",
+              string: "String",
+              number: "Number",
+              object: "Object",
+              function: "Function",
+              map: "Map",
+              set: "Set",
+              date: "Date",
+            },
+            requireReturn: false,
+          },
+        ],
+      },
+    },
+  ],
 };
