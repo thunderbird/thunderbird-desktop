@@ -2,8 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var {Services} = ChromeUtils.import("resource://gre/modules/Services.jsm");
-var {XPCOMUtils} = ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var { XPCOMUtils } = ChromeUtils.import(
+  "resource://gre/modules/XPCOMUtils.jsm"
+);
 var {
   smileImMarkup,
   smileTextNode,
@@ -14,18 +16,20 @@ var {
 
 var kSmileRegexp = /^smile:\/\//;
 
-function smileProtocolHandler() { }
+function smileProtocolHandler() {}
 
 smileProtocolHandler.prototype = {
   scheme: "smile",
   defaultPort: -1,
-  protocolFlags: Ci.nsIProtocolHandler.URI_NORELATIVE |
-                 Ci.nsIProtocolHandler.URI_NOAUTH |
-                 Ci.nsIProtocolHandler.URI_IS_UI_RESOURCE |
-                 Ci.nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
+  protocolFlags:
+    Ci.nsIProtocolHandler.URI_NORELATIVE |
+    Ci.nsIProtocolHandler.URI_NOAUTH |
+    Ci.nsIProtocolHandler.URI_IS_UI_RESOURCE |
+    Ci.nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
   newURI(aSpec, aOriginCharset, aBaseURI) {
-    let mutator = Cc["@mozilla.org/network/simple-uri-mutator;1"]
-                    .createInstance(Ci.nsIURIMutator);
+    let mutator = Cc[
+      "@mozilla.org/network/simple-uri-mutator;1"
+    ].createInstance(Ci.nsIURIMutator);
     return mutator.setSpec(aSpec).finalize();
   },
   newChannel(aURI, aLoadInfo) {
@@ -35,7 +39,9 @@ smileProtocolHandler.prototype = {
     channel.originalURI = aURI;
     return channel;
   },
-  allowPort(aPort, aScheme) { return false; },
+  allowPort(aPort, aScheme) {
+    return false;
+  },
 
   classDescription: "Smile Protocol Handler",
   classID: Components.ID("{04e58eae-dfbc-4c9e-8130-6d9ef19cbff4}"),

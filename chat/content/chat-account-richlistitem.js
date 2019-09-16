@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 "use strict";
 
@@ -8,20 +8,24 @@
 
 // Wrap in a block to prevent leaking to window scope.
 {
-  const { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
-  const { DownloadUtils } = ChromeUtils.import("resource://gre/modules/DownloadUtils.jsm");
+  const { Services } = ChromeUtils.import(
+    "resource://gre/modules/Services.jsm"
+  );
+  const { DownloadUtils } = ChromeUtils.import(
+    "resource://gre/modules/DownloadUtils.jsm"
+  );
 
   /**
-  * The MozChatAccountRichlistitem widget displays the information about the
-  * configured account: i.e. icon, state, name, error, checkbox for
-  * auto sign in and buttons for disconnect and properties.
-  *
-  * @extends {MozElements.MozRichlistitem}
-  */
+   * The MozChatAccountRichlistitem widget displays the information about the
+   * configured account: i.e. icon, state, name, error, checkbox for
+   * auto sign in and buttons for disconnect and properties.
+   *
+   * @extends {MozElements.MozRichlistitem}
+   */
   class MozChatAccountRichlistitem extends MozElements.MozRichlistitem {
     static get inheritedAttributes() {
       return {
-        "stack": "tooltiptext=protocol",
+        stack: "tooltiptext=protocol",
         ".accountIcon": "src=prplicon",
         ".accountName": "value=name",
         ".autoSignOn": "checked=autologin",
@@ -34,7 +38,7 @@
         return;
       }
 
-      this.addEventListener("dblclick", (event) => {
+      this.addEventListener("dblclick", event => {
         if (event.button == 0) {
           // If we double clicked on a widget that has already done
           // something with the first click, we should ignore the event
@@ -47,7 +51,9 @@
         event.stopPropagation();
       });
 
-      this.appendChild(MozXULElement.parseXULToFragment(`
+      this.appendChild(
+        MozXULElement.parseXULToFragment(
+          `
         <vbox flex="1">
           <hbox flex="1" align="top">
             <vbox>
@@ -79,7 +85,10 @@
             <button command="cmd_edit"></button>
           </hbox>
         </vbox>
-    `, ["chrome://chat/locale/accounts.dtd"]));
+    `,
+          ["chrome://chat/locale/accounts.dtd"]
+        )
+      );
       this.initializeAttributeInheritance();
     }
 
@@ -154,11 +163,14 @@
     }
 
     updateConnectionState() {
-      let bundle = Services.strings.createBundle("chrome://messenger/locale/imAccounts.properties");
+      let bundle = Services.strings.createBundle(
+        "chrome://messenger/locale/imAccounts.properties"
+      );
       const key = "account.connection.progress";
       let text = this._account.connectionStateMsg;
-      text = text ? bundle.formatStringFromName(key, [text], 1) :
-        bundle.GetStringFromName("account.connecting");
+      text = text
+        ? bundle.formatStringFromName(key, [text], 1)
+        : bundle.GetStringFromName("account.connecting");
 
       let progress = this.querySelector(".connecting");
       progress.setAttribute("value", text);
@@ -170,13 +182,19 @@
     }
 
     updateConnectionError() {
-      let bundle = Services.strings.createBundle("chrome://messenger/locale/imAccounts.properties");
+      let bundle = Services.strings.createBundle(
+        "chrome://messenger/locale/imAccounts.properties"
+      );
       const key = "account.connection.error";
       let account = this._account;
       let text;
       let errorReason = account.connectionErrorReason;
       if (errorReason == Ci.imIAccount.ERROR_UNKNOWN_PRPL) {
-        text = bundle.formatStringFromName(key + "UnknownPrpl", [account.protocol.id], 1);
+        text = bundle.formatStringFromName(
+          key + "UnknownPrpl",
+          [account.protocol.id],
+          1
+        );
       } else if (errorReason == Ci.imIAccount.ERROR_MISSING_PASSWORD) {
         text = bundle.GetStringFromName(key + "EnteringPasswordRequired");
       } else if (errorReason == Ci.imIAccount.ERROR_CRASHED) {
@@ -190,25 +208,36 @@
       }
 
       this.setAttribute("error", "true");
-      if ((Ci.imIAccount.ERROR_CERT_NOT_PROVIDED <= errorReason &&
-        errorReason <= Ci.imIAccount.ERROR_CERT_OTHER_ERROR) &&
-        account.prplAccount.connectionTarget) {
+      if (
+        Ci.imIAccount.ERROR_CERT_NOT_PROVIDED <= errorReason &&
+        errorReason <= Ci.imIAccount.ERROR_CERT_OTHER_ERROR &&
+        account.prplAccount.connectionTarget
+      ) {
         this.setAttribute("certError", "true");
       }
       let error = this.querySelector(".error-description");
       error.textContent = text;
 
       let updateReconnect = () => {
-        let date = Math.round((account.timeOfNextReconnect - Date.now()) / 1000);
+        let date = Math.round(
+          (account.timeOfNextReconnect - Date.now()) / 1000
+        );
         let reconnect = "";
         if (date > 0) {
           let [val1, unit1, val2, unit2] = DownloadUtils.convertTimeUnits(date);
-          if (!val2)
-            reconnect = bundle.formatStringFromName("account.reconnectInSingle",
-              [val1, unit1], 2);
-          else
-            reconnect = bundle.formatStringFromName("account.reconnectInDouble",
-              [val1, unit1, val2, unit2], 4);
+          if (!val2) {
+            reconnect = bundle.formatStringFromName(
+              "account.reconnectInSingle",
+              [val1, unit1],
+              2
+            );
+          } else {
+            reconnect = bundle.formatStringFromName(
+              "account.reconnectInDouble",
+              [val1, unit1, val2, unit2],
+              4
+            );
+          }
         }
         this.querySelector(".error-reconnect").textContent = reconnect;
         return reconnect;
@@ -221,17 +250,26 @@
     }
 
     refreshConnectedLabel() {
-      let bundle = Services.strings.createBundle("chrome://messenger/locale/imAccounts.properties");
-      let date = 60 * Math.floor((Date.now() - this._account.timeOfLastConnect) / 60000);
+      let bundle = Services.strings.createBundle(
+        "chrome://messenger/locale/imAccounts.properties"
+      );
+      let date =
+        60 * Math.floor((Date.now() - this._account.timeOfLastConnect) / 60000);
       let value;
       if (date > 0) {
         let [val1, unit1, val2, unit2] = DownloadUtils.convertTimeUnits(date);
         if (!val2) {
-          value = bundle.formatStringFromName("account.connectedForSingle",
-            [val1, unit1], 2);
+          value = bundle.formatStringFromName(
+            "account.connectedForSingle",
+            [val1, unit1],
+            2
+          );
         } else {
-          value = bundle.formatStringFromName("account.connectedForDouble",
-            [val1, unit1, val2, unit2], 4);
+          value = bundle.formatStringFromName(
+            "account.connectedForDouble",
+            [val1, unit1, val2, unit2],
+            4
+          );
         }
       } else {
         value = bundle.GetStringFromName("account.connectedForSeconds");
@@ -261,7 +299,9 @@
         this.refreshConnectedLabel();
       } else if (this._account.connecting) {
         this.updateConnectionState();
-      } else if (this._account.connectionErrorReason != Ci.prplIAccount.NO_ERROR) {
+      } else if (
+        this._account.connectionErrorReason != Ci.prplIAccount.NO_ERROR
+      ) {
         this.updateConnectionError();
       }
     }
@@ -277,14 +317,19 @@
     }
 
     get activeButton() {
-      let action = this.account.disconnected ? ".connectButton" : ".disconnectButton";
+      let action = this.account.disconnected
+        ? ".connectButton"
+        : ".disconnectButton";
       return this.querySelector(action);
     }
 
     setFocus() {
       let focusTarget = this.activeButton;
       let accountName = this.getAttribute("name");
-      focusTarget.setAttribute("aria-label", focusTarget.label + " " + accountName);
+      focusTarget.setAttribute(
+        "aria-label",
+        focusTarget.label + " " + accountName
+      );
       if (focusTarget.disabled) {
         focusTarget = document.getElementById("accountlist");
       }
@@ -296,5 +341,9 @@
     }
   }
 
-  customElements.define("chat-account-richlistitem", MozChatAccountRichlistitem, { extends: "richlistitem" });
+  customElements.define(
+    "chat-account-richlistitem",
+    MozChatAccountRichlistitem,
+    { extends: "richlistitem" }
+  );
 }

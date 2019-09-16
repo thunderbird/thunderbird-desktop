@@ -2,20 +2,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { LocalizationSync } =
-  ChromeUtils.import("resource://gre/modules/Localization.jsm", {});
-const {BasePromiseWorker} = ChromeUtils.import("resource://gre/modules/PromiseWorker.jsm");
-const {OS} = ChromeUtils.import("resource://gre/modules/osfile.jsm");
-const {ctypes} = ChromeUtils.import("resource://gre/modules/ctypes.jsm");
-const {Services} = ChromeUtils.import("resource:///modules/imServices.jsm");
-const {CLib} = ChromeUtils.import("resource:///modules/CLib.jsm");
-const {OTRLibLoader} = ChromeUtils.import("resource:///modules/OTRLib.jsm");
+const { LocalizationSync } = ChromeUtils.import(
+  "resource://gre/modules/Localization.jsm",
+  {}
+);
+const { BasePromiseWorker } = ChromeUtils.import(
+  "resource://gre/modules/PromiseWorker.jsm"
+);
+const { OS } = ChromeUtils.import("resource://gre/modules/osfile.jsm");
+const { ctypes } = ChromeUtils.import("resource://gre/modules/ctypes.jsm");
+const { Services } = ChromeUtils.import("resource:///modules/imServices.jsm");
+const { CLib } = ChromeUtils.import("resource:///modules/CLib.jsm");
+const { OTRLibLoader } = ChromeUtils.import("resource:///modules/OTRLib.jsm");
 var workerPath = "chrome://chat/content/otrWorker.js";
-const {OTRHelpers} = ChromeUtils.import("resource:///modules/OTRHelpers.jsm");
+const { OTRHelpers } = ChromeUtils.import("resource:///modules/OTRHelpers.jsm");
 
-const syncL10n = new LocalizationSync([
-  "messenger/otr/otr.ftl",
-]);
+const syncL10n = new LocalizationSync(["messenger/otr/otr.ftl"]);
 
 function _str(id) {
   return syncL10n.formatValue(id);
@@ -45,17 +47,20 @@ function comparePointers(p, q) {
 }
 
 function trustFingerprint(fingerprint) {
-  return (!fingerprint.isNull() &&
+  return (
+    !fingerprint.isNull() &&
     !fingerprint.contents.trust.isNull() &&
-    fingerprint.contents.trust.readString().length > 0);
+    fingerprint.contents.trust.readString().length > 0
+  );
 }
 
 // Report whether you think the given user is online. Return 1 if you think
 // they are, 0 if you think they aren't, -1 if you're not sure.
 function isOnline(conv) {
   let ret = -1;
-  if (conv.buddy)
+  if (conv.buddy) {
     ret = conv.buddy.online ? 1 : 0;
+  }
   return ret;
 }
 
@@ -67,21 +72,31 @@ function Context(context) {
 
 Context.prototype = {
   constructor: Context,
-  get username() { return this._context.contents.username.readString(); },
-  get account() { return this._context.contents.accountname.readString(); },
-  get protocol() { return this._context.contents.protocol.readString(); },
-  get msgstate() { return this._context.contents.msgstate; },
-  get fingerprint() { return this._context.contents.active_fingerprint; },
-  get trust() { return trustFingerprint(this.fingerprint); },
+  get username() {
+    return this._context.contents.username.readString();
+  },
+  get account() {
+    return this._context.contents.accountname.readString();
+  },
+  get protocol() {
+    return this._context.contents.protocol.readString();
+  },
+  get msgstate() {
+    return this._context.contents.msgstate;
+  },
+  get fingerprint() {
+    return this._context.contents.active_fingerprint;
+  },
+  get trust() {
+    return trustFingerprint(this.fingerprint);
+  },
 };
-
 
 // otr module
 
 var OTRLib;
 
 var OTR = {
-
   hasRan: false,
   libLoaded: false,
   once() {
@@ -107,11 +122,13 @@ var OTR = {
   init(opts) {
     opts = opts || {};
 
-    if (!this.hasRan)
+    if (!this.hasRan) {
       this.once();
+    }
 
-    if (!OTR.libLoaded)
+    if (!OTR.libLoaded) {
       return;
+    }
 
     this.userstate = OTRLib.otrl_userstate_create();
 
@@ -127,7 +144,7 @@ var OTR = {
     this._pluck_timer = setInterval(() => {
       let buf = this._buffer;
       for (let i = 0; i < buf.length;) {
-        if ((Date.now() - buf[i].time) > pluck_time) {
+        if (Date.now() - buf[i].time > pluck_time) {
           this.log("dropping an old message: " + buf[i].display);
           buf.splice(i, 1);
         } else {
@@ -156,20 +173,34 @@ var OTR = {
   // load stored files from my profile
   loadFiles() {
     return Promise.all([
-      OS.File.exists(this.privateKeyPath).then((exists) => {
-        if (exists && OTRLib.otrl_privkey_read(
-          this.userstate, this.privateKeyPath
-        )) throw new Error("Failed to read private keys.");
+      OS.File.exists(this.privateKeyPath).then(exists => {
+        if (
+          exists &&
+          OTRLib.otrl_privkey_read(this.userstate, this.privateKeyPath)
+        ) {
+          throw new Error("Failed to read private keys.");
+        }
       }),
-      OS.File.exists(this.fingerprintsPath).then((exists) => {
-        if (exists && OTRLib.otrl_privkey_read_fingerprints(
-          this.userstate, this.fingerprintsPath, null, null
-        )) throw new Error("Failed to read fingerprints.");
+      OS.File.exists(this.fingerprintsPath).then(exists => {
+        if (
+          exists &&
+          OTRLib.otrl_privkey_read_fingerprints(
+            this.userstate,
+            this.fingerprintsPath,
+            null,
+            null
+          )
+        ) {
+          throw new Error("Failed to read fingerprints.");
+        }
       }),
-      OS.File.exists(this.instanceTagsPath).then((exists) => {
-        if (exists && OTRLib.otrl_instag_read(
-          this.userstate, this.instanceTagsPath
-        )) throw new Error("Failed to read instance tags.");
+      OS.File.exists(this.instanceTagsPath).then(exists => {
+        if (
+          exists &&
+          OTRLib.otrl_instag_read(this.userstate, this.instanceTagsPath)
+        ) {
+          throw new Error("Failed to read instance tags.");
+        }
       }),
     ]);
   },
@@ -178,14 +209,19 @@ var OTR = {
   generatePrivateKey(account, protocol) {
     let newkey = new ctypes.void_t.ptr();
     let err = OTRLib.otrl_privkey_generate_start(
-      OTR.userstate, account, protocol, newkey.address()
+      OTR.userstate,
+      account,
+      protocol,
+      newkey.address()
     );
-    if (err || newkey.isNull())
+    if (err || newkey.isNull()) {
       return Promise.reject("otrl_privkey_generate_start (" + err + ")");
+    }
 
     let keyPtrSrc = newkey.toSource();
     let re = new RegExp(
-      "^ctypes\\.voidptr_t\\(ctypes\\.UInt64\\(\"0x([0-9a-fA-F]+)\"\\)\\)$");
+      '^ctypes\\.voidptr_t\\(ctypes\\.UInt64\\("0x([0-9a-fA-F]+)"\\)\\)$'
+    );
     let address;
     let match = re.exec(keyPtrSrc);
     if (match) {
@@ -194,37 +230,51 @@ var OTR = {
 
     if (!address) {
       OTRLib.otrl_privkey_generate_cancelled(OTR.userstate, newkey);
-      throw new Error("generatePrivateKey failed to parse ptr.toSource(): " + keyPtrSrc);
+      throw new Error(
+        "generatePrivateKey failed to parse ptr.toSource(): " + keyPtrSrc
+      );
     }
 
     let worker = new BasePromiseWorker(workerPath);
-    return worker.post("generateKey", [
-      OTRLib.path, OTRLib.otrl_version, address,
-    ]).then(function() {
-      let err = OTRLib.otrl_privkey_generate_finish(
-        OTR.userstate, newkey, OTR.privateKeyPath
-      );
-      if (err)
-        throw new Error("otrl_privkey_generate_calculate (" + err + ")");
-    }).catch(function(err) {
-      if (!newkey.isNull())
-        OTRLib.otrl_privkey_generate_cancelled(OTR.userstate, newkey);
-      throw err;
-    });
+    return worker
+      .post("generateKey", [OTRLib.path, OTRLib.otrl_version, address])
+      .then(function() {
+        let err = OTRLib.otrl_privkey_generate_finish(
+          OTR.userstate,
+          newkey,
+          OTR.privateKeyPath
+        );
+        if (err) {
+          throw new Error("otrl_privkey_generate_calculate (" + err + ")");
+        }
+      })
+      .catch(function(err) {
+        if (!newkey.isNull()) {
+          OTRLib.otrl_privkey_generate_cancelled(OTR.userstate, newkey);
+        }
+        throw err;
+      });
   },
 
   generatePrivateKeySync(account, protocol) {
     let newkey = new ctypes.void_t.ptr();
     let err = OTRLib.otrl_privkey_generate_start(
-      OTR.userstate, account, protocol, newkey.address()
+      OTR.userstate,
+      account,
+      protocol,
+      newkey.address()
     );
-    if (err || newkey.isNull())
+    if (err || newkey.isNull()) {
       return "otrl_privkey_generate_start (" + err + ")";
+    }
 
     err = OTRLib.otrl_privkey_generate_calculate(newkey);
     if (!err) {
       err = OTRLib.otrl_privkey_generate_finish(
-        OTR.userstate, newkey, OTR.privateKeyPath);
+        OTR.userstate,
+        newkey,
+        OTR.privateKeyPath
+      );
     }
     if (err && !newkey.isNull()) {
       OTRLib.otrl_privkey_generate_cancelled(OTR.userstate, newkey);
@@ -238,22 +288,37 @@ var OTR = {
 
   // write fingerprints to file synchronously
   writeFingerprints() {
-    if (OTRLib.otrl_privkey_write_fingerprints(
-      this.userstate, this.fingerprintsPath
-    )) throw new Error("Failed to write fingerprints.");
+    if (
+      OTRLib.otrl_privkey_write_fingerprints(
+        this.userstate,
+        this.fingerprintsPath
+      )
+    ) {
+      throw new Error("Failed to write fingerprints.");
+    }
   },
 
   // generate instance tag synchronously
   generateInstanceTag(account, protocol) {
-    if (OTRLib.otrl_instag_generate(
-      this.userstate, this.instanceTagsPath, account, protocol
-    )) throw new Error("Failed to generate instance tag.");
+    if (
+      OTRLib.otrl_instag_generate(
+        this.userstate,
+        this.instanceTagsPath,
+        account,
+        protocol
+      )
+    ) {
+      throw new Error("Failed to generate instance tag.");
+    }
   },
 
   // get my fingerprint
   privateKeyFingerprint(account, protocol) {
     let fingerprint = OTRLib.otrl_privkey_fingerprint(
-      this.userstate, new OTRLib.fingerprint_t(), account, protocol
+      this.userstate,
+      new OTRLib.fingerprint_t(),
+      account,
+      protocol
     );
     return fingerprint.isNull() ? null : fingerprint.readString();
   },
@@ -264,8 +329,9 @@ var OTR = {
     try {
       hash = fingerprint.contents.fingerprint;
     } catch (e) {}
-    if (!hash || hash.isNull())
+    if (!hash || hash.isNull()) {
       throw new Error("No fingerprint found.");
+    }
     let human = new OTRLib.fingerprint_t();
     OTRLib.otrl_privkey_hash_to_human(human, hash);
     return human.readString();
@@ -276,7 +342,7 @@ var OTR = {
     // our null byte so that readString below is safe.
     let buf = ctypes.char.array(Math.floor((dataLen + 2) / 3) * 4 + 1)();
     OTRLib.otrl_base64_encode(buf, data, dataLen); // ignore returned size
-    return buf.readString();  // str
+    return buf.readString(); // str
   },
 
   base64decode(str) {
@@ -311,13 +377,16 @@ var OTR = {
       context = context.contents.next
     ) {
       // skip child contexts
-      if (!comparePointers(context.contents.m_context, context))
+      if (!comparePointers(context.contents.m_context, context)) {
         continue;
+      }
       let wContext = new Context(context);
 
       if (forAccount) {
-        if (forAccount.normalizedName != wContext.account ||
-            forAccount.protocol.normalizedName != wContext.protocol) {
+        if (
+          forAccount.normalizedName != wContext.account ||
+          forAccount.protocol.normalizedName != wContext.protocol
+        ) {
           continue;
         }
       }
@@ -352,7 +421,7 @@ var OTR = {
       if (!obj.purge) {
         return;
       }
-      obj.purge = false;  // reset early
+      obj.purge = false; // reset early
       let fingerprint = obj.fpointer;
       if (fingerprint.isNull()) {
         return;
@@ -362,11 +431,12 @@ var OTR = {
       for (
         let context_itr = context;
         !context_itr.isNull() &&
-          comparePointers(context_itr.contents.m_context, context);
+        comparePointers(context_itr.contents.m_context, context);
         context_itr = context_itr.contents.next
       ) {
         if (
-          context_itr.contents.msgstate === OTRLib.messageState.OTRL_MSGSTATE_ENCRYPTED &&
+          context_itr.contents.msgstate ===
+            OTRLib.messageState.OTRL_MSGSTATE_ENCRYPTED &&
           comparePointers(context_itr.contents.active_fingerprint, fingerprint)
         ) {
           result = false;
@@ -375,7 +445,7 @@ var OTR = {
       }
       write = true;
       OTRLib.otrl_context_forget_fingerprint(fingerprint, 1);
-      fps[i] = null;  // null out removed fps
+      fps[i] = null; // null out removed fps
     });
     if (write) {
       OTR.writeFingerprints();
@@ -385,19 +455,29 @@ var OTR = {
 
   addFingerprint(context, hex) {
     let fingerprint = new OTRLib.hash_t();
-    if (hex.length != 40) throw new Error("Invalid fingerprint value.");
+    if (hex.length != 40) {
+      throw new Error("Invalid fingerprint value.");
+    }
     let bytes = hex.match(/.{1,2}/g);
-    for (let i = 0; i < 20; i++)
+    for (let i = 0; i < 20; i++) {
       fingerprint[i] = parseInt(bytes[i], 16);
-    return OTRLib.otrl_context_find_fingerprint(context._context, fingerprint, 1, null);
+    }
+    return OTRLib.otrl_context_find_fingerprint(
+      context._context,
+      fingerprint,
+      1,
+      null
+    );
   },
 
   getFingerprintsForRecipient(account, protocol, recipient) {
     let fingers = OTR.knownFingerprints();
     return fingers.filter(function(fg) {
-      return fg.account == account &&
-             fg.protocol == protocol &&
-             fg.screenname == recipient;
+      return (
+        fg.account == account &&
+        fg.protocol == protocol &&
+        fg.screenname == recipient
+      );
     });
   },
 
@@ -408,12 +488,14 @@ var OTR = {
   // update trust in fingerprint
   setTrust(fingerprint, trust, context) {
     // ignore if no change in trust
-    if (context && (trust === context.trust))
+    if (context && trust === context.trust) {
       return;
+    }
     OTRLib.otrl_context_set_trust(fingerprint, trust ? "verified" : "");
     this.writeFingerprints();
-    if (context)
+    if (context) {
       this.notifyTrust(context);
+    }
   },
 
   notifyTrust(context) {
@@ -422,11 +504,14 @@ var OTR = {
   },
 
   authUpdate(context, progress, success) {
-    this.notifyObservers({
-      context,
-      progress,
-      success,
-    }, "otr:auth-update");
+    this.notifyObservers(
+      {
+        context,
+        progress,
+        success,
+      },
+      "otr:auth-update"
+    );
   },
 
   // expose message states
@@ -443,22 +528,35 @@ var OTR = {
       // TODO: check why sometimes normalizedName is undefined, and if
       // that's ok. Fallback wasn't necessary in the original code.
       conv.account.protocol.normalizedName || "",
-      OTRLib.instag.OTRL_INSTAG_BEST, 1, null, null, null
+      OTRLib.instag.OTRL_INSTAG_BEST,
+      1,
+      null,
+      null,
+      null
     );
     return new Context(context);
   },
 
   getContextFromRecipient(account, protocol, recipient) {
     let context = OTRLib.otrl_context_find(
-      this.userstate, recipient, account, protocol,
-      OTRLib.instag.OTRL_INSTAG_BEST, 1, null, null, null
+      this.userstate,
+      recipient,
+      account,
+      protocol,
+      OTRLib.instag.OTRL_INSTAG_BEST,
+      1,
+      null,
+      null,
+      null
     );
     return new Context(context);
   },
 
   getUIConvFromContext(context) {
     return this.getUIConvForRecipient(
-      context.account, context.protocol, context.username
+      context.account,
+      context.protocol,
+      context.username
     );
   },
 
@@ -467,10 +565,12 @@ var OTR = {
     let uiConv = uiConvs.next();
     while (!uiConv.done) {
       let conv = uiConv.value.target;
-      if (conv.account.normalizedName === account &&
-          conv.account.protocol.normalizedName === protocol &&
-          conv.normalizedName === recipient) {
-          // console.log("=== getUIConvForRecipient found, account: " + account + "  protocol: " + protocol + "  recip: " + recipient);
+      if (
+        conv.account.normalizedName === account &&
+        conv.account.protocol.normalizedName === protocol &&
+        conv.normalizedName === recipient
+      ) {
+        // console.log("=== getUIConvForRecipient found, account: " + account + "  protocol: " + protocol + "  recip: " + recipient);
         return uiConv.value;
       }
       uiConv = uiConvs.next();
@@ -495,25 +595,30 @@ var OTR = {
     );
     if (remove) {
       let uiConv = this.getUIConvFromConv(conv);
-      if (uiConv)
+      if (uiConv) {
         this.removeConversation(uiConv);
-    } else
+      }
+    } else {
       this.notifyObservers(this.getContext(conv), "otr:disconnected");
+    }
   },
 
   getAccountPref(prefName, accountId, defaultVal) {
     return Services.prefs.getBoolPref(
       "messenger.account." + accountId + ".options." + prefName,
-      defaultVal);
+      defaultVal
+    );
   },
 
   sendQueryMsg(conv) {
-    let req = this.getAccountPref("otrRequireEncryption", conv.account.id,
-      Services.prefs.getBoolPref("chat.otr.default.requireEncryption"));
+    let req = this.getAccountPref(
+      "otrRequireEncryption",
+      conv.account.id,
+      Services.prefs.getBoolPref("chat.otr.default.requireEncryption")
+    );
     let query = OTRLib.otrl_proto_default_query_msg(
       conv.account.normalizedName,
-      req ?
-        OTRLib.OTRL_POLICY_ALWAYS : OTRLib.OTRL_POLICY_OPPORTUNISTIC
+      req ? OTRLib.OTRL_POLICY_ALWAYS : OTRLib.OTRL_POLICY_OPPORTUNISTIC
     );
     if (query.isNull()) {
       Cu.reportError(new Error("Sending query message failed."));
@@ -526,7 +631,7 @@ var OTR = {
     // software could misinterpret it as a protocol version.
     // See https://bugzilla.mozilla.org/show_bug.cgi?id=1536108
     let noNumbersName = conv.account.normalizedName.replace(/[0-9]/g, "#");
-    queryMsg += _strArgs("query-msg", {name: noNumbersName});
+    queryMsg += _strArgs("query-msg", { name: noNumbersName });
     conv.sendMsg(queryMsg);
     OTRLib.otrl_message_free(query);
   },
@@ -559,8 +664,10 @@ var OTR = {
 
   getPrefBranchFromWrappedContext(wContext) {
     for (let acc of Services.accounts.getAccounts()) {
-      if (wContext.account == acc.normalizedName &&
-          wContext.protocol == acc.protocol.normalizedName) {
+      if (
+        wContext.account == acc.normalizedName &&
+        wContext.protocol == acc.protocol.normalizedName
+      ) {
         return acc.prefBranch;
       }
     }
@@ -578,10 +685,13 @@ var OTR = {
     if (!pb) {
       return new ctypes.unsigned_int(0);
     }
-    let prefRequire = pb.getBoolPref("options.otrRequireEncryption",
-      Services.prefs.getBoolPref("chat.otr.default.requireEncryption"));
-    return prefRequire ? OTRLib.OTRL_POLICY_ALWAYS
-                       : OTRLib.OTRL_POLICY_OPPORTUNISTIC;
+    let prefRequire = pb.getBoolPref(
+      "options.otrRequireEncryption",
+      Services.prefs.getBoolPref("chat.otr.default.requireEncryption")
+    );
+    return prefRequire
+      ? OTRLib.OTRL_POLICY_ALWAYS
+      : OTRLib.OTRL_POLICY_OPPORTUNISTIC;
   },
 
   /**
@@ -627,14 +737,23 @@ var OTR = {
    */
   new_fingerprint_cb(opdata, us, accountname, protocol, username, fingerprint) {
     let context = OTRLib.otrl_context_find(
-      us, username, accountname, protocol,
-      OTRLib.instag.OTRL_INSTAG_MASTER, 1, null, null, null
+      us,
+      username,
+      accountname,
+      protocol,
+      OTRLib.instag.OTRL_INSTAG_MASTER,
+      1,
+      null,
+      null,
+      null
     );
 
     let seen = false;
     let fp = context.contents.fingerprint_root.next;
     while (!fp.isNull()) {
-      if (CLib.memcmp(fingerprint, fp.contents.fingerprint, new ctypes.size_t(20))) {
+      if (
+        CLib.memcmp(fingerprint, fp.contents.fingerprint, new ctypes.size_t(20))
+      ) {
         seen = true;
         break;
       }
@@ -642,7 +761,9 @@ var OTR = {
     }
 
     let wContext = new Context(context);
-    let defaultNudge = Services.prefs.getBoolPref("chat.otr.default.verifyNudge");
+    let defaultNudge = Services.prefs.getBoolPref(
+      "chat.otr.default.verifyNudge"
+    );
     let prefNudge = defaultNudge;
     let pb = OTR.getPrefBranchFromWrappedContext(wContext);
     if (pb) {
@@ -650,9 +771,13 @@ var OTR = {
     }
 
     // Only nudge on new fingerprint, as opposed to always.
-    if (!prefNudge)
-      this.notifyObservers(wContext, "otr:unverified",
-        (seen ? "seen" : "unseen"));
+    if (!prefNudge) {
+      this.notifyObservers(
+        wContext,
+        "otr:unverified",
+        seen ? "seen" : "unseen"
+      );
+    }
   },
 
   /**
@@ -667,17 +792,21 @@ var OTR = {
    */
   gone_secure_cb(opdata, context) {
     let wContext = new Context(context);
-    let defaultNudge = Services.prefs.getBoolPref("chat.otr.default.verifyNudge");
+    let defaultNudge = Services.prefs.getBoolPref(
+      "chat.otr.default.verifyNudge"
+    );
     let prefNudge = defaultNudge;
     let pb = OTR.getPrefBranchFromWrappedContext(wContext);
     if (pb) {
       prefNudge = pb.getBoolPref("options.otrVerifyNudge", defaultNudge);
     }
-    let strid = "context-gone_secure_" + (wContext.trust ? "private" : "unverified");
+    let strid =
+      "context-gone_secure_" + (wContext.trust ? "private" : "unverified");
     this.notifyObservers(wContext, "otr:msg-state");
-    this.sendAlert(wContext, _strArgs(strid, {name: wContext.username}));
-    if (prefNudge && !wContext.trust)
+    this.sendAlert(wContext, _strArgs(strid, { name: wContext.username }));
+    if (prefNudge && !wContext.trust) {
       this.notifyObservers(wContext, "otr:unverified", "unseen");
+    }
   },
 
   /**
@@ -698,7 +827,10 @@ var OTR = {
     if (!is_reply) {
       context = new Context(context);
       this.notifyObservers(context, "otr:msg-state");
-      this.sendAlert(context, _strArgs("context-still_secure", {name: context.username}));
+      this.sendAlert(
+        context,
+        _strArgs("context-still_secure", { name: context.username })
+      );
     }
   },
 
@@ -709,30 +841,30 @@ var OTR = {
     context = new Context(context);
     // These values are, for the most part, from pidgin-otr's mms_table.
     switch (context.protocol) {
-    case "irc":
-    case "prpl-irc":
-      return 417;
-    case "facebook":
-    case "gtalk":
-    case "odnoklassniki":
-    case "jabber":
-    case "xmpp":
-      return 65536;
-    case "prpl-yahoo":
-      return 799;
-    case "prpl-msn":
-      return 1409;
-    case "prpl-icq":
-      return 2346;
-    case "prpl-gg":
-      return 1999;
-    case "prpl-aim":
-    case "prpl-oscar":
-      return 2343;
-    case "prpl-novell":
-      return 1792;
-    default:
-      return 0;
+      case "irc":
+      case "prpl-irc":
+        return 417;
+      case "facebook":
+      case "gtalk":
+      case "odnoklassniki":
+      case "jabber":
+      case "xmpp":
+        return 65536;
+      case "prpl-yahoo":
+        return 799;
+      case "prpl-msn":
+        return 1409;
+      case "prpl-icq":
+        return 2346;
+      case "prpl-gg":
+        return 1999;
+      case "prpl-aim":
+      case "prpl-oscar":
+        return 2343;
+      case "prpl-novell":
+        return 1792;
+      default:
+        return 0;
     }
   },
 
@@ -751,20 +883,20 @@ var OTR = {
     context = new Context(context);
     let msg;
     switch (err_code) {
-    case OTRLib.errorCode.OTRL_ERRCODE_ENCRYPTION_ERROR:
-      msg = _str("error-enc");
-      break;
-    case OTRLib.errorCode.OTRL_ERRCODE_MSG_NOT_IN_PRIVATE:
-      msg = _strArgs("error-not_priv", context.username);
-      break;
-    case OTRLib.errorCode.OTRL_ERRCODE_MSG_UNREADABLE:
-      msg = _str("error-unreadable");
-      break;
-    case OTRLib.errorCode.OTRL_ERRCODE_MSG_MALFORMED:
-      msg = _str("error-malformed");
-      break;
-    default:
-      return null;
+      case OTRLib.errorCode.OTRL_ERRCODE_ENCRYPTION_ERROR:
+        msg = _str("error-enc");
+        break;
+      case OTRLib.errorCode.OTRL_ERRCODE_MSG_NOT_IN_PRIVATE:
+        msg = _strArgs("error-not_priv", context.username);
+        break;
+      case OTRLib.errorCode.OTRL_ERRCODE_MSG_UNREADABLE:
+        msg = _str("error-unreadable");
+        break;
+      case OTRLib.errorCode.OTRL_ERRCODE_MSG_MALFORMED:
+        msg = _str("error-malformed");
+        break;
+      default:
+        return null;
     }
     return CLib.strdup(msg);
   },
@@ -773,8 +905,9 @@ var OTR = {
    * Deallocate a string returned by otr_error_message_cb.
    */
   otr_error_message_free_cb(opdata, err_msg) {
-    if (!err_msg.isNull())
+    if (!err_msg.isNull()) {
       CLib.free(err_msg);
+    }
   },
 
   /**
@@ -788,8 +921,9 @@ var OTR = {
    * Deallocate a string returned by resent_msg_prefix.
    */
   resent_msg_prefix_free_cb(opdata, prefix) {
-    if (!prefix.isNull())
+    if (!prefix.isNull()) {
       CLib.free(prefix);
+    }
   },
 
   /**
@@ -798,31 +932,37 @@ var OTR = {
   handle_smp_event_cb(opdata, smp_event, context, progress_percent, question) {
     context = new Context(context);
     switch (smp_event) {
-    case OTRLib.smpEvent.OTRL_SMPEVENT_NONE:
-      break;
-    case OTRLib.smpEvent.OTRL_SMPEVENT_ASK_FOR_ANSWER:
-    case OTRLib.smpEvent.OTRL_SMPEVENT_ASK_FOR_SECRET:
-      this.notifyObservers({
-        context,
-        progress: progress_percent,
-        question: question.isNull() ? null : question.readString(),
-      }, "otr:auth-ask");
-      break;
-    case OTRLib.smpEvent.OTRL_SMPEVENT_CHEATED:
-      OTR.abortSMP(context);
+      case OTRLib.smpEvent.OTRL_SMPEVENT_NONE:
+        break;
+      case OTRLib.smpEvent.OTRL_SMPEVENT_ASK_FOR_ANSWER:
+      case OTRLib.smpEvent.OTRL_SMPEVENT_ASK_FOR_SECRET:
+        this.notifyObservers(
+          {
+            context,
+            progress: progress_percent,
+            question: question.isNull() ? null : question.readString(),
+          },
+          "otr:auth-ask"
+        );
+        break;
+      case OTRLib.smpEvent.OTRL_SMPEVENT_CHEATED:
+        OTR.abortSMP(context);
       /* falls through */
-    case OTRLib.smpEvent.OTRL_SMPEVENT_IN_PROGRESS:
-    case OTRLib.smpEvent.OTRL_SMPEVENT_SUCCESS:
-    case OTRLib.smpEvent.OTRL_SMPEVENT_FAILURE:
-    case OTRLib.smpEvent.OTRL_SMPEVENT_ABORT:
-      this.authUpdate(context, progress_percent,
-        (smp_event === OTRLib.smpEvent.OTRL_SMPEVENT_SUCCESS));
-      break;
-    case OTRLib.smpEvent.OTRL_SMPEVENT_ERROR:
-      OTR.abortSMP(context);
-      break;
-    default:
-      this.log("smp event: " + smp_event);
+      case OTRLib.smpEvent.OTRL_SMPEVENT_IN_PROGRESS:
+      case OTRLib.smpEvent.OTRL_SMPEVENT_SUCCESS:
+      case OTRLib.smpEvent.OTRL_SMPEVENT_FAILURE:
+      case OTRLib.smpEvent.OTRL_SMPEVENT_ABORT:
+        this.authUpdate(
+          context,
+          progress_percent,
+          smp_event === OTRLib.smpEvent.OTRL_SMPEVENT_SUCCESS
+        );
+        break;
+      case OTRLib.smpEvent.OTRL_SMPEVENT_ERROR:
+        OTR.abortSMP(context);
+        break;
+      default:
+        this.log("smp event: " + smp_event);
     }
   },
 
@@ -833,57 +973,96 @@ var OTR = {
   handle_msg_event_cb(opdata, msg_event, context, message, err) {
     context = new Context(context);
     switch (msg_event) {
-    case OTRLib.messageEvent.OTRL_MSGEVENT_NONE:
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_ENCRYPTION_REQUIRED:
-      this.sendAlert(context, _strArgs("msgevent-encryption_required_part1", {name: context.username}));
-      this.sendAlert(context, _str("msgevent-encryption_required_part2"));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_ENCRYPTION_ERROR:
-      this.sendAlert(context, _str("msgevent-encryption_error"));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_CONNECTION_ENDED:
-      this.sendAlert(context, _strArgs("msgevent-connection_ended", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_SETUP_ERROR:
-      this.sendAlert(context, _strArgs("msgevent-setup_error", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_MSG_REFLECTED:
-      this.sendAlert(context, _str("msgevent-msg_reflected"));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_MSG_RESENT:
-      this.sendAlert(context, _strArgs("msgevent-msg_resent", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_NOT_IN_PRIVATE:
-      this.sendAlert(context, _strArgs("msgevent-rcvdmsg_not_private", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNREADABLE:
-      this.sendAlert(context, _strArgs("msgevent-rcvdmsg_unreadable", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_MALFORMED:
-      this.sendAlert(context, _strArgs("msgevent-rcvdmsg_malformed", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_LOG_HEARTBEAT_RCVD:
-      this.log(_strArgs("msgevent-log_heartbeat_rcvd", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
-      this.log(_strArgs("msgevent-log_heartbeat_sent", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
-      this.sendAlert(context, _str("msgevent-rcvdmsg_general_err"));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:
-      this.sendAlert(context, _strArgs("msgevent-rcvdmsg_unencrypted",
-        {name: context.username, msg: message.isNull() ? "" : message.readString()}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED:
-      this.sendAlert(context, _strArgs("msgevent-rcvdmsg_unrecognized", {name: context.username}));
-      break;
-    case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
-      this.log(_strArgs("msgevent-rcvdmsg_for_other_instance", {name: context.username}));
-      break;
-    default:
-      this.log("msg event: " + msg_event);
+      case OTRLib.messageEvent.OTRL_MSGEVENT_NONE:
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_ENCRYPTION_REQUIRED:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-encryption_required_part1", {
+            name: context.username,
+          })
+        );
+        this.sendAlert(context, _str("msgevent-encryption_required_part2"));
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_ENCRYPTION_ERROR:
+        this.sendAlert(context, _str("msgevent-encryption_error"));
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_CONNECTION_ENDED:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-connection_ended", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_SETUP_ERROR:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-setup_error", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_MSG_REFLECTED:
+        this.sendAlert(context, _str("msgevent-msg_reflected"));
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_MSG_RESENT:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-msg_resent", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_NOT_IN_PRIVATE:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-rcvdmsg_not_private", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNREADABLE:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-rcvdmsg_unreadable", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_MALFORMED:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-rcvdmsg_malformed", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_LOG_HEARTBEAT_RCVD:
+        this.log(
+          _strArgs("msgevent-log_heartbeat_rcvd", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
+        this.log(
+          _strArgs("msgevent-log_heartbeat_sent", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
+        this.sendAlert(context, _str("msgevent-rcvdmsg_general_err"));
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-rcvdmsg_unencrypted", {
+            name: context.username,
+            msg: message.isNull() ? "" : message.readString(),
+          })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED:
+        this.sendAlert(
+          context,
+          _strArgs("msgevent-rcvdmsg_unrecognized", { name: context.username })
+        );
+        break;
+      case OTRLib.messageEvent.OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
+        this.log(
+          _strArgs("msgevent-rcvdmsg_for_other_instance", {
+            name: context.username,
+          })
+        );
+        break;
+      default:
+        this.log("msg event: " + msg_event);
     }
   },
 
@@ -922,15 +1101,15 @@ var OTR = {
       "create_privkey",
       "is_logged_in",
       "inject_message",
-      "update_context_list",  // not implemented
+      "update_context_list", // not implemented
       "new_fingerprint",
       "write_fingerprint",
       "gone_secure",
       "gone_insecure",
       "still_secure",
       "max_message_size",
-      "account_name",  // not implemented
-      "account_name_free",  // not implemented
+      "account_name", // not implemented
+      "account_name_free", // not implemented
       "received_symkey",
       "otr_error_message",
       "otr_error_message_free",
@@ -939,8 +1118,8 @@ var OTR = {
       "handle_smp_event",
       "handle_msg_event",
       "create_instag",
-      "convert_msg",  // not implemented
-      "convert_free",  // not implemented
+      "convert_msg", // not implemented
+      "convert_free", // not implemented
       "timer_control",
     ];
 
@@ -962,22 +1141,23 @@ var OTR = {
 
   observe(aObject, aTopic, aMsg) {
     switch (aTopic) {
-    case "sending-message":
-      this.onSend(aObject);
-      break;
-    case "received-message":
-      this.onReceive(aObject);
-      break;
-    case "new-ui-conversation":
-      this.addConversation(aObject);
-      break;
+      case "sending-message":
+        this.onSend(aObject);
+        break;
+      case "received-message":
+        this.onReceive(aObject);
+        break;
+      case "new-ui-conversation":
+        this.addConversation(aObject);
+        break;
     }
   },
 
   addConversation(uiConv) {
     let conv = uiConv.target;
-    if (conv.isChat)
+    if (conv.isChat) {
       return;
+    }
     this._convos.set(conv.id, uiConv);
     uiConv.addObserver(this);
   },
@@ -1025,19 +1205,22 @@ var OTR = {
   },
 
   onSend(om) {
-    if (om.cancelled)
+    if (om.cancelled) {
       return;
+    }
 
     let conv = om.conversation;
-    if (conv.isChat)
+    if (conv.isChat) {
       return;
+    }
 
     // check for irc action messages
     if (om.action) {
       om.cancelled = true;
       let uiConv = this.getUIConvFromConv(conv);
-      if (uiConv)
+      if (uiConv) {
         uiConv.sendMsg("/me " + om.message);
+      }
       return;
     }
 
@@ -1066,7 +1249,9 @@ var OTR = {
 
     if (err) {
       om.cancelled = true;
-      Cu.reportError(new Error("Failed to send message. Returned code: " + err));
+      Cu.reportError(
+        new Error("Failed to send message. Returned code: " + err)
+      );
     } else if (!newMessage.isNull()) {
       msg = newMessage.readString();
       // https://bugs.otr.im/lib/libotr/issues/52
@@ -1081,9 +1266,11 @@ var OTR = {
       // which the OTR protocol uses to signal that the sender is willing
       // to start an OTR session. Don't do that for offline messages.
       // See: https://bugs.otr.im/lib/libotr/issues/102
-      if (isOnline(conv) === 0 ||
-          // Twitter trims tweets.
-          conv.account.protocol.normalizedName === "twitter") {
+      if (
+        isOnline(conv) === 0 ||
+        // Twitter trims tweets.
+        conv.account.protocol.normalizedName === "twitter"
+      ) {
         let ind = msg.indexOf(OTRLib.OTRL_MESSAGE_TAG_BASE);
         if (ind > -1) {
           msg = msg.substring(0, ind);
@@ -1101,12 +1288,14 @@ var OTR = {
   },
 
   onReceive(im) {
-    if (im.cancelled || im.system)
+    if (im.cancelled || im.system) {
       return;
+    }
 
     let conv = im.conversation;
-    if (conv.isChat)
+    if (conv.isChat) {
       return;
+    }
 
     // After outgoing messages have been handled in onSend,
     // they are again passed back to us, here in onReceive.
@@ -1152,12 +1341,15 @@ var OTR = {
     if (!tlv.isNull()) {
       let context = this.getContext(conv);
       this.notifyObservers(context, "otr:disconnected");
-      this.sendAlert(context, _strArgs("tlv-disconnected", {name: conv.normalizedName}));
+      this.sendAlert(
+        context,
+        _strArgs("tlv-disconnected", { name: conv.normalizedName })
+      );
     }
 
     if (err) {
       this.log("error (" + err + ") ignoring: " + im.displayMessage);
-      im.cancelled = true;  // ignore
+      im.cancelled = true; // ignore
     } else {
       this.log("post receiving: " + im.displayMessage);
     }
@@ -1169,8 +1361,9 @@ var OTR = {
   // observer interface
 
   addObserver(observer) {
-    if (!this._observers.includes(observer))
+    if (!this._observers.includes(observer)) {
       this._observers.push(observer);
+    }
   },
 
   removeObserver(observer) {
@@ -1186,7 +1379,7 @@ var OTR = {
   // buffer messages
 
   clearMsgs(convId) {
-    this._buffer = this._buffer.filter((msg) => msg.convId !== convId);
+    this._buffer = this._buffer.filter(msg => msg.convId !== convId);
   },
 
   bufferMsg(convId, display, sent) {
@@ -1213,7 +1406,6 @@ var OTR = {
     im.cancelled = true;
     this.log("not displaying: " + im.displayMessage);
   },
-
 };
 
 // exports
