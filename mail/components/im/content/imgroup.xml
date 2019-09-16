@@ -18,10 +18,11 @@
     <implementation>
      <constructor>
       <![CDATA[
-        if (this.hasAttribute("closed"))
+        if (this.hasAttribute("closed")) {
           this.setAttribute("aria-expanded", "false");
-        else
+        } else {
           this.setAttribute("aria-expanded", "true");
+        }
       ]]>
      </constructor>
 
@@ -35,8 +36,9 @@
       <parameter name="aContactB"/>
       <body>
       <![CDATA[
-        if (aContactA.statusType != aContactB.statusType)
+        if (aContactA.statusType != aContactB.statusType) {
           return aContactB.statusType - aContactA.statusType;
+        }
         let a = aContactA.displayName.toLowerCase();
         let b = aContactB.displayName.toLowerCase();
         return a.localeCompare(b);
@@ -52,13 +54,13 @@
       <parameter name="aTagName"/>
       <body>
       <![CDATA[
-        if (this.contactsById.hasOwnProperty(aContact.id))
+        if (this.contactsById.hasOwnProperty(aContact.id)) {
           return null;
-
+        }
         let contactElt = document.createXULElement(aTagName || "imcontact");
-        if (this.hasAttribute("closed"))
+        if (this.hasAttribute("closed")) {
           contactElt.setAttribute("collapsed", "true");
-
+        }
         let end = this.contacts.length;
         // Avoid the binary search loop if the contacts were already sorted.
         if (end != 0 &&
@@ -66,10 +68,11 @@
           let start = 0;
           while (start < end) {
             let middle = start + Math.floor((end - start) / 2);
-            if (this.sortComparator(aContact, this.contacts[middle].contact) < 0)
+            if (this.sortComparator(aContact, this.contacts[middle].contact) < 0) {
               end = middle;
-            else
+            } else {
               start = middle + 1;
+            }
           }
         }
         let last = end == 0 ? this : this.contacts[end - 1];
@@ -104,8 +107,9 @@
           let oldItem = this.removeContact(aSubject);
           let newItem = this.addContact(aSubject);
           let list = this.parentNode;
-          if (list.selectedItem == oldItem)
+          if (list.selectedItem == oldItem) {
             list.selectedItem = newItem;
+          }
         }
       ]]>
       </body>
@@ -116,8 +120,9 @@
       <body>
       <![CDATA[
         let contact = this.contactsById[aContact.id];
-        if (!contact)
+        if (!contact) {
           throw new Error("Removing a contact that isn't here?");
+        }
 
         // create a new array to remove without breaking for each loops.
         this.contacts = this.contacts.filter(c => c !== contact);
@@ -126,11 +131,11 @@
         contact.destroy();
 
         // Check if some contacts remain in the group, if empty hide it.
-        if (!this.contacts.length)
+        if (!this.contacts.length) {
           this.setAttribute("collapsed", "true");
-        else
+        } else {
           this._updateGroupLabel();
-
+        }
         return contact;
       ]]>
       </body>
@@ -140,8 +145,9 @@
       <parameter name="aClosed"/>
       <body>
       <![CDATA[
-        for (let contact of this.contacts)
+        for (let contact of this.contacts) {
           contact.collapsed = aClosed;
+        }
       ]]>
       </body>
      </method>
@@ -168,12 +174,13 @@
      <method name="_updateGroupLabel">
       <body>
       <![CDATA[
-        if (!this.displayName)
+        if (!this.displayName) {
           this.displayName = this.getAttribute("name");
+        }
         let name = this.displayName;
-        if (this.hasAttribute("closed"))
+        if (this.hasAttribute("closed")) {
           name += " (" + this.contacts.length + ")";
-
+        }
         this.setAttribute("name", name);
       ]]>
       </body>
@@ -189,13 +196,15 @@
             break;
 
           case aEvent.DOM_VK_LEFT:
-            if (!this.hasAttribute("closed"))
+            if (!this.hasAttribute("closed")) {
               this.close();
+            }
             break;
 
           case aEvent.DOM_VK_RIGHT:
-            if (this.hasAttribute("closed"))
+            if (this.hasAttribute("closed")) {
               this.close();
+            }
             break;
         }
       ]]>
@@ -207,11 +216,13 @@
      <![CDATA[
         // Check if there was 1 click on the image or 2 clicks on the label
         if ((event.detail == 1 && event.originalTarget.localName == "image") ||
-            (event.detail == 2 && event.originalTarget.localName == "label"))
+            (event.detail == 2 && event.originalTarget.localName == "label")) {
           this.close();
+        }
 
-        if (event.originalTarget.localName == "button")
+        if (event.originalTarget.localName == "button") {
           this.hide();
+        }
      ]]>
      </handler>
     </handlers>

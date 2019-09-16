@@ -66,12 +66,14 @@
        <![CDATA[
          if (aTopic == "contact-preferred-buddy-changed" ||
              aTopic == "contact-display-name-changed" ||
-             aTopic == "contact-status-changed")
+             aTopic == "contact-status-changed") {
            this.update();
+         }
 
          if (aTopic == "contact-availability-changed" ||
-             aTopic == "contact-display-name-changed")
+             aTopic == "contact-display-name-changed") {
            this.group.updateContactPosition(aSubject);
+         }
        ]]>
        </body>
      </method>
@@ -92,18 +94,19 @@
         this.setAttribute("displayname", this.contact.displayName);
 
         let statusText = this.contact.statusText;
-        if (statusText)
+        if (statusText) {
           statusText = " - " + statusText;
+        }
         this.setAttribute("statusTextWithDash", statusText);
         let statusType = this.contact.statusType;
         this.setAttribute("statusText", Status.toLabel(statusType) + statusText);
         this.setAttribute("status", Status.toAttribute(statusType));
 
-        if (this.contact.canSendMessage)
+        if (this.contact.canSendMessage) {
           this.setAttribute("cansend", "true");
-        else
+        } else {
           this.removeAttribute("cansend");
-
+        }
         let proto = this.contact.preferredBuddy.protocol;
         this.setAttribute("iconPrpl", proto.iconBaseURI + "icon.png");
       ]]>
@@ -113,8 +116,9 @@
      <method name="startAliasing">
       <body>
       <![CDATA[
-        if (this.hasAttribute("aliasing"))
+        if (this.hasAttribute("aliasing")) {
           return; // prevent re-entry.
+        }
 
         this.setAttribute("aliasing", "true");
         let textbox =
@@ -126,8 +130,9 @@
         // of the richlistbox change without producing a blur event on
         // our textbox. Make sure we watch richlistbox selection changes.
         this._parentSelectListener = (function(aEvent) {
-          if (aEvent.target == this.parentNode)
+          if (aEvent.target == this.parentNode) {
             this.finishAliasing(true);
+          }
         }).bind(this);
         this.parentNode.addEventListener("select", this._parentSelectListener);
       ]]>
@@ -191,20 +196,23 @@
         switch (aEvent.keyCode) {
           // If Enter or Return is pressed, open a new conversation
           case aEvent.DOM_VK_RETURN:
-            if (this.hasAttribute("aliasing"))
+            if (this.hasAttribute("aliasing")) {
               this.finishAliasing(true);
-            else if (this.canOpenConversation())
+            } else if (this.canOpenConversation()) {
               this.openConversation();
+            }
             break;
 
           case aEvent.DOM_VK_F2:
-            if (!this.hasAttribute("aliasing"))
+            if (!this.hasAttribute("aliasing")) {
               this.startAliasing();
+            }
             break;
 
           case aEvent.DOM_VK_ESCAPE:
-            if (this.hasAttribute("aliasing"))
+            if (this.hasAttribute("aliasing")) {
               this.finishAliasing(false);
+            }
             break;
         }
       ]]>
@@ -214,11 +222,13 @@
     <handlers>
      <handler event="blur">
        <![CDATA[
-         if (!this.hasAttribute("aliasing"))
+         if (!this.hasAttribute("aliasing")) {
            return;
+         }
 
-         if (Services.focus.activeWindow == document.defaultView)
+         if (Services.focus.activeWindow == document.defaultView) {
            this.finishAliasing(true);
+         }
        ]]>
      </handler>
 
@@ -236,8 +246,9 @@
        <![CDATA[
          if (!this.hasAttribute("aliasing") && this.canOpenConversation() &&
              event.detail == 2 &&
-             event.originalTarget.getAttribute("anonid") != "expander")
+             event.originalTarget.getAttribute("anonid") != "expander") {
            this.openConversation();
+         }
        ]]>
      </handler>
     </handlers>

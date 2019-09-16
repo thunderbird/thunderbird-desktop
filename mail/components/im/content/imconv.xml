@@ -44,12 +44,14 @@
      <constructor>
       <![CDATA[
         new MutationObserver(aMutations => {
-          if (!this.convView || !this.convView.loaded)
+          if (!this.convView || !this.convView.loaded) {
             return;
-          if (this.hasAttribute("selected"))
+          }
+          if (this.hasAttribute("selected")) {
             this.convView.switchingToPanel();
-          else
+          } else {
             this.convView.switchingAwayFromPanel(true);
+          }
         }).observe(this, {attributes: true, attributeFilter: ["selected"]});
       ]]>
      </constructor>
@@ -96,10 +98,12 @@
              aTopic == "update-buddy-status" ||
              aTopic == "update-conv-chatleft" ||
              aTopic == "update-conv-chatjoining" ||
-             aTopic == "chat-update-topic")
+             aTopic == "chat-update-topic") {
            this.update();
-         if (aTopic == "update-conv-title")
+         }
+         if (aTopic == "update-conv-title") {
            this.group.updateContactPosition(this.conv);
+         }
        ]]>
        </body>
      </method>
@@ -110,10 +114,11 @@
                   this.getAttribute("selected") == "true";
          ]]></getter>
        <setter><![CDATA[
-         if (val)
+         if (val) {
            this.setAttribute("selected", "true");
-         else
+         } else {
            this.removeAttribute("selected");
+         }
 
          return val;
          ]]></setter>
@@ -142,35 +147,41 @@
             this.setAttribute("unread", "true");
             if (this.conv.isChat) {
               directedMessages = this.conv.unreadTargetedMessageCount;
-              if (directedMessages)
+              if (directedMessages) {
                 this.setAttribute("attention", "true");
+              }
             }
             unreadCount -= directedMessages;
-            if (directedMessages > this.directedUnreadCount)
+            if (directedMessages > this.directedUnreadCount) {
               this.directedUnreadCount = directedMessages;
+            }
           }
-          if (unreadCount)
+          if (unreadCount) {
             unreadCount = "(" + unreadCount + ")";
+          }
           this.setAttribute("unreadCount", unreadCount);
           if (Services.prefs.getBoolPref("messenger.options.getAttentionOnNewMessages") &&
-              directedMessages > parseInt(this.getAttribute("unreadTargetedCount")))
+              directedMessages > parseInt(this.getAttribute("unreadTargetedCount"))) {
             window.getAttention();
+          }
           this.setAttribute("unreadTargetedCount", directedMessages);
           chatHandler.updateTitle();
         }
 
         if (this.conv.isChat) {
-          if (this.conv.joining)
+          if (this.conv.joining) {
             this.setAttribute("status", "joining");
-          else if (!this.conv.account.connected || this.conv.left)
+          } else if (!this.conv.account.connected || this.conv.left) {
             this.setAttribute("status", "left");
-          else
+          } else {
             this.removeAttribute("status");
+          }
         } else {
           let statusType = Ci.imIStatusInfo.STATUS_UNKNOWN;
           let buddy = this.conv.buddy;
-          if (buddy && buddy.account.connected)
+          if (buddy && buddy.account.connected) {
             statusType = buddy.statusType;
+          }
 
           const {Status} = ChromeUtils.import("resource:///modules/imStatusUtils.jsm");
           this.setAttribute("status", Status.toAttribute(statusType));
@@ -185,8 +196,9 @@
      <method name="destroy">
       <body>
       <![CDATA[
-        if (this.conv)
+        if (this.conv) {
           this.conv.removeObserver(this);
+        }
         if (this.convView) {
           this.convView.destroy();
           this.convView.remove();
@@ -201,8 +213,9 @@
         // item is fully destroyed and removed from the list.
         let newSelectedItem;
         let list = this.parentNode;
-        if (list.selectedItem == this)
+        if (list.selectedItem == this) {
           newSelectedItem = this.previousSibling;
+        }
 
         if (this.log) {
           this.hidden = true;
@@ -211,8 +224,9 @@
           this.remove();
           delete this.conv;
         }
-        if (newSelectedItem)
+        if (newSelectedItem) {
           list.selectedItem = newSelectedItem;
+        }
       ]]>
       </body>
      </method>
@@ -220,10 +234,11 @@
      <method name="closeConversation">
       <body>
        <![CDATA[
-         if (this.conv)
+         if (this.conv) {
            this.conv.close();
-         else
+         } else {
            this.destroy();
+         }
        ]]>
       </body>
      </method>

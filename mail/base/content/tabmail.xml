@@ -338,8 +338,9 @@
       <method name="registerTabType">
         <parameter name="aTabType"/>
         <body><![CDATA[
-          if (aTabType.name in this.tabTypes)
+          if (aTabType.name in this.tabTypes) {
             return;
+          }
 
           this.tabTypes[aTabType.name] = aTabType;
           for (let [modeName, modeDetails] of Object.entries(aTabType.modes)) {
@@ -347,8 +348,9 @@
             modeDetails.tabType = aTabType;
             modeDetails.tabs = [];
             this.tabModes[modeName] = modeDetails;
-            if (modeDetails.isDefault)
+            if (modeDetails.isDefault) {
               this.defaultTabMode = modeDetails;
+            }
           }
           if (aTabType.panelId) {
             aTabType.panel = document.getElementById(aTabType.panelId);
@@ -377,18 +379,22 @@
         <parameter name="aTabType"/>
         <body><![CDATA[
           // we can skip if the tab type was never registered...
-          if (!(aTabType.name in this.tabTypes))
+          if (!(aTabType.name in this.tabTypes)) {
              return;
+          }
 
           // ... if the tab type is still in use, we can not remove it without
           // breaking the UI. So we throw an exception.
-          for (let modeName of Object.keys(aTabType.modes))
-            if (this.tabModes[modeName].tabs.length)
+          for (let modeName of Object.keys(aTabType.modes)) {
+            if (this.tabModes[modeName].tabs.length) {
               throw new Error("Tab mode " + modeName + " still in use. Close tabs");
+            }
+          }
 
           // ... finally get rid of the tab type
-          for (let modeName of Object.keys(aTabType.modes))
+          for (let modeName of Object.keys(aTabType.modes)) {
             delete this.tabModes[modeName];
+          }
 
           delete this.tabTypes[aTabType.name];
         ]]></body>
@@ -396,15 +402,17 @@
       <method name="registerTabMonitor">
         <parameter name="aTabMonitor"/>
         <body><![CDATA[
-          if (!this.tabMonitors.includes(aTabMonitor))
+          if (!this.tabMonitors.includes(aTabMonitor)) {
             this.tabMonitors.push(aTabMonitor);
+          }
         ]]></body>
       </method>
       <method name="unregisterTabMonitor">
         <parameter name="aTabMonitor"/>
         <body><![CDATA[
-          if (this.tabMonitors.includes(aTabMonitor))
+          if (this.tabMonitors.includes(aTabMonitor)) {
             this.tabMonitors.splice(this.tabMonitors.indexOf(aTabMonitor), 1);
+          }
         ]]></body>
       </method>
       <!-- Given an index, tab node or tab info object, return a tuple of
@@ -419,8 +427,9 @@
         <body><![CDATA[
           let iTab, tab, tabNode;
           if (aTabIndexNodeOrInfo == null) {
-            if (!aDefaultToCurrent)
+            if (!aDefaultToCurrent) {
               throw new Error("You need to specify a tab!");
+            }
             iTab = this.tabContainer.selectedIndex;
             return [iTab, this.tabInfo[iTab],
                     this.tabContainer.childNodes[iTab]];
@@ -487,8 +496,9 @@
             this.setTabTitle(null);
 
             for (let tabMonitor of this.tabMonitors) {
-              if ("onTabOpened" in tabMonitor)
+              if ("onTabOpened" in tabMonitor) {
                 tabMonitor.onTabOpened(firstTab, true);
+              }
               tabMonitor.onTabSwitched(firstTab, null);
             }
           }
@@ -499,8 +509,9 @@
         <parameter name="aArgs"/>
         <body><![CDATA[
         try {
-          if (!(aTabModeName in this.tabModes))
+          if (!(aTabModeName in this.tabModes)) {
             throw new Error("No such tab mode: " + aTabModeName);
+          }
           let tabMode = this.tabModes[aTabModeName];
           // if we are already at our limit for this mode, show an existing one
           if (tabMode.tabs.length == tabMode.maxTabs) {
@@ -527,15 +538,17 @@
           if (shouldSwitchToFunc) {
             let tabIndex = shouldSwitchToFunc.apply(tabMode.tabType, [aArgs]);
             if (tabIndex >= 0) {
-              if (!background)
+              if (!background) {
                 this.selectTabByIndex(null, tabIndex);
+              }
               return null;
             }
           }
 
-          if (!background)
+          if (!background) {
             // we need to save the state before it gets corrupted
             this.saveCurrentTabState();
+          }
 
           let tab = {mode: tabMode, busy: false, canClose: true,
                      thinking: false, beforeTabOpen: true, _ext: {}};
@@ -565,11 +578,11 @@
           // If we're not disregarding the opening, hold a reference to opener
           // so that if the new tab is closed without switching, we can switch
           // back to the opener tab.
-          if (disregardOpener)
+          if (disregardOpener) {
             this.mLastTabOpener = null;
-          else
+          } else {
             this.mLastTabOpener = oldTab;
-
+          }
           // the order of the following statements is important
           this.tabInfo[this.tabContainer.childNodes.length - 1] = tab;
           if (!background) {
@@ -620,14 +633,16 @@
           let restoreState = this._restoringTabState;
           for (let tabMonitor of this.tabMonitors) {
             if (("onTabRestored" in tabMonitor) && restoreState &&
-                (tabMonitor.monitorName in restoreState.ext))
+                (tabMonitor.monitorName in restoreState.ext)) {
               tabMonitor.onTabRestored(tab,
                                        restoreState.ext[tabMonitor.monitorName],
                                        false);
-            else if ("onTabOpened" in tabMonitor)
+            } else if ("onTabOpened" in tabMonitor) {
               tabMonitor.onTabOpened(tab, false, oldTab);
-            if (!background)
+            }
+            if (!background) {
               tabMonitor.onTabSwitched(tab, oldTab);
+            }
           }
 
           // clear _mostRecentTabInfo; we only needed it during the call to
@@ -636,16 +651,18 @@
 
           t.setAttribute("label", tab.title);
 
-          if (!background)
+          if (!background) {
             this.setDocumentTitle(tab);
+          }
 
           // for styling purposes, apply the type to the tab...
           t.setAttribute("type", tab.mode.type);
 
-          if (!background)
+          if (!background) {
             // Update the toolbar status - we don't need to do menus as they
             // do themselves when we open them.
             UpdateMailToolbar("tabmail");
+          }
 
           let moving = restoreState ? restoreState.moving : null;
 
@@ -686,8 +703,9 @@
         <parameter name="aIndex"/>
         <body><![CDATA[
           // count backwards for aIndex < 0
-          if (aIndex < 0)
+          if (aIndex < 0) {
             aIndex += this.tabInfo.length;
+          }
 
           if (aIndex >= 0 &&
               aIndex < this.tabInfo.length &&
@@ -724,10 +742,11 @@
           // (this._mostRecentTabInfo is non-null), we shouldn't consider the
           // current tab
           let tabToConsider = this._mostRecentTabInfo || this.currentTabInfo;
-          if (tabToConsider && tabToConsider.mode == aTabMode)
+          if (tabToConsider && tabToConsider.mode == aTabMode) {
             return tabToConsider;
-          else if (aTabMode.tabs.length)
+          } else if (aTabMode.tabs.length) {
             return aTabMode.tabs[0];
+          }
           return null;
         ]]></body>
       </method>
@@ -735,20 +754,24 @@
         <parameter name="aIdx"/>
         <body><![CDATA[
 
-          if (!this.recentlyClosedTabs.length)
+          if (!this.recentlyClosedTabs.length) {
             return;
+          }
 
-          if (aIdx >= this.recentlyClosedTabs.length)
+          if (aIdx >= this.recentlyClosedTabs.length) {
             aIdx = this.recentlyClosedTabs.length - 1;
+          }
 
           // splice always returns an array
           let history = (this.recentlyClosedTabs.splice(aIdx, 1))[0];
 
-          if (!history.tab)
+          if (!history.tab) {
             return;
+          }
 
-          if (!this.restoreTab(JSON.parse(history.tab)))
+          if (!this.restoreTab(JSON.parse(history.tab))) {
             return;
+          }
 
           let idx = Math.min(history.idx, this.tabInfo.length);
           let tab = this.tabContainer.childNodes[this.tabInfo.length - 1];
@@ -766,8 +789,9 @@
             let [iTab, tab, tabNode] =
               this._getTabContextForTabbyThing(aOptTabIndexNodeOrInfo, true);
 
-            if (!tab.canClose)
+            if (!tab.canClose) {
               return;
+            }
 
             // Give the tab type a chance to make its own decisions about
             // whether its tabs can be closed or not. For instance, contentTabs
@@ -775,9 +799,9 @@
             // exercise their right to prompt the user for confirmation before
             // closing.
             let tryCloseFunc = tab.mode.tryCloseTab || tab.mode.tabType.tryCloseTab;
-            if (tryCloseFunc && !tryCloseFunc.call(tab.mode.tabType, tab))
+            if (tryCloseFunc && !tryCloseFunc.call(tab.mode.tabType, tab)) {
               return;
-
+            }
             let evt = new CustomEvent("TabClose", {
               bubbles: true,
               detail: { tabInfo: tab, moving: tab.moving },
@@ -785,8 +809,9 @@
             tabNode.dispatchEvent(evt);
 
             for (let tabMonitor of this.tabMonitors) {
-              if ("onTabClosing" in tabMonitor)
+              if ("onTabClosing" in tabMonitor) {
                 tabMonitor.onTabClosing(tab);
+              }
             }
 
             if (!aNoUndo) {
@@ -797,8 +822,9 @@
                 this.recentlyClosedTabs.unshift(
                   { tab: JSON.stringify(session), idx: iTab, title: tab.title });
 
-                if (this.recentlyClosedTabs.length > 10)
+                if (this.recentlyClosedTabs.length > 10) {
                   this.recentlyClosedTabs.pop();
+                }
               }
             }
 
@@ -821,9 +847,9 @@
             // Clear the last tab opener - we don't need this anymore.
             this.mLastTabOpener = null;
 
-            if (this.currentTabInfo == tab)
+            if (this.currentTabInfo == tab) {
               this.updateCurrentTab();
-
+            }
             if (tab.panel) {
               tab.panel.remove();
               delete tab.panel;
@@ -834,8 +860,9 @@
                 this.currentTabInfo.panel || this.currentTabInfo.mode.tabType.panel;
             }
             if (this.tabContainer.childNodes.length == 1 &&
-                this.tabContainer.mAutoHide)
+                this.tabContainer.mAutoHide) {
               this.tabContainer.mCollapseToolbar.collapsed = true;
+            }
           ]]>
         </body>
       </method>
@@ -861,8 +888,9 @@
             // closeTab mutates the tabInfo array, so start from the end.
             for (let i = this.tabInfo.length - 1; i >= 0; i--) {
               let tab = this.tabInfo[i];
-              if ((tab != thisTab) && tab.canClose)
+              if ((tab != thisTab) && tab.canClose) {
                 this.closeTab(tab, aNoUndo);
+              }
             }
           ]]>
         </body>
@@ -873,19 +901,19 @@
         <parameter name="aTargetPosition"/>
         <body>
           <![CDATA[
-            if (this.tabInfo.length <= 1)
+            if (this.tabInfo.length <= 1) {
               return null;
-
+            }
             let tab = this._getTabContextForTabbyThing(aTab, false)[1];
 
-            if (!tab.canClose)
+            if (!tab.canClose) {
               return null;
-
+            }
             // We use Json and session restore transfer the tab to the new window.
             tab = this.persistTab(tab);
-            if (!tab)
+            if (!tab) {
               return null;
-
+            }
             // Converting to JSON and back again creates clean javascript
             // object with absolutely no references to our current window.
             tab = JSON.parse(JSON.stringify(tab));
@@ -962,9 +990,9 @@
           let modeIdx = tab.mode.tabs.length + 1;
 
           for (let i = 0; i < tab.mode.tabs.length; i++) {
-            if (this.tabInfo.indexOf(tab.mode.tabs[i]) < aIndex)
+            if (this.tabInfo.indexOf(tab.mode.tabs[i]) < aIndex) {
               continue;
-
+            }
             modeIdx = i;
             break;
           }
@@ -987,9 +1015,9 @@
            let persistFunc = tab.mode.persistTab || tab.mode.tabType.persistTab;
 
            // if we can't restore the tab we can't move it
-           if (!persistFunc)
+           if (!persistFunc) {
              return null;
-
+           }
            //  If there is a non-null tab-state, then persisting succeeded and
            //  we should store it.  We store the tab's persisted state in its
            //  own distinct object rather than mixing things up in a dictionary
@@ -1008,16 +1036,17 @@
              Cu.reportError(ex);
            }
 
-           if (!tabState)
+           if (!tabState) {
              return null;
-
+           }
            let ext = {};
 
            for (let tabMonitor of this.tabMonitors) {
              if ("onTabPersist" in tabMonitor) {
                let monState = tabMonitor.onTabPersist(tab);
-               if (monState !== null)
+               if (monState !== null) {
                  ext[tabMonitor.monitorName] = monState;
+               }
              }
            }
 
@@ -1050,14 +1079,15 @@
           for (let [iTab, tab] of this.tabInfo.entries()) {
             let persistTab = this.persistTab(tab);
 
-            if (!persistTab)
+            if (!persistTab) {
               continue;
-
+            }
             tabs.push(persistTab);
 
             // Mark this persisted tab as selected
-            if (iTab == this.tabContainer.selectedIndex)
+            if (iTab == this.tabContainer.selectedIndex) {
               state.selectedIndex = tabs.length - 1;
+            }
           }
 
           return state;
@@ -1076,13 +1106,13 @@
 
           let restoreFunc = mode.restoreTab || mode.tabType.restoreTab;
 
-          if (!restoreFunc)
+          if (!restoreFunc) {
             return false;
-
+          }
           // normalize the state to have an ext attribute if it does not.
-          if (!("ext" in aState))
+          if (!("ext" in aState)) {
             aState.ext = {};
-
+          }
           this._restoringTabState = aState;
           restoreFunc.call(mode.tabType, this, aState.state);
           this._restoringTabState = null;
@@ -1104,22 +1134,24 @@
           let tabs = aPersistedState.tabs;
           let indexToSelect = null;
           for (let [iTab, tabState] of tabs.entries()) {
-            if (tabState.state.firstTab && aDontRestoreFirstTab)
+            if (tabState.state.firstTab && aDontRestoreFirstTab) {
               tabState.state.dontRestoreFirstTab = aDontRestoreFirstTab;
-
-            if (!this.restoreTab(tabState))
+            }
+            if (!this.restoreTab(tabState)) {
               continue;
-
+            }
             // If this persisted tab was the selected one, then mark the newest
             //  tab as the guy to select.
-            if (iTab == aPersistedState.selectedIndex)
+            if (iTab == aPersistedState.selectedIndex) {
               indexToSelect = this.tabInfo.length - 1;
+            }
           }
 
-          if (indexToSelect != null && !aDontRestoreFirstTab)
+          if (indexToSelect != null && !aDontRestoreFirstTab) {
             this.tabContainer.selectedIndex = indexToSelect;
-          else
+          } else {
             this.tabContainer.selectedIndex = 0;
+          }
         ]]></body>
       </method>
       <method name="clearRecentlyClosedTabs">
@@ -1145,9 +1177,9 @@
 
       <property name="selectedTab">
         <getter><![CDATA[
-          if (!this.currentTabInfo)
+          if (!this.currentTabInfo) {
             this.currentTabInfo = this.tabInfo[0];
-
+          }
           return this.currentTabInfo;
         ]]></getter>
         <setter><![CDATA[
@@ -1161,13 +1193,13 @@
            require a getBrowser() function. -->
       <method name="getBrowserForSelectedTab">
         <body><![CDATA[
-          if (!this.currentTabInfo)
+          if (!this.currentTabInfo) {
             this.currentTabInfo = this.tabInfo[0];
-
+          }
           let tab = this.currentTabInfo;
-          if (!tab)
+          if (!tab) {
             return null;
-
+          }
           return this.getBrowserForTab(tab);
         ]]></body>
       </method>
@@ -1192,8 +1224,9 @@
               let possBrowser = browserFunc.call(this.tabInfo[i].mode.tabType,
                                                  this.tabInfo[i]);
               if (possBrowser &&
-                  possBrowser.contentWindow == aDocument)
+                  possBrowser.contentWindow == aDocument) {
                 return this.tabInfo[i];
+              }
             }
           }
           return null;
@@ -1211,8 +1244,9 @@
               let possBrowser = browserFunc.call(this.tabInfo[i].mode.tabType,
                                                  this.tabInfo[i]);
               if (possBrowser &&
-                  possBrowser.contentDocument.documentElement.id == aDocumentId)
+                  possBrowser.contentDocument.documentElement.id == aDocumentId) {
                 return this.tabInfo[i];
+              }
             }
           }
           return null;
@@ -1251,9 +1285,9 @@
         <body>
           <![CDATA[
             if (this.currentTabInfo != this.tabInfo[this.tabContainer.selectedIndex]) {
-              if (this.currentTabInfo)
+              if (this.currentTabInfo) {
                 this.saveCurrentTabState();
-
+              }
               let oldTab = this.currentTabInfo;
               let oldPanel = [...this.panelContainer.children].find(p => p.hasAttribute("selected"));
               let tab = this.currentTabInfo =
@@ -1301,8 +1335,9 @@
       <method name="saveCurrentTabState">
         <body>
           <![CDATA[
-            if (!this.currentTabInfo)
+            if (!this.currentTabInfo) {
               this.currentTabInfo = this.tabInfo[0];
+            }
             let tab = this.currentTabInfo;
 
             // save the old tab state before we change the current tab
@@ -1317,8 +1352,9 @@
         <body>
           <![CDATA[
             // a middle mouse button click on a tab is a short cut for closing a tab
-            if (event.button != 1 || event.target.localName != "tab")
+            if (event.button != 1 || event.target.localName != "tab") {
               return;
+            }
             this.removeTabByNode(event.target);
             event.stopPropagation();
           ]]>
@@ -1358,9 +1394,9 @@
               tabNode.setAttribute("label", newLabel);
 
               // Update the window title if we're the displayed tab.
-              if (iTab == this.tabContainer.selectedIndex)
+              if (iTab == this.tabContainer.selectedIndex) {
                 this.setDocumentTitle(tab);
-
+              }
               // Notify tab title change
               if (!tab.beforeTabOpen) {
                 let evt = new CustomEvent("TabAttrModified", {
@@ -1399,10 +1435,11 @@
                 tabNode.dispatchEvent(evt);
               }
 
-              if (aIcon)
+              if (aIcon) {
                 tabNode.setAttribute("image", aIcon);
-              else
+              } else {
                 tabNode.removeAttribute("image");
+              }
             }
           ]]>
         </body>
@@ -1416,8 +1453,9 @@
         <body><![CDATA[
           if (aThinkingState) {
             statusFeedback.showProgress(0);
-            if (typeof(aThinkingState) == "string")
+            if (typeof(aThinkingState) == "string") {
               statusFeedback.showStatusString(aThinkingState);
+            }
             gStatusBar.removeAttribute("value");
           } else {
             statusFeedback.showProgress(0);
@@ -1435,17 +1473,18 @@
             let isSelected = (iTab == this.tabContainer.selectedIndex);
 
             // if we are the current tab, update the cursor
-            if (isSelected)
+            if (isSelected) {
               this._setActiveThinkingState(aThinking);
-
+            }
             // if we are busy, hint our tab
             if (aThinking) {
               tabNode.setAttribute("thinking", "true");
             } else {
               // if we were thinking and are not selected, set the
               //  "wasThinking" attribute.
-              if (tab.thinking && !isSelected)
+              if (tab.thinking && !isSelected) {
                 tabNode.setAttribute("wasThinking", "true");
+              }
               tabNode.removeAttribute("thinking");
             }
 
@@ -1464,17 +1503,18 @@
             let isSelected = (iTab == this.tabContainer.selectedIndex);
 
             // if we are the current tab, update the cursor
-            if (isSelected)
+            if (isSelected) {
               SetBusyCursor(window, aBusy);
-
+            }
             // if we are busy, hint our tab
             if (aBusy) {
               tabNode.setAttribute("busy", "true");
             } else {
               // if we were busy and are not selected, set the
               //  "wasBusy" attribute.
-              if (tab.busy && !isSelected)
+              if (tab.busy && !isSelected) {
                 tabNode.setAttribute("wasBusy", "true");
+              }
               tabNode.removeAttribute("busy");
             }
 
@@ -1489,9 +1529,9 @@
           <![CDATA[
             // this happens when the user did not actually-click on a tab but
             // instead on the strip behind it.
-            if (aTabNode.localName != "tab")
+            if (aTabNode.localName != "tab") {
               return false;
-
+            }
             let tabContextMenu = document.getElementById("tabContextMenu");
 
             let tab = this._getTabContextForTabbyThing(aTabNode, true)[1];
@@ -1542,22 +1582,23 @@
 
             // This can happen if we're starting up and haven't got a tab
             // loaded yet.
-            if (!tab)
+            if (!tab) {
               return false;
-
+            }
             for (let tabMonitor of this.tabMonitors) {
               if ("supportsCommand" in tabMonitor) {
                 let result = tabMonitor.supportsCommand(aCommand, tab);
-                if (result !== null)
+                if (result !== null) {
                   return result;
+                }
               }
             }
 
             let supportsCommandFunc = tab.mode.supportsCommand ||
                                       tab.mode.tabType.supportsCommand;
-            if (supportsCommandFunc)
+            if (supportsCommandFunc) {
               return supportsCommandFunc.call(tab.mode.tabType, aCommand, tab);
-
+            }
             return false;
           ]]>
         </body>
@@ -1570,22 +1611,23 @@
 
             // This can happen if we're starting up and haven't got a tab
             // loaded yet.
-            if (!tab)
+            if (!tab) {
               return false;
-
+            }
             for (let tabMonitor of this.tabMonitors) {
               if ("isCommandEnabled" in tabMonitor) {
                 let result = tabMonitor.isCommandEnabled(aCommand, tab);
-                if (result !== null)
+                if (result !== null) {
                   return result;
+                }
               }
             }
 
             let isCommandEnabledFunc = tab.mode.isCommandEnabled ||
                                        tab.mode.tabType.isCommandEnabled;
-            if (isCommandEnabledFunc)
+            if (isCommandEnabledFunc) {
               return isCommandEnabledFunc.call(tab.mode.tabType, aCommand, tab);
-
+            }
             return false;
           ]]>
         </body>
@@ -1598,21 +1640,23 @@
 
             // This can happen if we're starting up and haven't got a tab
             // loaded yet.
-            if (!tab)
+            if (!tab) {
               return;
-
+            }
             for (let tabMonitor of this.tabMonitors) {
               if ("doCommand" in tabMonitor) {
                 let result = tabMonitor.doCommand(aCommand, tab);
-                if (result === true)
+                if (result === true) {
                   return;
+                }
               }
             }
 
             let doCommandFunc = tab.mode.doCommand ||
                                 tab.mode.tabType.doCommand;
-            if (doCommandFunc)
+            if (doCommandFunc) {
               doCommandFunc.call(tab.mode.tabType, aCommand, tab);
+            }
           ]]>
         </body>
       </method>
@@ -1624,14 +1668,14 @@
 
             // This can happen if we're starting up and haven't got a tab
             // loaded yet.
-            if (!tab)
+            if (!tab) {
               return null;
-
+            }
             let onEventFunc = tab.mode.onEvent ||
                               tab.mode.tabType.onEvent;
-            if (onEventFunc)
+            if (onEventFunc) {
               return onEventFunc.call(tab.mode.tabType, aEvent, tab);
-
+            }
             return false;
           ]]>
         </body>
@@ -1644,9 +1688,9 @@
             let docTitle = aTab.title ? aTab.title.trim() : "";
             let docElement = document.documentElement;
             // If the document title is blank, add the default title.
-            if (!docTitle)
+            if (!docTitle) {
               docTitle = docElement.getAttribute("defaultTabTitle");
-
+            }
             // If we're on Mac, don't display the separator and the modifier.
             if (AppConstants.platform != "macosx") {
               docTitle += docElement.getAttribute("titlemenuseparator") +
@@ -1851,18 +1895,21 @@
     <handlers>
       <handler event="mouseover">
         var anonid = event.originalTarget.getAttribute("anonid");
-        if (anonid == "close-button")
+        if (anonid == "close-button") {
           this.mOverCloseButton = true;
+        }
       </handler>
       <handler event="mouseout">
         var anonid = event.originalTarget.getAttribute("anonid");
-        if (anonid == "close-button")
+        if (anonid == "close-button") {
           this.mOverCloseButton = false;
+        }
       </handler>
       <handler event="mousedown" button="0" phase="capturing">
       <![CDATA[
-        if (this.mOverCloseButton)
+        if (this.mOverCloseButton) {
           event.stopPropagation();
+        }
       ]]>
       </handler>
     </handlers>
@@ -1915,8 +1962,9 @@
     <handlers>
       <handler event="underflow"><![CDATA[
         // filter underflow events which were dispatched on nested scrollboxes
-        if (event.target != this)
+        if (event.target != this) {
           return;
+        }
 
         // Ignore vertical events.
         if (event.detail == 0) {
@@ -1930,9 +1978,9 @@
 
       <handler event="overflow"><![CDATA[
         // filter underflow events which were dispatched on nested scrollboxes
-        if (event.target != this)
+        if (event.target != this) {
           return;
-
+        }
         // Ignore vertical events.
         if (event.detail == 0) {
           return;
@@ -1945,9 +1993,9 @@
 
       <handler event="UpdatedScrollButtonsDisabledState"><![CDATA[
         // filter underflow events which were dispatched on nested scrollboxes
-        if (event.target != this)
+        if (event.target != this) {
           return;
-
+        }
         // fix for bug #352353
         // unlike the scrollup button on the tab strip (which is a
         // simple toolbarbutton) the scrolldown button is
@@ -2001,9 +2049,9 @@
           this.mCloseButtons = Services.prefs.getIntPref("mail.tabs.closeButtons");
           this.mAutoHide = Services.prefs.getBoolPref("mail.tabs.autoHide");
 
-          if (this.mAutoHide)
+          if (this.mAutoHide) {
             this.mCollapseToolbar.collapsed = true;
-
+          }
           this.firstChild.minWidth = this.mTabMinWidth;
           this.firstChild.maxWidth = this.mTabMaxWidth;
           this._updateCloseButtons();
@@ -2106,8 +2154,9 @@
       <property name="mAutoHide" onget="return this._mAutoHide;">
         <setter><![CDATA[
           if (val != this._mAutoHide) {
-            if (this.childNodes.length == 1)
+            if (this.childNodes.length == 1) {
               this.mCollapseToolbar.collapsed = val;
+            }
             this._mAutoHide = val;
           }
           return val;
@@ -2155,10 +2204,11 @@
             var width = this.firstChild.getBoundingClientRect().width;
             // 0 width is an invalid value and indicates
             // an item without display, so ignore.
-            if (width > this.mTabClipWidth || width == 0)
+            if (width > this.mTabClipWidth || width == 0) {
               this.setAttribute("closebuttons", "alltabs");
-            else
+            } else {
               this.setAttribute("closebuttons", "activetab");
+            }
             break;
           case 2:
           case 3:
@@ -2231,9 +2281,9 @@
       <method name="_stopAnimation">
         <body><![CDATA[
           if (this._animateStep != -1) {
-            if (this._animateTimer)
+            if (this._animateTimer) {
               this._animateTimer.cancel();
-
+            }
             this._animateStep = -1;
             this.mAllTabsBoxAnimate.style.opacity = 0.0;
             this.mDownBoxAnimate.style.opacity = 0.0;
@@ -2256,13 +2306,13 @@
           if (tsboStart > ctboStart || ctboEnd > tsboEnd) {
             this._animateStep = 0;
 
-            if (!this._animateTimer)
+            if (!this._animateTimer) {
               this._animateTimer =
                 Cc["@mozilla.org/timer;1"]
                   .createInstance(Ci.nsITimer);
-            else
+            } else {
                this._animateTimer.cancel();
-
+            }
             this._animateTimer.initWithCallback(this,
                          this._animateDelay,
                          Ci.nsITimer.TYPE_REPEATING_SLACK);
@@ -2273,17 +2323,18 @@
       <method name="notify">
         <parameter name="aTimer"/>
         <body><![CDATA[
-          if (!document)
+          if (!document) {
             aTimer.cancel();
-
+          }
           var percent = this._animatePercents[this._animateStep];
           this.mAllTabsBoxAnimate.style.opacity = percent;
           this.mDownBoxAnimate.style.opacity = percent;
 
-          if (this._animateStep < (this._animatePercents.length - 1))
+          if (this._animateStep < (this._animatePercents.length - 1)) {
             this._animateStep++;
-          else
+          } else {
             this._stopAnimation();
+          }
         ]]></body>
       </method>
 
@@ -2291,24 +2342,25 @@
         <parameter name="event"/>
         <body><![CDATA[
 
-          if (event.target.localName != "tab")
+          if (event.target.localName != "tab") {
             return null;
+          }
 
           let tab = event.target;
 
-          if (!tab)
+          if (!tab) {
             return null;
-
-          if ((event.type != "drop") && (event.type != "dragover"))
+          }
+          if ((event.type != "drop") && (event.type != "dragover")) {
             return tab;
-
+          }
           let tabRect = tab.getBoundingClientRect();
-          if (event.screenX < tab.screenX + tabRect.width * .25)
+          if (event.screenX < tab.screenX + tabRect.width * .25) {
             return null;
-
-          if (event.screenX > tab.screenX + tabRect.width * .75)
+          }
+          if (event.screenX > tab.screenX + tabRect.width * .75) {
             return null;
-
+          }
           return tab;
         ]]></body>
       </method>
@@ -2320,16 +2372,20 @@
           let tabs = this.childNodes;
 
           if (window.getComputedStyle(this).direction == "ltr") {
-            for (let i = 0; i < tabs.length; i++)
-              if (event.screenX < (tabs[i].screenX + (tabs[i].getBoundingClientRect().width / 2)))
+            for (let i = 0; i < tabs.length; i++) {
+              if (event.screenX < (tabs[i].screenX + (tabs[i].getBoundingClientRect().width / 2))) {
                 return i;
+              }
+            }
           } else {
-            for (let i = 0; i < tabs.length; i++)
-              if (event.screenX > (tabs[i].screenX + (tabs[i].getBoundingClientRect().width / 2)))
+            for (let i = 0; i < tabs.length; i++) {
+              if (event.screenX > (tabs[i].screenX + (tabs[i].getBoundingClientRect().width / 2))) {
                 return i;
+              }
+            }
           }
 
-           return tabs.length;
+          return tabs.length;
         ]]></body>
       </method>
     </implementation>
@@ -2338,8 +2394,9 @@
           this._handleTabSelect();
 
           if (!("updateCurrentTab" in this.tabmail) ||
-              event.target.localName != "tabs")
+              event.target.localName != "tabs") {
             return;
+          }
 
           this.tabmail.updateCurrentTab();
       ]]></handler>
@@ -2347,14 +2404,14 @@
       <handler event="dragstart"><![CDATA[
         let draggedTab = this._getDragTargetTab(event);
 
-        if (!draggedTab)
+        if (!draggedTab) {
           return;
-
+        }
         let tab = this.tabmail.selectedTab;
 
-        if (!tab || !tab.canClose)
+        if (!tab || !tab.canClose) {
           return;
-
+        }
 
         let dt = event.dataTransfer;
 
@@ -2371,8 +2428,9 @@
         // moved such tabs to a new window. However moving them within the same
         // window works perfectly fine
 
-        if (uri)
+        if (uri) {
           uri = JSON.stringify(uri);
+        }
 
         dt.mozSetDataAt("application/x-moz-tabmail-json", uri, 0);
 
@@ -2407,9 +2465,9 @@
       <handler event="dragover"><![CDATA[
         let dt = event.dataTransfer;
 
-        if (dt.mozItemCount == 0)
+        if (dt.mozItemCount == 0) {
           return;
-
+        }
         if (dt.mozGetDataAt("text/toolbarwrapper-id/messengerWindow", 0)
             != null) {
           event.preventDefault();
@@ -2421,11 +2479,11 @@
                             false, false, false, false, 0, null,
                             event.dataTransfer);
 
-          if (this.mToolbar.firstChild)
+          if (this.mToolbar.firstChild) {
             this.mToolbar.firstChild.dispatchEvent(evt);
-          else
+          } else {
             this.mToolbar.dispatchEvent(evt);
-
+          }
           return;
         }
 
@@ -2436,9 +2494,9 @@
             && (dt.mozTypesAt(0)[1] != "application/x-moz-tabmail-json")) {
           let tab = this._getDragTargetTab(event);
 
-          if (!tab)
+          if (!tab) {
             return;
-
+          }
           event.preventDefault();
           event.stopPropagation();
 
@@ -2447,12 +2505,12 @@
             return;
           }
 
-          if (Date.now() <= this._dragTime + this._dragOverDelay)
+          if (Date.now() <= this._dragTime + this._dragOverDelay) {
             return;
-
-          if (this.tabmail.tabContainer.selectedItem == tab)
+          }
+          if (this.tabmail.tabContainer.selectedItem == tab) {
             return;
-
+          }
           this.tabmail.tabContainer.selectedItem = tab;
 
           return;
@@ -2464,11 +2522,12 @@
         if (!dt.mozGetDataAt("application/x-moz-tabmail-json", 0)) {
           let draggedTab = dt.mozGetDataAt("application/x-moz-tabmail-tab", 0);
 
-          if (!draggedTab)
+          if (!draggedTab) {
             return;
-
-          if (this.tabmail.tabContainer.getIndexOfItem(draggedTab) == -1)
+          }
+          if (this.tabmail.tabContainer.getIndexOfItem(draggedTab) == -1) {
             return;
+          }
         }
 
         dt.effectAllowed = "copyMove";
@@ -2485,15 +2544,16 @@
 
           let pixelsToScroll = 0;
 
-          if (target == "scrollbutton-up")
+          if (target == "scrollbutton-up") {
             pixelsToScroll = this.arrowScrollbox.scrollIncrement;
+          }
 
-          if (target == "scrollbutton-down")
+          if (target == "scrollbutton-down") {
             pixelsToScroll = this.arrowScrollbox.scrollIncrement * -1;
-
-          if (ltr)
+          }
+          if (ltr) {
             pixelsToScroll = pixelsToScroll * -1;
-
+          }
           if (pixelsToScroll) {
             // Hide Indicator while Scrolling
             ind.collapsed = true;
@@ -2507,8 +2567,9 @@
         // fix the DropIndex in case it points to tab that can't be closed
         let tabInfo = this.tabmail.tabInfo;
 
-        while ((newIndex < tabInfo.length) && !(tabInfo[newIndex].canClose))
+        while ((newIndex < tabInfo.length) && !(tabInfo[newIndex].canClose)) {
           newIndex++;
+        }
 
 
         var scrollRect = this.arrowScrollbox.scrollClientRect;
@@ -2516,42 +2577,44 @@
         var minMargin = scrollRect.left - rect.left;
         var maxMargin = Math.min(minMargin + scrollRect.width, scrollRect.right);
 
-        if (!ltr)
+        if (!ltr) {
           [minMargin, maxMargin] = [this.clientWidth - maxMargin, this.clientWidth - minMargin];
-
+        }
         var newMargin;
 
         if (newIndex == this.childNodes.length) {
           let tabRect = this.childNodes[newIndex - 1].getBoundingClientRect();
 
-          if (ltr)
+          if (ltr) {
             newMargin = tabRect.right - rect.left;
-          else
+          } else {
             newMargin = rect.right - tabRect.left;
+          }
         } else {
           let tabRect = this.childNodes[newIndex].getBoundingClientRect();
 
-          if (ltr)
+          if (ltr) {
             newMargin = tabRect.left - rect.left;
-          else
+          } else {
             newMargin = rect.right - tabRect.right;
+          }
         }
 
         ind.collapsed = false;
 
         newMargin += ind.clientWidth / 2;
-        if (!ltr)
+        if (!ltr) {
           newMargin *= -1;
-
+        }
         ind.style.transform = "translate(" + Math.round(newMargin) + "px)";
         ind.style.marginInlineStart = (-ind.clientWidth) + "px";
       ]]></handler>
       <handler event="drop"><![CDATA[
         let dt = event.dataTransfer;
 
-        if (dt.mozItemCount != 1)
+        if (dt.mozItemCount != 1) {
           return;
-
+        }
 
         /* If we're dragging a toolbar button, let's prepend the tabs toolbar
          * with that button, and then bail out.
@@ -2567,20 +2630,20 @@
                             false, false, false, false, 0, null,
                             event.dataTransfer);
 
-          if (this.mToolbar.firstChild)
+          if (this.mToolbar.firstChild) {
             this.mToolbar.firstChild.dispatchEvent(evt);
-          else
+          } else {
             this.mToolbar.dispatchEvent(evt);
-
+          }
           return;
         }
 
 
         let draggedTab = dt.mozGetDataAt("application/x-moz-tabmail-tab", 0);
 
-        if (!draggedTab)
+        if (!draggedTab) {
           return;
-
+        }
         event.stopPropagation();
         this._tabDropIndicator.collapsed = true;
 
@@ -2590,13 +2653,13 @@
           // restore to get our tab
 
           let tabmail2 = draggedTab.ownerDocument.getElementById("tabmail");
-          if (!tabmail2)
+          if (!tabmail2) {
             return;
-
+          }
           let draggedJson = dt.mozGetDataAt("application/x-moz-tabmail-json", 0);
-          if (!draggedJson)
+          if (!draggedJson) {
             return;
-
+          }
           draggedJson = JSON.parse(draggedJson);
 
           // Some tab exist only once, so we have to gamble a bit. We close
@@ -2604,9 +2667,9 @@
 
           tabmail2.closeTab(draggedTab, true);
 
-          if (!this.tabmail.restoreTab(draggedJson))
+          if (!this.tabmail.restoreTab(draggedJson)) {
             return;
-
+          }
           draggedTab = this.tabmail.tabContainer.childNodes[
             this.tabmail.tabContainer.childNodes.length - 1];
         }
@@ -2615,8 +2678,9 @@
 
         // fix the DropIndex in case it points to tab that can't be closed
         let tabInfo = this.tabmail.tabInfo;
-        while ((idx < tabInfo.length) && !(tabInfo[idx].canClose))
+        while ((idx < tabInfo.length) && !(tabInfo[idx].canClose)) {
           idx++;
+        }
 
         this.tabmail.moveTabTo(draggedTab, idx);
 
@@ -2632,9 +2696,9 @@
 
         // the user pressed ESC to cancel the drag, or the drag succeeded
         var dt = event.dataTransfer;
-        if ((dt.mozUserCancelled) || (dt.dropEffect != "none"))
+        if ((dt.mozUserCancelled) || (dt.dropEffect != "none")) {
           return;
-
+        }
         // Disable detach within the browser toolbox
         var eX = event.screenX;
         var wX = window.screenX;
@@ -2647,19 +2711,20 @@
           let endScreenY = bo.screenY + 1.5 * bo.getBoundingClientRect().height;
           let eY = event.screenY;
 
-          if (eY < endScreenY && eY > window.screenY)
+          if (eY < endScreenY && eY > window.screenY) {
             return;
+          }
         }
 
         // user wants to deatach tab from window...
-        if (dt.mozItemCount != 1)
+        if (dt.mozItemCount != 1) {
           return;
-
+        }
         let draggedTab = dt.mozGetDataAt("application/x-moz-tabmail-tab", 0);
 
-        if (!draggedTab)
+        if (!draggedTab) {
           return;
-
+        }
         this.tabmail.replaceTabWithWindow(draggedTab);
 
       ]]></handler>
@@ -2701,8 +2766,9 @@
         this._mutationObserver = new MutationObserver(function(aRecords, aObserver) {
           aRecords.forEach(function(mutation) {
             let menuItem = mutation.target.mCorrespondingMenuitem;
-            if (menuItem)
+            if (menuItem) {
               tabmailalltabspopup._setMenuitemAttributes(menuItem, mutation.target);
+            }
           });
         });
 
@@ -2721,16 +2787,18 @@
         <parameter name="aEvent"/>
         <body><![CDATA[
           var menuItem = aEvent.target.mCorrespondingMenuitem;
-          if (menuItem)
+          if (menuItem) {
             menuItem.remove();
+          }
         ]]></body>
       </method>
 
       <method name="handleEvent">
         <parameter name="aEvent"/>
         <body><![CDATA[
-          if (!aEvent.isTrusted)
+          if (!aEvent.isTrusted) {
             return;
+          }
 
           switch (aEvent.type) {
             case "command":
@@ -2753,17 +2821,19 @@
         <body><![CDATA[
           var tabContainer = document.getElementById("tabmail").tabContainer;
           // We don't want menu item decoration unless there is overflow.
-          if (tabContainer.getAttribute("overflow") != "true")
+          if (tabContainer.getAttribute("overflow") != "true") {
             return;
+          }
 
           var tabstripBO = tabContainer.arrowScrollbox;
           for (var i = 0; i < this.childNodes.length; i++) {
             var curTabBO = this.childNodes[i].tab;
             if (curTabBO.screenX >= tabstripBO.screenX &&
-                curTabBO.screenX + curTabBO.getBoundingClientRect().width <= tabstripBO.screenX + tabstripBO.getBoundingClientRect().width)
+                curTabBO.screenX + curTabBO.getBoundingClientRect().width <= tabstripBO.screenX + tabstripBO.getBoundingClientRect().width) {
               this.childNodes[i].setAttribute("tabIsVisible", "true");
-            else
+            } else {
               this.childNodes[i].removeAttribute("tabIsVisible");
+            }
           }
         ]]></body>
       </method>
@@ -2811,15 +2881,17 @@
           aMenuitem.style.listStyleImage = style.listStyleImage;
           aMenuitem.style.MozImageRegion = style.MozImageRegion;
 
-          if (aTab.hasAttribute("pending"))
+          if (aTab.hasAttribute("pending")) {
             aMenuitem.setAttribute("pending", aTab.getAttribute("pending"));
-          else
+          } else {
             aMenuitem.removeAttribute("pending");
+          }
 
-          if (aTab.selected)
+          if (aTab.selected) {
             aMenuitem.setAttribute("selected", "true");
-          else
+          } else {
             aMenuitem.removeAttribute("selected");
+          }
         ]]></body>
       </method>
     </implementation>
@@ -2882,9 +2954,9 @@
     <handlers>
       <handler event="click" button="0"><![CDATA[
         let bindingParent = document.getBindingParent(this);
-        if (!bindingParent)
+        if (!bindingParent) {
           return;
-
+        }
         let tabbedBrowser = document.getElementById("tabmail");
         if (bindingParent.localName == "tab") {
           /* The only sequence in which a second click event (i.e. dblclik)
@@ -2898,9 +2970,9 @@
            * In both cases, it is most likely that the close button area has
            * been accidentally clicked, therefore we do not close the tab.
            */
-          if (event.detail > 1)
+          if (event.detail > 1) {
             return;
-
+          }
           tabbedBrowser.removeTabByNode(bindingParent);
           tabbedBrowser._blockDblClick = true;
           let tabContainer = tabbedBrowser.tabContainer;
@@ -2916,8 +2988,9 @@
           let clickedOnce = false;
           let enableDblClick = function enableDblClick(event) {
             let target = event.originalTarget;
-            if (target.className == "tab-close-button")
+            if (target.className == "tab-close-button") {
               target._ignoredClick = true;
+            }
             if (!clickedOnce) {
               clickedOnce = true;
               return;

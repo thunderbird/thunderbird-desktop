@@ -90,9 +90,9 @@
      <method name="destroy">
        <body>
          <![CDATA[
-           if (this._conv)
+           if (this._conv) {
              this._forgetConv();
-
+           }
            if ("MessageFormat" in window) {
              let textbox = this.editor;
              const {MessageFormat} = ChromeUtils.import("resource:///modules/imTextboxUtils.jsm");
@@ -132,8 +132,9 @@
         this.loaded = true;
         let messages = this._conv.getMessages();
         this._readCount = messages.length - this._conv.unreadMessageCount;
-        if (this._readCount)
+        if (this._readCount) {
           this._writingContextMessages = true;
+        }
         messages.forEach(this.addMsg.bind(this));
         delete this._writingContextMessages;
       ]]>
@@ -147,10 +148,11 @@
          let convStatusContainer = this.getElt("convStatusContainer");
          let convStatus = this.getElt("convStatus");
          convStatus.value = this._statusText;
-         if (this._statusText.length)
+         if (this._statusText.length) {
            convStatusContainer.removeAttribute("hidden");
-         else
+         } else {
            convStatusContainer.setAttribute("hidden", "true");
+         }
        ]]>
        </body>
      </method>
@@ -159,9 +161,9 @@
       <parameter name="aMsg"/>
       <body>
       <![CDATA[
-        if (!this.loaded)
+        if (!this.loaded) {
           throw new Error("Calling addMsg before the browser is ready?");
-
+        }
         var conv = aMsg.conversation;
         if (!conv) {
           // The conversation has already been destroyed,
@@ -198,13 +200,14 @@
         // Since the unread flag won't be set if the tab is focused,
         // we need the following when showing the first messages to stop
         // firstUnread being set for subsequent messages.
-        if (firstUnread)
+        if (firstUnread) {
           delete this._writingContextMessages;
+        }
 
         this.browser.appendMessage(aMsg, read, firstUnread);
-        if (!aMsg.system)
+        if (!aMsg.system) {
           this._isAfterFirstRealMessage = true;
-
+        }
         if (read) {
           --this._readCount;
           if (!this._readCount && !this._isAfterFirstRealMessage) {
@@ -228,8 +231,9 @@
         }
 
         if (shouldSetUnreadFlag) {
-          if (conv.isChat && aMsg.containsNick)
+          if (conv.isChat && aMsg.containsNick) {
             this.tab.setAttribute("attention", "true");
+          }
           this.tab.setAttribute("unread", "true");
         }
       ]]>
@@ -240,9 +244,9 @@
       <parameter name="aMsg"/>
       <body>
       <![CDATA[
-        if (!aMsg)
+        if (!aMsg) {
           return;
-
+        }
         let account = this._conv.account;
 
         if (aMsg.startsWith("/")) {
@@ -260,8 +264,9 @@
                                                  convToFocus)) {
             this._conv.sendTyping("");
             this.resetInput();
-            if (convToFocus.value)
+            if (convToFocus.value) {
               chatHandler.focusConversation(convToFocus.value);
+            }
             return;
           } else if (account.protocol.slashCommandsNative && account.connected) {
             let cmd = aMsg.match(/^\/[^ ]+/);
@@ -284,49 +289,59 @@
             let style = MessageFormat.getMessageStyle();
             let proto = this._conv.account.protocol.id;
             if (proto == "prpl-msn") {
-              if ("color" in style)
+              if ("color" in style) {
                 msg = "<font color=\"" + style.color + "\">" + msg + "</font>";
-              if ("fontFamily" in style)
+              }
+              if ("fontFamily" in style) {
                 msg = "<font face=\"" + style.fontFamily + "\">" + msg + "</font>";
+              }
               // MSN doesn't support font size info in messages...
             } else if (proto == "prpl-aim" || proto == "prpl-icq") {
               let styleAttributes = "";
-              if ("color" in style)
+              if ("color" in style) {
                 styleAttributes += " color=\"" + style.color + "\"";
-              if ("fontFamily" in style)
+              }
+              if ("fontFamily" in style) {
                 styleAttributes += " face=\"" + style.fontFamily + "\"";
+              }
               if ("fontSize" in style) {
                 let size = style.fontSize - style.defaultFontSize;
-                if (size < -4)
+                if (size < -4) {
                   size = 1;
-                else if (size < 0)
+                } else if (size < 0) {
                   size = 2;
-                else if (size < 3)
+                } else if (size < 3) {
                   size = 3;
-                else if (size < 7)
+                } else if (size < 7) {
                   size = 4;
-                else if (size < 15)
+                } else if (size < 15) {
                   size = 5;
-                else if (size < 25)
+                } else if (size < 25) {
                   size = 6;
-                else
+                } else {
                   size = 7;
+                }
                 styleAttributes += " size=\"" + size + "\""
                                  + " style=\"font-size: " + style.fontSize + "px;\"";
               }
-              if (styleAttributes)
+              if (styleAttributes) {
                 msg = "<font" + styleAttributes + ">" + msg + "</font>";
+              }
             } else {
               let styleProperties = [];
-              if ("color" in style)
+              if ("color" in style) {
                 styleProperties.push("color: " + style.color);
-              if ("fontFamily" in style)
+              }
+              if ("fontFamily" in style) {
                 styleProperties.push("font-family: " + style.fontFamily);
-              if ("fontSize" in style)
+              }
+              if ("fontSize" in style) {
                 styleProperties.push("font-size: " + style.fontSize + "px");
+              }
               style = styleProperties.join("; ");
-              if (style)
+              if (style) {
                 msg = "<span style=\"" + style + "\">" + msg + "</span>";
+              }
             }
           }
           this._conv.sendMsg(msg);
@@ -388,16 +403,17 @@
         // Calculate the number of lines to display.
         let numberOfLines =
           Math.round(totalSpace * this._TEXTBOX_RATIO / lineHeight);
-        if (numberOfLines <= 0)
+        if (numberOfLines <= 0) {
           numberOfLines = 1;
-
+        }
         if (!this._maxEmptyLines) {
           this._maxEmptyLines =
             Services.prefs.getIntPref("messenger.conversations.textbox.defaultMaxLines");
         }
 
-        if (numberOfLines > this._maxEmptyLines)
+        if (numberOfLines > this._maxEmptyLines) {
           numberOfLines = this._maxEmptyLines;
+        }
         textbox.defaultHeight = numberOfLines * lineHeight;
 
         // set minimum height (in case the user moves the splitter)
@@ -503,8 +519,9 @@
               let preceding = text.substring(0, pos - suffix.length).split(", ");
               if (preceding.every(n => completions.includes(n))) {
                 let s = preceding.pop();
-                if (preceding.length)
+                if (preceding.length) {
                   s = suffix + s;
+                }
                 inputBox.selectionStart -= s.length + suffix.length;
                 this.addString(s);
                 if (this._completions[0].slice(-suffix.length) == suffix) {
@@ -539,8 +556,9 @@
 
           if (this._completions) {
             // Tab has been pressed more than once.
-            if (this._completions.length == 1)
+            if (this._completions.length == 1) {
               return;
+            }
             if (this._shouldListCompletionsLater) {
               this._conv.systemMessage(this._shouldListCompletionsLater);
               delete this._shouldListCompletionsLater;
@@ -550,8 +568,9 @@
             if (event.shiftKey) {
               // Reverse cycle completions.
               this._completionsIndex -= 2;
-              if (this._completionsIndex < 0)
+              if (this._completionsIndex < 0) {
                 this._completionsIndex += this._completions.length;
+              }
             }
             this.addString(this._completions[this._completionsIndex++]);
             this._completionsIndex %= this._completions.length;
@@ -566,8 +585,9 @@
           this._beforeTabComplete = text.substring(0, inputBox.selectionStart);
           let words = this._beforeTabComplete.match(/\S*?([\w-]+)?$/);
           let word = words[0];
-          if (!word)
+          if (!word) {
             return;
+          }
           let isFirstWord = inputBox.selectionStart == word.length;
 
           // Check if we are completing a command.
@@ -577,14 +597,15 @@
               // It's possible to have a global and a protocol specific command
               // with the same name. Avoid duplicates in the |completions| array.
               let name = "/" + cmd.name;
-              if (!completions.includes(name))
+              if (!completions.includes(name)) {
                 completions.push(name);
+              }
             }
           } else {
             // If it's not a command, the only thing we can complete is a nick.
-            if (!this._conv.isChat)
+            if (!this._conv.isChat) {
               return;
-
+            }
             firstWordSuffix = ": ";
 
             completions = Array.from(this.buddies.keys());
@@ -599,8 +620,9 @@
                    this.partedBuddies[partedNicks[j]].partTime > cutoffTime)
               --j;
             ++j; // Index of the first nick we want to keep.
-            if (partedNicks.length > j)
+            if (partedNicks.length > j) {
               completions = completions.concat(partedNicks.slice(j));
+            }
 */
 
             let outgoingNick = this._conv.nick;
@@ -626,19 +648,20 @@
           // Keep only the completions that share |word| as a prefix.
           // Be case insensitive only if |word| is entirely lower case.
           let condition;
-          if (word.toLocaleLowerCase() == word)
+          if (word.toLocaleLowerCase() == word) {
             condition = c => c.toLocaleLowerCase().startsWith(word);
-          else
+          } else {
             condition = c => c.startsWith(word);
+          }
           let matchingCompletions = completions.filter(condition);
           if (!matchingCompletions.length && words[1]) {
             word = words[1];
             firstWordSuffix = " ";
             matchingCompletions = completions.filter(condition);
           }
-          if (!matchingCompletions.length)
+          if (!matchingCompletions.length) {
             return;
-
+          }
           // If the cursor is in the middle of a word, and the word is a nick,
           // there is no need to complete - just jump to the end of the nick.
           let wholeWord = text.substring(inputBox.selectionStart - word.length);
@@ -676,8 +699,9 @@
             let activeCompletions = this._completions.filter(c =>
               this.buddies.has(c) &&
               !this.buddies.get(c).hasAttribute("inactive"));
-            if (activeCompletions.length == 1)
+            if (activeCompletions.length == 1) {
               preferredNick = true;
+            }
             if (activeCompletions.length) {
               // Move active nicks to the front of the queue.
               activeCompletions.reverse();
@@ -723,8 +747,9 @@
             // We have several possible completions, attempt to find a common prefix.
             let maxLength = Math.min(firstCompletion.length, lastCompletion.length);
             let i = 0;
-            while (i < maxLength && firstCompletion[i] == lastCompletion[i])
+            while (i < maxLength && firstCompletion[i] == lastCompletion[i]) {
               ++i;
+            }
 
             if (i) {
               completion = firstCompletion.substring(0, i);
@@ -751,8 +776,9 @@
           delete this._completions;
         }
 
-        if (event.keyCode != 13)
+        if (event.keyCode != 13) {
           return;
+        }
 
         if (!event.ctrlKey && !event.shiftKey && !event.altKey) {
           // Prevent the default action before calling sendMsg to avoid having
@@ -774,8 +800,9 @@
          // a row if the user is on a slow or overloaded machine that has
          // trouble to handle keystrokes in a timely fashion.
          // Make sure only one typing notification call can be pending.
-         if (this._pendingValueChangedCall)
+         if (this._pendingValueChangedCall) {
            return;
+         }
 
          this._pendingValueChangedCall = true;
          Services.tm.mainThread.dispatch(this.delayedInputValueChanged.bind(this),
@@ -791,8 +818,9 @@
 
          // By the time this function is executed, the conversation may have
          // been closed.
-         if (!this._conv)
+         if (!this._conv) {
            return;
+         }
 
          let inputBox = this.editor;
          let text = inputBox.value;
@@ -802,10 +830,11 @@
          // These checks are not perfect (especially if non-existing
          // commands are sent as regular messages on the in-use prpl).
          let left = Ci.prplIConversation.NO_TYPING_LIMIT;
-         if (!text.startsWith("/"))
+         if (!text.startsWith("/")) {
            left = this._conv.sendTyping(text);
-         else if (/^\/me /.test(text))
+         } else if (/^\/me /.test(text)) {
            left = this._conv.sendTyping(text.slice(4));
+         }
 
          // When the input box is cleared or there is no character limit,
          // don't show the character limit.
@@ -817,10 +846,11 @@
            // 200 is a 'magic' constant to avoid showing big numbers.
            charCounter.setAttribute("value", (left < 200 ? left : ""));
 
-           if (left >= 0)
+           if (left >= 0) {
              inputBox.removeAttribute("invalidInput");
-           else if (left < 0)
+           } else if (left < 0) {
              inputBox.setAttribute("invalidInput", "true");
+           }
          }
        ]]>
        </body>
@@ -841,8 +871,9 @@
         const {TextboxSize} = ChromeUtils.import("resource:///modules/imTextboxUtils.jsm");
         if (TextboxSize.autoResize) {
           let currHeight = parseInt(inputBox.parentNode.height);
-          if (inputBox.defaultHeight + this._TEXTBOX_VERTICAL_OVERHEAD > currHeight)
+          if (inputBox.defaultHeight + this._TEXTBOX_VERTICAL_OVERHEAD > currHeight) {
             inputBox.defaultHeight = currHeight - this._TEXTBOX_VERTICAL_OVERHEAD;
+          }
           this.getElt("conv-bottom").height =
             inputBox.defaultHeight + this._TEXTBOX_VERTICAL_OVERHEAD;
           overflow = "hidden";
@@ -919,8 +950,9 @@
           }
         }
         const {TextboxSize} = ChromeUtils.import("resource:///modules/imTextboxUtils.jsm");
-        if (TextboxSize.autoResize)
+        if (TextboxSize.autoResize) {
           this.inputExpand();
+        }
       ]]>
       </body>
      </method>
@@ -930,8 +962,9 @@
       <body>
       <![CDATA[
         const {TextboxSize} = ChromeUtils.import("resource:///modules/imTextboxUtils.jsm");
-        if (TextboxSize.autoResize)
+        if (TextboxSize.autoResize) {
           this.style.overflowY = "hidden";
+        }
       ]]>
       </body>
      </method>
@@ -944,14 +977,16 @@
 
         // 118 is the decimal code for "v" character, 13 keyCode for "return" key
         if (((accelKeyPressed && event.charCode != 118) || event.altKey) &&
-            event.keyCode != 13)
+            event.keyCode != 13) {
           return;
+        }
 
         if (event.charCode == 0 &&  // it's not a character, it's a command key
             (event.keyCode != 13 && // Return
              event.keyCode != 8 &&  // Backspace
-             event.keyCode != 46))  // Delete
+             event.keyCode != 46)) { // Delete
           return;
+        }
 
         if (accelKeyPressed ||
             !Services.prefs.getBoolPref("accessibility.typeaheadfind")) {
@@ -966,9 +1001,9 @@
         }
 
         // Returns for Ctrl+V
-        if (accelKeyPressed)
+        if (accelKeyPressed) {
           return;
-
+        }
         // resend the event
         let clonedEvent = new KeyboardEvent("keypress", event);
         this.editor.dispatchEvent(clonedEvent);
@@ -980,8 +1015,9 @@
      <parameter name="event"/>
       <body>
       <![CDATA[
-        if (!Services.prefs.getBoolPref("messenger.conversations.doubleClickToReply"))
+        if (!Services.prefs.getBoolPref("messenger.conversations.doubleClickToReply")) {
           return;
+        }
 
         for (let node = event.target; node; node = node.parentNode) {
           if (node._originalMsg) {
@@ -992,8 +1028,9 @@
               return;
             }
             if (msg.system || msg.outgoing || !msg.incoming || msg.error ||
-                !this._conv.isChat)
+                !this._conv.isChat) {
               return;
+            }
             this.addPrompt(msg.who + ": ");
             return;
           }
@@ -1028,8 +1065,9 @@
        <![CDATA[
          let editor = this.editor;
          let currentEditorValue = editor.value;
-         if (!currentEditorValue.startsWith(aPrompt))
+         if (!currentEditorValue.startsWith(aPrompt)) {
            editor.value = aPrompt + currentEditorValue;
+         }
          editor.focus();
          this.inputValueChanged();
        ]]>
@@ -1053,19 +1091,21 @@
          var buddy = aItem.chatBuddy;
          var image;
          if (!buddy.noFlags) {
-           if (buddy.op)
+           if (buddy.op) {
              image = "operator";
-           else if (buddy.halfOp)
+           } else if (buddy.halfOp) {
              image = "half-operator";
-           else if (buddy.voiced)
+           } else if (buddy.voiced) {
              image = "voice";
-           else if (buddy.founder)
+           } else if (buddy.founder) {
              image = "founder";
+           }
          }
-         if (image)
+         if (image) {
            aItem.firstChild.setAttribute("src", "chrome://messenger/skin/" + image + ".png");
-         else
+         } else {
            aItem.firstChild.removeAttribute("src");
+         }
        ]]>
        </body>
      </method>
@@ -1089,8 +1129,9 @@
          var res = 0;
          for (var i = 0; i < nick.length; ++i) {
            var char = nick.charCodeAt(i) - 47;
-           if (char > 10)
+           if (char > 10) {
              char -= 39;
+           }
            // now char contains a value between 1 and 36
            res += char * weight;
            weight *= kWeightReductionPerChar;
@@ -1115,10 +1156,12 @@
        <body>
        <![CDATA[
          var name = aBuddy.name;
-         if (!name)
+         if (!name) {
            throw new Error("The empty string isn't a valid nick.");
-         if (this.buddies.has(name))
+         }
+         if (this.buddies.has(name)) {
            throw new Error("Adding chat buddy " + name + " twice?!");
+         }
 
          this.trackNick(name);
 
@@ -1140,8 +1183,9 @@
          item.colorStyle = style;
          item.setAttribute("style", style);
          item.setAttribute("align", "center");
-         if (!this._isBuddyActive(name))
+         if (!this._isBuddyActive(name)) {
            item.setAttribute("inactive", "true");
+         }
          item.color = color;
          this.buddies.set(name, item);
 
@@ -1167,17 +1211,19 @@
            // .label since the XBL binding might not be attached yet.
            if (nick < nicklist.getItemAtIndex(middle)
                               .firstChild.nextSibling
-                              .getAttribute("value").toLowerCase())
+                              .getAttribute("value").toLowerCase()) {
              end = middle;
-           else
+           } else {
              start = middle + 1;
+           }
          }
 
          // Now insert the element
-         if (end == nicklist.itemCount)
+         if (end == nicklist.itemCount) {
            nicklist.appendChild(aListItem);
-         else
+         } else {
            nicklist.insertBefore(aListItem, nicklist.getItemAtIndex(end));
+         }
        ]]>
        </body>
      </method>
@@ -1189,8 +1235,9 @@
        <body>
        <![CDATA[
          var name = aBuddy.name;
-         if (!name)
+         if (!name) {
            throw new Error("The empty string isn't a valid nick.");
+         }
 
          if (!aOldName) {
            // If aOldName is null, we are changing the flags of the buddy
@@ -1207,15 +1254,18 @@
 
          this.trackNick(name);
 
-         if (!this._isConversationSelected)
+         if (!this._isConversationSelected) {
            return;
+         }
 
          // Is aOldName is not null, then we are renaming the buddy
-         if (!this.buddies.has(aOldName))
+         if (!this.buddies.has(aOldName)) {
            throw new Error("Updating a chat buddy that does not exist: " + aOldName);
+         }
 
-         if (this.buddies.has(name))
+         if (this.buddies.has(name)) {
            throw new Error("Updating a chat buddy to an already existing one: " + name);
+         }
 
          let item = this.buddies.get(aOldName);
          item.chatBuddy = aBuddy;
@@ -1234,12 +1284,14 @@
        <parameter name="aName"/>
        <body>
        <![CDATA[
-         if (!this.buddies.has(aName))
+         if (!this.buddies.has(aName)) {
            throw new Error("Cannot remove a buddy that was not in the room");
+         }
          this.buddies.get(aName).remove();
          this.buddies.delete(aName);
-         if (this._isBuddyActive(aName))
+         if (this._isBuddyActive(aName)) {
            delete this._activeBuddies[aName];
+         }
        ]]>
        </body>
      </method>
@@ -1264,8 +1316,9 @@
            if (!("_showNickRegExp" in this)) {
              if (!("_showNickList" in this)) {
                this._showNickList = {};
-               for (let n of this.buddies.keys())
+               for (let n of this.buddies.keys()) {
                  this._showNickList[n.replace(this._nickEscape, "\\$&")] = true;
+               }
              }
 
              // The reverse sort ensures that if we have "foo" and "foobar",
@@ -1322,10 +1375,11 @@
        <body>
        <![CDATA[
           let cti = document.getElementById("conv-top-info");
-          if (this._conv.topicSettable)
+          if (this._conv.topicSettable) {
             cti.setAttribute("topicEditable", "true");
-          else
+          } else {
             cti.removeAttribute("topicEditable");
+          }
 
           var topic = this._conv.topic;
           if (topic) {
@@ -1348,9 +1402,9 @@
        <![CDATA[
          this.editor.focus();
 
-         if (!this.loaded)
+         if (!this.loaded) {
            return;
-
+         }
          if (this.tab) {
            this.tab.removeAttribute("unread");
            this.tab.removeAttribute("attention");
@@ -1369,8 +1423,9 @@
           cti.removeAttribute("typing");
 
           let name = this._currentTypingName;
-          if (!this._currentTypingName)
+          if (!this._currentTypingName) {
             name = this._conv.title; // .replace(/^([a-zA-Z0-9.]+)[@\s].*/, "$1");
+          }
           if (typingState == Ci.prplIConvIM.TYPING) {
             cti.setAttribute("typing", "active");
             let typingMsg = this.bundle.formatStringFromName("chat.contactIsTyping",
@@ -1395,9 +1450,9 @@
     <method name="switchingToPanel">
       <body>
       <![CDATA[
-        if (this._visibleTimer)
+        if (this._visibleTimer) {
           return;
-
+        }
         // Start a timer to detect if the tab has been visible to the
         // user for long enough to actually be seen (as opposed to the
         // tab only being visible "accidentally in passing").
@@ -1425,11 +1480,12 @@
           }
           // Remove the unread ruler if the tab has been visible without
           // interruptions for sufficiently long.
-          if (this._wasVisible)
+          if (this._wasVisible) {
             this.browser.removeUnreadRuler();
-
-          if (aHidden)
+          }
+          if (aHidden) {
             this.browser.isActive = false;
+          }
         ]]>
       </body>
     </method>
@@ -1470,8 +1526,9 @@
             }
 
             cti.setAttribute("displayName", displayName);
-            if (statusText)
+            if (statusText) {
               statusText = " - " + statusText;
+            }
             cti.setAttribute("statusMessageWithDash", statusText);
             let statusString = Status.toLabel(statusType);
             cti.setAttribute("statusMessage", statusString + statusText);
@@ -1491,12 +1548,14 @@
        <![CDATA[
          if (this._conv.isChat) {
            let nicklist = document.getElementById("nicklist");
-           while (nicklist.hasChildNodes())
+           while (nicklist.hasChildNodes()) {
              nicklist.lastChild.remove();
+           }
            // Populate the nicklist
            this.buddies = new Map();
-           for (let n of this.conv.getParticipants())
+           for (let n of this.conv.getParticipants()) {
              this.createBuddy(n);
+           }
            nicklist.append(...Array.from(this.buddies.keys())
                                 .sort((a, b) => a.localeCompare(b))
                                 .map(nick => this.buddies.get(nick)));
@@ -1519,12 +1578,14 @@
            this._activeBuddies = {};
            this.showParticipants();
 
-           if (Services.prefs.getBoolPref("messenger.conversations.showNicks"))
+           if (Services.prefs.getBoolPref("messenger.conversations.showNicks")) {
              this.browser.addTextModifier(this.getShowNickModifier());
+           }
          }
 
-         if (this.tab)
+         if (this.tab) {
            this.tab.setAttribute("label", this._conv.title);
+         }
 
          this.findbar.browser = this.browser;
 
@@ -1542,24 +1603,25 @@
        <body>
        <![CDATA[
          if (aTopic == "conversation-loaded") {
-           if (aSubject != this.browser)
+           if (aSubject != this.browser) {
              return;
-
+           }
            this.browser.progressBar = this.getElt("browserProgress");
 
            // Display all queued messages. Use a timeout so that message text
            // modifiers can be added with observers for this notification.
-           if (!this.loaded)
+           if (!this.loaded) {
              setTimeout(this._showFirstMessages.bind(this), 0);
-
+           }
            Services.obs.removeObserver(this, "conversation-loaded");
            return;
          }
 
          switch (aTopic) {
          case "new-text":
-           if (this.loaded)
+           if (this.loaded) {
              this.addMsg(aSubject);
+           }
            break;
 
          case "status-text-changed":
@@ -1573,14 +1635,16 @@
 
          case "target-prpl-conversation-changed":
          case "update-conv-title":
-           if (this.tab)
+           if (this.tab) {
                this.tab.setAttribute("label", this.conv.title);
+           }
            // Update the status too.
          case "update-buddy-status":
          case "update-buddy-icon":
          case "update-conv-chatleft":
-           if (this.tab && this._isConversationSelected)
+           if (this.tab && this._isConversationSelected) {
              this.updateConvStatus();
+           }
            break;
 
          case "update-typing":
@@ -1591,11 +1655,13 @@
            break;
 
          case "chat-buddy-add":
-           if (!this._isConversationSelected)
+           if (!this._isConversationSelected) {
              break;
+           }
            aSubject.QueryInterface(Ci.nsISimpleEnumerator);
-           while (aSubject.hasMoreElements())
+           while (aSubject.hasMoreElements()) {
              this.insertBuddy(this.createBuddy(aSubject.getNext()));
+           }
            this.updateParticipantCount();
            break;
 
@@ -1604,8 +1670,9 @@
            if (!this._isConversationSelected) {
              while (aSubject.hasMoreElements()) {
                let name = aSubject.getNext().QueryInterface(Ci.nsISupportsString).toString();
-               if (this._isBuddyActive(name))
+               if (this._isBuddyActive(name)) {
                  delete this._activeBuddies[name];
+               }
              }
              break;
            }
@@ -1622,8 +1689,9 @@
            break;
 
          case "chat-update-topic":
-           if (this._isConversationSelected)
+           if (this._isConversationSelected) {
              this.updateTopic();
+           }
            break;
          }
        ]]>
@@ -1658,8 +1726,9 @@
        </getter>
        <setter>
          <![CDATA[
-           if (this._conv && val)
+           if (this._conv && val) {
              throw new Error("imconversation already initialized");
+           }
            if (!val) {
              // this conversation has probably been moved to another
              // tab. Forget the prplConversation so that it isn't
@@ -1680,8 +1749,9 @@
      <property name="editor">
        <getter>
          <![CDATA[
-          if (!this._editor)
+          if (!this._editor) {
             this._editor = this.getElt("inputBox");
+          }
           return this._editor;
          ]]>
        </getter>

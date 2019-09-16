@@ -43,10 +43,11 @@
           let badge = document.getAnonymousElementByAttribute(this, "anonid", "badge");
           badge.value = this._badgeCount;
 
-          if (this._badgeCount > 0)
+          if (this._badgeCount > 0) {
             this.setAttribute("showingBadge", "true");
-          else
+          } else {
             this.removeAttribute("showingBadge");
+          }
         ]]>
         </body>
       </method>
