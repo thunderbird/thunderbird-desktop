@@ -706,7 +706,7 @@ var specialTabs = {
 
       let iconUri;
       let linkNode = dom.head.querySelector(
-        'link[rel="shortcut icon"],' + 'link[rel="icon"]'
+        'link[rel="shortcut icon"],link[rel="icon"]'
       );
       let href = linkNode ? linkNode.href : null;
       try {

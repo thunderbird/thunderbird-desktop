@@ -291,7 +291,7 @@ function test_attachment_name_click() {
 
   assert_true(
     attachmentList.collapsed,
-    "Attachment list should start out " + "collapsed!"
+    "Attachment list should start out collapsed!"
   );
 
   // Ensure the open dialog appears when clicking on the attachment name and
@@ -301,7 +301,7 @@ function test_attachment_name_click() {
   wait_for_modal_dialog("unknownContentType");
   assert_true(
     attachmentList.collapsed,
-    "Attachment list should not expand " + "when clicking on attachmentName!"
+    "Attachment list should not expand when clicking on attachmentName!"
   );
 }
 
@@ -384,17 +384,14 @@ function subtest_attachment_list_toggle(elementId) {
   mc.click(element);
   assert_true(
     !attachmentList.collapsed,
-    "Attachment list should be expanded " + "after clicking " + elementId + "!"
+    `Attachment list should be expanded after clicking ${elementId}!`
   );
   assert_attachment_list_focused();
 
   mc.click(element);
   assert_true(
     attachmentList.collapsed,
-    "Attachment list should be collapsed " +
-      "after clicking " +
-      elementId +
-      " again!"
+    `Attachment list should be collapsed after clicking ${elementId} again!`
   );
   assert_message_pane_focused();
 }
@@ -407,7 +404,7 @@ function test_attachment_list_expansion() {
 
   assert_true(
     mc.e("attachmentList").collapsed,
-    "Attachment list should " + "start out collapsed!"
+    "Attachment list should start out collapsed!"
   );
 
   subtest_attachment_list_toggle("attachmentToggle");
@@ -425,7 +422,7 @@ function test_attachment_list_expansion() {
   );
   assert_true(
     mc.e("attachmentList").collapsed,
-    "Attachment list should be " + "collapsed after clicking save button!"
+    "Attachment list should be collapsed after clicking save button!"
   );
 }
 
@@ -473,7 +470,7 @@ function test_selected_attachments_are_cleared() {
   assert_equals(
     attachmentList.selectedItems.length,
     2,
-    "We had the wrong number of selected items after selecting " + "some!"
+    "We had the wrong number of selected items after selecting some!"
   );
 
   // Switch to the message with one attachment, and make sure there are no
