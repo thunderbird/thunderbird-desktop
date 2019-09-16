@@ -10,6 +10,12 @@ XPI_INSTALL_EXTENSION = $(XPI_EM_ID)
 THUNDERBIRD_VERSION := $(shell cat $(commtopsrcdir)/mail/config/version.txt)
 SEAMONKEY_VERSION := $(shell cat $(commtopsrcdir)/suite/config/version.txt)
 
+# Gecko milestone
+GRE_MILESTONE = $(shell $(PYTHON) $(moztopsrcdir)/config/printconfigsetting.py $(DIST)/bin/platform.ini Build Milestone)
+ifdef GRE_MILESTONE
+DEFINES += -DGRE_MILESTONE=$(GRE_MILESTONE)
+endif
+
 ifdef MOZ_SUITE
 LIGHTNING_VERSION := $(shell $(PYTHON) $(commtopsrcdir)/calendar/lightning/build/makeversion.py $(THUNDERBIRD_VERSION))
 else
