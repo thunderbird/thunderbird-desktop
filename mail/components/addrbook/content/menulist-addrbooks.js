@@ -48,7 +48,8 @@ customElements.whenDefined("menulist").then(() => {
           if (aItem instanceof Ci.nsIAbDirectory) {
             // Find the item in the list to remove.
             // We can't use indexOf here because we need loose equality.
-            for (var index = this._directories.length; --index >= 0;) {
+            let len = this._directories.length;
+            for (var index = len - 1; index >= 0; index--) {
               if (this._directories[index] == aItem) {
                 break;
               }
@@ -75,7 +76,8 @@ customElements.whenDefined("menulist").then(() => {
           if (aItem instanceof Ci.nsIAbDirectory) {
             // Find the item in the list to rename.
             // We can't use indexOf here because we need loose equality.
-            for (var oldIndex = this._directories.length; --oldIndex >= 0;) {
+            let len = this._directories.length;
+            for (var oldIndex = len - 1; oldIndex >= 0; oldIndex--) {
               if (this._directories[oldIndex] == aItem) {
                 break;
               }
