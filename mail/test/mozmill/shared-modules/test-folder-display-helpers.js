@@ -824,12 +824,11 @@ function switch_tab(aNewTab) {
 
   mc.tabmail.switchToTab(targetTab);
   if (mc.messageDisplay.visible) {
-    // if there is something selected, wait for display completion
     if (mc.folderDisplay.selectedCount) {
+      // There is something selected, wait for display completion.
       wait_for_message_display_completion(mc, true);
-    }
-    // otherwise wait for the pane to end up blank
-    else {
+    } else {
+      // Wait for the pane to end up blank.
       wait_for_blank_content_pane();
     }
   }
@@ -994,9 +993,8 @@ function close_tab(aTabToClose) {
   if (nextTab && mc.messageDisplay.visible) {
     if (mc.folderDisplay.selectedCount) {
       wait_for_message_display_completion(mc, true);
-    }
-    // otherwise wait for the pane to end up blank
-    else {
+    } else {
+      // Otherwise wait for the pane to end up blank.
       wait_for_blank_content_pane();
     }
   }
@@ -1703,8 +1701,8 @@ function close_popup(aController, eid) {
     mark_action("fdh", "close_popup", [
       "popup suspiciously already closing...",
     ]);
-  } // actually push escape because it's not closing/closed
-  else {
+  } else {
+    // Actually push escape because it's not closing/closed.
     aController.keypress(eid, "VK_ESCAPE", {});
   }
   utils.waitFor(() => elem.state == "closed", "Popup did not close!", 1000, 50);
