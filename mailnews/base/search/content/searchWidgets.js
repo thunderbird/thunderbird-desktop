@@ -53,16 +53,16 @@
       this.appendChild(
         MozXULElement.parseXULToFragment(
           `
-      <menulist class="ruleactionitem" flex="1">
-        <menupopup>
-          <menuitem value="6" label="&highestPriorityCmd.label;"></menuitem>
-          <menuitem value="5" label="&highPriorityCmd.label;"></menuitem>
-          <menuitem value="4" label="&normalPriorityCmd.label;"></menuitem>
-          <menuitem value="3" label="&lowPriorityCmd.label;"></menuitem>
-          <menuitem value="2" label="&lowestPriorityCmd.label;"></menuitem>
-        </menupopup>
-      </menulist>
-      `,
+          <menulist class="ruleactionitem" flex="1">
+            <menupopup>
+              <menuitem value="6" label="&highestPriorityCmd.label;"></menuitem>
+              <menuitem value="5" label="&highPriorityCmd.label;"></menuitem>
+              <menuitem value="4" label="&normalPriorityCmd.label;"></menuitem>
+              <menuitem value="3" label="&lowPriorityCmd.label;"></menuitem>
+              <menuitem value="2" label="&lowestPriorityCmd.label;"></menuitem>
+            </menupopup>
+          </menulist>
+          `,
           ["chrome://messenger/locale/FilterEditor.dtd"]
         )
       );
@@ -76,13 +76,13 @@
       this.appendChild(
         MozXULElement.parseXULToFragment(
           `
-      <menulist class="ruleactionitem" flex="1">
-        <menupopup>
-          <menuitem value="100" label="&junk.label;"/>
-          <menuitem value="0" label="&notJunk.label;"/>
-        </menupopup>
-      </menulist>
-      `,
+          <menulist class="ruleactionitem" flex="1">
+            <menupopup>
+              <menuitem value="100" label="&junk.label;"/>
+              <menuitem value="0" label="&notJunk.label;"/>
+            </menupopup>
+          </menulist>
+          `,
           ["chrome://messenger/locale/FilterEditor.dtd"]
         )
       );
@@ -132,19 +132,19 @@
       this.appendChild(
         MozXULElement.parseXULToFragment(
           `
-      <menulist class="ruleactionitem
-                folderMenuItem"
-                flex="1"
-                displayformat="verbose">
-        <menupopup is="folder-menupopup"
-                   mode="filing"
-                   class="menulist-menupopup"
-                   showRecent="true"
-                   recentLabel="&recentFolders.label;"
-                   showFileHereLabel="true">
-        </menupopup>
-      </menulist>
-      `,
+          <menulist class="ruleactionitem
+                    folderMenuItem"
+                    flex="1"
+                    displayformat="verbose">
+            <menupopup is="folder-menupopup"
+                       mode="filing"
+                       class="menulist-menupopup"
+                       showRecent="true"
+                       recentLabel="&recentFolders.label;"
+                       showFileHereLabel="true">
+            </menupopup>
+          </menulist>
+          `,
           ["chrome://messenger/locale/messenger.dtd"]
         )
       );
@@ -699,52 +699,106 @@
       if (!this.hasChildNodes()) {
         this.appendChild(
           MozXULElement.parseXULToFragment(`
-        <textbox flex="1" class="search-value-textbox" inherits="disabled"></textbox>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup">
-            <menuitem value="6" stringTag="priorityHighest" class="search-value-menuitem"></menuitem>
-            <menuitem value="5" stringTag="priorityHigh" class="search-value-menuitem"></menuitem>
-            <menuitem value="4" stringTag="priorityNormal" class="search-value-menuitem"></menuitem>
-            <menuitem value="3" stringTag="priorityLow" class="search-value-menuitem"></menuitem>
-            <menuitem value="2" stringTag="priorityLowest" class="search-value-menuitem"></menuitem>
-          </menupopup>
-        </menulist>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup">
-            <menuitem value="2" stringTag="replied" class="search-value-menuitem"></menuitem>
-            <menuitem value="1" stringTag="read" class="search-value-menuitem"></menuitem>
-            <menuitem value="65536" stringTag="new" class="search-value-menuitem"></menuitem>
-            <menuitem value="4096" stringTag="forwarded" class="search-value-menuitem"></menuitem>
-            <menuitem value="4" stringTag="flagged" class="search-value-menuitem"></menuitem>
-          </menupopup>
-        </menulist>
-        <textbox flex="1" class="search-value-textbox" inherits="disabled"></textbox>
-        <menulist is="menulist-addrbooks" flex="1" class="search-value-menulist" inherits="disabled" localonly="true"/>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup"></menupopup>
-        </menulist>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup">
-            <menuitem value="2" stringTag="junk" class="search-value-menuitem"></menuitem>
-          </menupopup>
-        </menulist>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup">
-            <menuitem value="0" stringTag="hasAttachments" class="search-value-menuitem"></menuitem>
-          </menupopup>
-        </menulist>
-        <menulist flex="1" class="search-value-menulist" inherits="disabled">
-          <menupopup class="search-value-popup">
-            <menuitem value="plugin" stringTag="junkScoreOriginPlugin" class="search-value-menuitem"></menuitem>
-            <menuitem value="user" stringTag="junkScoreOriginUser" class="search-value-menuitem"></menuitem>
-            <menuitem value="filter" stringTag="junkScoreOriginFilter" class="search-value-menuitem"></menuitem>
-            <menuitem value="whitelist" stringTag="junkScoreOriginWhitelist" class="search-value-menuitem"></menuitem>
-            <menuitem value="imapflag" stringTag="junkScoreOriginImapFlag" class="search-value-menuitem"></menuitem>
-          </menupopup>
-        </menulist>
-        <html:input type="number" class="search-value-textbox" inherits="disabled"/>
-        <hbox flex="1" class="search-value-custom" inherits="disabled"></hbox>
-      `)
+            <textbox flex="1"
+                     class="search-value-textbox"
+                     inherits="disabled"></textbox>
+            <menulist flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled">
+              <menupopup class="search-value-popup">
+                <menuitem value="6"
+                          stringTag="priorityHighest"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="5"
+                          stringTag="priorityHigh"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="4"
+                          stringTag="priorityNormal"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="3"
+                          stringTag="priorityLow"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="2"
+                          stringTag="priorityLowest"
+                          class="search-value-menuitem"></menuitem>
+              </menupopup>
+            </menulist>
+            <menulist flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled">
+              <menupopup class="search-value-popup">
+                <menuitem value="2"
+                          stringTag="replied"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="1"
+                          stringTag="read"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="65536"
+                          stringTag="new"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="4096"
+                          stringTag="forwarded"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="4"
+                          stringTag="flagged"
+                          class="search-value-menuitem"></menuitem>
+              </menupopup>
+            </menulist>
+            <textbox flex="1"
+                     class="search-value-textbox"
+                     inherits="disabled"></textbox>
+            <menulist is="menulist-addrbooks"
+                      flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled"
+                      localonly="true"/>
+            <menulist flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled">
+              <menupopup class="search-value-popup"></menupopup>
+            </menulist>
+            <menulist flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled">
+              <menupopup class="search-value-popup">
+                <menuitem value="2"
+                          stringTag="junk"
+                          class="search-value-menuitem"></menuitem>
+              </menupopup>
+            </menulist>
+            <menulist flex="1"
+                      class="search-value-menulist"
+                      inherits="disabled">
+              <menupopup class="search-value-popup">
+                <menuitem value="0" stringTag="hasAttachments" class="search-value-menuitem"></menuitem>
+              </menupopup>
+            </menulist>
+            <menulist flex="1" class="search-value-menulist" inherits="disabled">
+              <menupopup class="search-value-popup">
+                <menuitem value="plugin"
+                          stringTag="junkScoreOriginPlugin"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="user"
+                          stringTag="junkScoreOriginUser"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="filter"
+                          stringTag="junkScoreOriginFilter"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="whitelist"
+                          stringTag="junkScoreOriginWhitelist"
+                          class="search-value-menuitem"></menuitem>
+                <menuitem value="imapflag"
+                          stringTag="junkScoreOriginImapFlag"
+                          class="search-value-menuitem"></menuitem>
+              </menupopup>
+            </menulist>
+            <html:input type="number"
+                        class="search-value-textbox"
+                        inherits="disabled"/>
+            <hbox flex="1"
+                  class="search-value-custom"
+                  inherits="disabled"></hbox>
+          `)
         );
 
         // Initialize the priority picker.
