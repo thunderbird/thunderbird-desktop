@@ -3729,7 +3729,6 @@ function OnMsgLoaded(aUrl) {
   }
 
   var msgHdr = gMessageDisplay.displayedMessage;
-  window.dispatchEvent(new CustomEvent("MsgLoaded", { detail: msgHdr }));
 
   var wintype = document.documentElement.getAttribute("windowtype");
 
