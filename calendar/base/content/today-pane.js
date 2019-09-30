@@ -387,7 +387,7 @@ var TodayPane = {
       try {
         // The minimonth code sometimes throws an exception as a result of this call. Bug 1560547.
         // As there's no known plausible explanation, just catch the exception and carry on.
-        document.getElementById("today-Minimonth").value = cal.dtz.dateTimeToJsDate(this.start);
+        document.getElementById("today-minimonth").value = cal.dtz.dateTimeToJsDate(this.start);
       } catch (ex) {
         Cu.reportError(ex);
       }
@@ -437,7 +437,7 @@ var TodayPane = {
     document.getElementById("mini-day-box").setVisible(aSection == "miniday");
     document.getElementById("today-none-box").setVisible(aSection == "none");
     setBooleanAttribute(
-      document.getElementById("today-Minimonth"),
+      document.getElementById("today-minimonth"),
       "freebusy",
       aSection == "minimonth"
     );
