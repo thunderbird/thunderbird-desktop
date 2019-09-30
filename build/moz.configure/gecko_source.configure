@@ -26,7 +26,6 @@ def read_sourcestamp(repository):
     @imports(_from='os.path', _import='exists')
     @imports(_from='os.path', _import='join')
     @imports(_from='__builtin__', _import='open')
-    @imports(_from='mozbuild.util', _import='system_encoding')
     def get_sourcestamp(paths):
         sourcestamp_file = join(paths.moztopsrcdir, 'sourcestamp.txt')
         if exists(sourcestamp_file):
@@ -40,7 +39,7 @@ def read_sourcestamp(repository):
                 return
 
             if lines and lines[line2read].startswith('http'):
-                repo_line = lines[line2read].decode(system_encoding)
+                repo_line = lines[line2read]
                 repo_url = repo_line.split('/rev/')
                 return namespace(repo_url=repo_url[0], repo_rev=repo_url[1])
 
@@ -56,7 +55,6 @@ def read_gecko_rev_yml():
     @imports(_from='os.path', _import='exists')
     @imports(_from='os.path', _import='join')
     @imports(_from='__builtin__', _import='open')
-    @imports(_from='mozbuild.util', _import='system_encoding')
     def wrapped(paths):
         log.info("Determining GECKO source information from .gecko_rev.yml")
         rev_file = join(paths.commtopsrcdir, '.gecko_rev.yml')
@@ -66,11 +64,11 @@ def read_gecko_rev_yml():
 
         for line in open(rev_file).readlines():
             if line.startswith('GECKO_HEAD_REPOSITORY:'):
-                repo = get_value(line).decode(system_encoding)
+                repo = get_value(line)
             elif line.startswith('GECKO_HEAD_REV:'):
-                rev = get_value(line).decode(system_encoding)
+                rev = get_value(line)
             elif line.startswith('GECKO_HEAD_REF:'):
-                ref = get_value(line).decode(system_encoding)
+                ref = get_value(line)
             else:
                 pass
 
@@ -81,7 +79,6 @@ def read_gecko_rev_yml():
 
 @depends(application)
 @imports(_from='os', _import="environ")
-@imports(_from='mozbuild.util', _import='system_encoding')
 def comm_repo_from_environ(app):
     """
     Read the Thunderbird source repository information from the environment.
@@ -94,9 +91,6 @@ def comm_repo_from_environ(app):
     comm_rev = environ.get('MOZ_SOURCE_CHANGESET', None)
 
     if all([comm_repo, comm_rev]):
-        comm_repo = comm_repo.decode(system_encoding)
-        comm_rev = comm_rev.decode(system_encoding)
-
         log.info("{}/rev/{}".format(comm_repo, comm_rev))
         return namespace(comm_repo=comm_repo, comm_rev=comm_rev)
 
@@ -173,7 +167,6 @@ def comm_source_repo(from_environ, from_config):
 
 @depends(application)
 @imports(_from='os', _import="environ")
-@imports(_from='mozbuild.util', _import='system_encoding')
 def gecko_repo_from_environ(app):
     """
     Same as above, but this time checking for the mozilla- repository.
@@ -182,9 +175,6 @@ def gecko_repo_from_environ(app):
     gecko_repo = environ.get('GECKO_HEAD_REPOSITORY', None)
     gecko_rev = environ.get('GECKO_HEAD_REV', None)
     if all([gecko_repo, gecko_rev]):
-        gecko_repo = gecko_repo.decode(system_encoding)
-        gecko_rev = gecko_rev.decode(system_encoding)
-
         log.info("{}/rev/{}".format(gecko_repo, gecko_rev))
         return namespace(gecko_repo=gecko_repo, gecko_rev=gecko_rev)
 
