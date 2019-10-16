@@ -169,6 +169,29 @@ gDetailView.updateState = function() {
   let restartButton = document.getElementById("restart-btn");
   let undoButton = document.getElementById("undo-btn");
 
+  // We hide the original label and add another label to make sure
+  // we open the link in the browser instead of internally.
+  let detailLabel = document.getElementById("detail-homepage");
+  let detailRow = document.getElementById("detail-homepage-row");
+  let detailLabel2 = document.createXULElement("label");
+  let href = detailLabel.getAttribute("href");
+  detailLabel.hidden = true;
+  detailLabel2.value = href;
+  detailLabel2.className = "text-link";
+  detailLabel2.addEventListener("click", function(event) {
+    Cc["@mozilla.org/messenger;1"]
+      .createInstance(Ci.nsIMessenger)
+      .launchExternalURL(href);
+  });
+  detailLabel2.addEventListener("keypress", function(event) {
+    if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
+      Cc["@mozilla.org/messenger;1"]
+        .createInstance(Ci.nsIMessenger)
+        .launchExternalURL(href);
+    }
+  });
+  detailRow.appendChild(detailLabel2);
+
   if (ExtensionSupport.loadedLegacyExtensions.has(this._addon.id)) {
     this.node.setAttribute("active", "true");
   }
