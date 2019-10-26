@@ -434,10 +434,6 @@ treechildren::-moz-tree-cell-text(dummy) {
       }
     }
   }
-
-  #mail-toolbar-menubar2 > .titlebar-placeholder {
-    display: none;
-  }
 }
 
 #folderpane_splitter,
