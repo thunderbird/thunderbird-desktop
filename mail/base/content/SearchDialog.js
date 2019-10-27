@@ -17,7 +17,6 @@ var nsIMsgWindow = Ci.nsIMsgWindow;
 
 var gFolderPicker;
 var gStatusFeedback;
-var gTimelineEnabled = false;
 var RDF;
 var gSearchBundle;
 
