@@ -5,6 +5,7 @@
 
 ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 ChromeUtils.import("resource://gre/modules/DownloadUtils.jsm");
+ChromeUtils.import("resource://gre/modules/AppConstants.jsm");
 
 function Startup()
 {
@@ -59,7 +60,7 @@ function ReadCacheFolder(aField)
 
   if (file) {
     aField.file = file;
-    aField.label = (/Mac/.test(navigator.platform)) ? file.leafName : file.path;
+    aField.label = AppConstants.platform == "macosx" ? file.leafName : file.path;
   }
 }
 

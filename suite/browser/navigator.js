@@ -6,6 +6,7 @@
 ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 ChromeUtils.import("resource://gre/modules/Services.jsm");
 ChromeUtils.import("resource:///modules/WindowsPreviewPerTab.jsm");
+ChromeUtils.import("resource://gre/modules/AppConstants.jsm");
 
 XPCOMUtils.defineLazyModuleGetters(this, {
   NetUtil: "resource://gre/modules/NetUtil.jsm",
@@ -2945,7 +2946,7 @@ function WindowIsClosing()
   var numtabs = cn.length;
   var reallyClose = true;
 
-  if (!gPrivate && !/Mac/.test(navigator.platform) && isClosingLastBrowser()) {
+  if (!gPrivate && AppConstants.platform != "macosx" && isClosingLastBrowser()) {
     let closingCanceled = Cc["@mozilla.org/supports-PRBool;1"]
                             .createInstance(Ci.nsISupportsPRBool);
     Services.obs.notifyObservers(closingCanceled, "browser-lastwindow-close-requested");
