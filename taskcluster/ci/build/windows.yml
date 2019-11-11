@@ -9,6 +9,7 @@ job-defaults:
         comm-checkout: true
         config-paths:
             - comm/mozharness
+        tooltool-downloads: internal
 
 win32/opt:
     description: "Win32 Opt"
