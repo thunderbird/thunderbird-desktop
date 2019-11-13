@@ -96,20 +96,20 @@ version-directory: comm/mail/config
 workers:
     aliases:
         b-linux.*:
-            provisioner: aws-provisioner-v1
+            provisioner: 'comm-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'gecko-{level}-{alias}'
+            worker-type: '{alias}'
         b-win2012:
-            provisioner: aws-provisioner-v1
+            provisioner: 'comm-{level}'
             implementation: generic-worker
             os: windows
-            worker-type: 'gecko-{level}-{alias}'
+            worker-type: '{alias}'
         images:
-            provisioner: aws-provisioner-v1
+            provisioner: 'comm-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: 'gecko-{level}-{alias}'
+            worker-type: '{alias}'
         linux-depsigning:
             provisioner: scriptworker-prov-v1
             implementation: scriptworker-signing
@@ -131,25 +131,20 @@ workers:
             os: macosx
             worker-type: tb-signing-mac-v1
         t-linux(-large|-xlarge):
-            provisioner: aws-provisioner-v1
+            provisioner: comm-t
             implementation: docker-worker
             os: linux
-            worker-type: 'gecko-{alias}'
+            worker-type: '{alias}'
         t-osx-1014:
             provisioner: releng-hardware
             implementation: generic-worker
             os: macosx
             worker-type: 'gecko-{alias}'
-        t-win10-64(|-gpu):
-            provisioner: aws-provisioner-v1
+        t-win.*:
+            provisioner: comm-t
             implementation: generic-worker
             os: windows
-            worker-type: 'gecko-{alias}'
-        t-win7-32(|-gpu):
-            provisioner: aws-provisioner-v1
-            implementation: generic-worker
-            os: windows
-            worker-type: 'gecko-{alias}'
+            worker-type: '{alias}'
 
 mac-notarization:
     mac-behavior:
