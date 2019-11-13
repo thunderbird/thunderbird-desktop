@@ -1599,17 +1599,38 @@
         item.setAttribute("image16", base + "attachment-deleted.png");
         item.setAttribute("image32", base + "attachment-deleted-large.png");
       } else {
+        let iconName = attachment.name;
+        if (iconName.toLowerCase().endsWith(".eml")) {
+          // Discard message names derived from crazy subject headers.
+          iconName = "message.eml";
+        } else if (attachment.url) {
+          // For local file urls, we are better off using the full file url
+          // because moz-icon will actually resolve the file url and get the
+          // right icon from the file url. All other urls, we should try to
+          // extract the file name from them. This fixes issues where an icon
+          // wasn't showing up if you dragged a web url that had a query or
+          // reference string after the file name and for mailnews urls where
+          // the filename is hidden in the url as a &filename=  part.
+          let url = Services.io.newURI(attachment.url);
+          if (
+            url instanceof Ci.nsIURL &&
+            url.fileName &&
+            !url.schemeIs("file")
+          ) {
+            iconName = url.fileName;
+          }
+        }
         item.setAttribute(
           "image16",
           "moz-icon://" +
-            attachment.name +
+            iconName +
             "?size=16&contentType=" +
             attachment.contentType
         );
         item.setAttribute(
           "image32",
           "moz-icon://" +
-            attachment.name +
+            iconName +
             "?size=32&contentType=" +
             attachment.contentType
         );
