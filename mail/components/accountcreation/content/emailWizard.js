@@ -284,6 +284,16 @@ EmailConfigWizard.prototype = {
 
     this.switchToMode("start");
     e("realname").select();
+
+    // In a new profile, the first request to live.thunderbird.net
+    // is much slower because of one-time overheads.
+    // Let's create some dummy requests to prime the connections.
+    fetch(Services.prefs.getCharPref("mailnews.auto_config_url"), {
+      method: "OPTIONS",
+    });
+    fetch(Services.prefs.getCharPref("mailnews.auto_config.addons_url"), {
+      method: "OPTIONS",
+    });
   },
 
   /**
@@ -430,16 +440,6 @@ EmailConfigWizard.prototype = {
       _hide("provisioner_button");
     }
     window.sizeToContent();
-
-    // In a new profile, the first request to live.thunderbird.net
-    // is much slower because of one-time overheads.
-    // Let's create some dummy requests to prime the connections.
-    fetch(Services.prefs.getCharPref("mailnews.auto_config_url"), {
-      method: "OPTIONS",
-    });
-    fetch(Services.prefs.getCharPref("mailnews.auto_config.addons_url"), {
-      method: "OPTIONS",
-    });
   },
 
   /**
