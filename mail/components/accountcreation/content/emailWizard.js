@@ -974,7 +974,6 @@ EmailConfigWizard.prototype = {
           _hide("result_addon_install");
           _enable("create_button");
         } else {
-          _hide("status_area");
           _show("result_addon_intro");
           var msg = gStringsBundle.getString("addon-intro");
           if (
