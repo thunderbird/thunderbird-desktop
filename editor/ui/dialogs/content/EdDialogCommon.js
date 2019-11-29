@@ -905,7 +905,7 @@ function RemoveContainer(element) {
 }
 
 function FillLinkMenulist(linkMenulist, headingsArray) {
-  var menupopup = linkMenulist.firstChild;
+  var menupopup = linkMenulist.inputField.nextSibling;
   var editor = GetCurrentEditor();
   try {
     var treeWalker = editor.document.createTreeWalker(
@@ -979,6 +979,7 @@ function FillLinkMenulist(linkMenulist, headingsArray) {
       // Save nodes in an array so we can create anchor node under it later
       headingsArray[anchor] = heading;
     }
+    var menuseprator;
     if (anchorList.length) {
       // case insensitive sort
       anchorList.sort((a, b) => {
@@ -991,16 +992,19 @@ function FillLinkMenulist(linkMenulist, headingsArray) {
         return 0;
       });
 
+      menuseprator = document.createXULElement("menuseparator");
+      menupopup.appendChild(menuseprator);
       for (i = 0; i < anchorList.length; i++) {
         createMenuItem(menupopup, anchorList[i].anchor);
       }
     } else {
       // Don't bother with named anchors in Mail.
       if (editor && editor.flags & Ci.nsIPlaintextEditor.eEditorMailMask) {
-        menupopup.remove();
         linkMenulist.removeAttribute("enablehistory");
         return;
       }
+      menuseprator = document.createXULElement("menuseparator");
+      menupopup.appendChild(menuseprator);
       var item = createMenuItem(
         menupopup,
         GetString("NoNamedAnchorsOrHeadings")
@@ -1013,6 +1017,10 @@ function FillLinkMenulist(linkMenulist, headingsArray) {
 function createMenuItem(aMenuPopup, aLabel) {
   var menuitem = document.createXULElement("menuitem");
   menuitem.setAttribute("label", aLabel);
+  menuitem.addEventListener("click", event => {
+    gDialog.hrefInput.value = aLabel;
+    ChangeLinkLocation();
+  });
   aMenuPopup.appendChild(menuitem);
   return menuitem;
 }
