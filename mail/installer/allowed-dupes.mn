@@ -17,7 +17,6 @@ chrome/classic/skin/classic/messenger/icons/address.svg
 chrome/classic/skin/classic/messenger/icons/attach.svg
 chrome/classic/skin/classic/messenger/icons/delete.svg
 chrome/classic/skin/classic/messenger/icons/new-mail-alert.png
-chrome/classic/skin/classic/messenger/icons/newmsg.svg
 chrome/classic/skin/classic/messenger/icons/print.svg
 chrome/classic/skin/classic/messenger/icons/save.svg
 chrome/classic/skin/classic/messenger/icons/security.svg
@@ -53,7 +52,6 @@ extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/calen
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/category.svg
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/complete.svg
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/delete.svg
-extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/edit.svg
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/print.svg
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/save.svg
 extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/security.svg
@@ -84,7 +82,6 @@ distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/commo
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/category.svg
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/complete.svg
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/delete.svg
-distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/edit.svg
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/print.svg
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/save.svg
 distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/chrome/skin/common/icons/security.svg
