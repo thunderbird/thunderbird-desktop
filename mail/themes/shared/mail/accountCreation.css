@@ -98,3 +98,14 @@ textbox.result-host-info > label.insecure {
 #result_addon_install_column_button {
   max-width: 10em;
 }
+
+.btn-link {
+  color: #0a84ff;
+  -moz-appearance: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.btn-link:hover {
+  color: #0060df !important;
+  text-decoration: underline;
+}
