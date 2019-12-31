@@ -664,6 +664,19 @@ class Tab extends TabBase {
     return super.frameLoader || { lazyWidth: 0, lazyHeight: 0 };
   }
 
+  /** Returns the current URL of this tab, without permission checks. */
+  get _url() {
+    return this.browser ? this.browser.currentURI.spec : null;
+  }
+
+  /** Returns the current title of this tab, without permission checks. */
+  get _title() {
+    if (this.browser && this.browser.contentTitle) {
+      return this.browser.contentTitle;
+    }
+    return this.nativeTab.label;
+  }
+
   /** Returns the favIcon, without permission checks. */
   get _favIconUrl() {
     return null;
@@ -737,11 +750,6 @@ class Tab extends TabBase {
   /** Returns the loading status of the tab. */
   get status() {
     return "complete";
-  }
-
-  /** Returns the title of the tab, without permission checks. */
-  get _title() {
-    return this.nativeTab.ownerDocument.title;
   }
 
   /** Returns the width of the tab. */
