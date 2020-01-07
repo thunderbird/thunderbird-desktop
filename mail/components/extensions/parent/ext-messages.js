@@ -231,7 +231,7 @@ this.messages = class extends ExtensionAPI {
             let currentTags = msgHdr.getStringProperty("keywords").split(" ");
             let msgHdrArray = toXPCOMArray([msgHdr], Ci.nsIMutableArray);
 
-            for (let { key: tagKey } of MailServices.tags.getAllTags()) {
+            for (let { key: tagKey } of MailServices.tags.getAllTags({})) {
               if (newProperties.tags.includes(tagKey)) {
                 if (!currentTags.includes(tagKey)) {
                   msgHdr.folder.addKeywordsToMessages(msgHdrArray, tagKey);
