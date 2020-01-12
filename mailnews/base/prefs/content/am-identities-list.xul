@@ -15,7 +15,7 @@
   buttons="accept"
   buttonlabelaccept="&identitiesListClose.label;"
   buttonaccesskeyaccept="&identitiesListClose.accesskey;"
-  style="width: 40em;">
+  style="width: 40em; max-height: 20em;">
 
 <stringbundle id="bundle_prefs" src="chrome://messenger/locale/prefs.properties"/>
 <script src="chrome://messenger/content/am-identities-list.js"/>
