@@ -706,7 +706,7 @@ EmailConfigWizard.prototype = {
             this.onStartOver();
             this.stopSpinner(); // clears status message
             _show("usernameRow");
-            _show("status-area");
+            _show("status_area");
             _enable("manual-edit_button");
             errorCallback(new CancelledException());
           } else {
@@ -835,7 +835,7 @@ EmailConfigWizard.prototype = {
           () => {
             // Invalid password: show the error and let user correct it.
             this.onStartOver();
-            _show("status-area");
+            _show("status_area");
             this.showErrorStatus("user_pass_invalid");
           }
         );
