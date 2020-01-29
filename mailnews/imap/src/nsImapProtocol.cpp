@@ -5440,9 +5440,11 @@ void nsImapProtocol::InitPrefAuthMethods(int32_t authMethodPrefValue,
       m_prefAuthMethods = kHasCRAMCapability | kHasAuthGssApiCapability |
                           kHasAuthNTLMCapability | kHasAuthMSNCapability;
       break;
+    case nsMsgAuthMethod::OAuth2:
+      m_prefAuthMethods = kHasXOAuth2Capability;
+      break;
     default:
       NS_ASSERTION(false, "IMAP: authMethod pref invalid");
-      // TODO log to error console
       MOZ_LOG(IMAP, LogLevel::Error,
               ("IMAP: bad pref authMethod = %d", authMethodPrefValue));
       // fall to any
@@ -5454,21 +5456,18 @@ void nsImapProtocol::InitPrefAuthMethods(int32_t authMethodPrefValue,
                           kHasAuthMSNCapability | kHasAuthExternalCapability |
                           kHasXOAuth2Capability;
       break;
-    case nsMsgAuthMethod::OAuth2:
-      m_prefAuthMethods = kHasXOAuth2Capability;
-      break;
   }
 
-  if (m_prefAuthMethods & kHasXOAuth2Capability)
+  if (m_prefAuthMethods & kHasXOAuth2Capability) {
     mOAuth2Support = new mozilla::mailnews::OAuth2ThreadHelper(aServer);
-
-  // Disable OAuth2 support if we don't have the prefs installed.
-  if (m_prefAuthMethods & kHasXOAuth2Capability &&
-      (!mOAuth2Support || !mOAuth2Support->SupportsOAuth2()))
-    m_prefAuthMethods &= ~kHasXOAuth2Capability;
-
-  NS_ASSERTION(m_prefAuthMethods != kCapabilityUndefined,
-               "IMAP: InitPrefAuthMethods() didn't work");
+    if (!mOAuth2Support || !mOAuth2Support->SupportsOAuth2()) {
+      // Disable OAuth2 support if we don't have the prefs installed.
+      m_prefAuthMethods &= ~kHasXOAuth2Capability;
+      mOAuth2Support = nullptr;
+      MOZ_LOG(IMAP, LogLevel::Warning,
+              ("IMAP: no OAuth2 support for this server."));
+    }
+  }
 }
 
 /**
@@ -5516,19 +5515,19 @@ nsresult nsImapProtocol::ChooseAuthMethod() {
   else if (kHasAuthOldLoginCapability & availCaps)
     m_currentAuthMethod = kHasAuthOldLoginCapability;
   else {
-    MOZ_LOG(IMAP, LogLevel::Debug, ("no remaining auth method"));
+    MOZ_LOG(IMAP, LogLevel::Debug, ("No remaining auth method"));
     m_currentAuthMethod = kCapabilityUndefined;
     return NS_ERROR_FAILURE;
   }
   MOZ_LOG(IMAP, LogLevel::Debug,
-          ("trying auth method 0x%" PRIx64, m_currentAuthMethod));
+          ("Trying auth method 0x%" PRIx64, m_currentAuthMethod));
   return NS_OK;
 }
 
 void nsImapProtocol::MarkAuthMethodAsFailed(
     eIMAPCapabilityFlags failedAuthMethod) {
   MOZ_LOG(IMAP, LogLevel::Debug,
-          ("marking auth method 0x%" PRIx64 " failed", failedAuthMethod));
+          ("Marking auth method 0x%" PRIx64 " failed", failedAuthMethod));
   m_failedAuthMethods |= failedAuthMethod;
 }
 
@@ -8076,7 +8075,7 @@ nsImapProtocol::OnPromptCanceled() {
 }
 
 bool nsImapProtocol::TryToLogon() {
-  MOZ_LOG(IMAP, LogLevel::Debug, ("try to log in"));
+  MOZ_LOG(IMAP, LogLevel::Debug, ("Try to log in"));
   NS_ENSURE_TRUE(m_imapServerSink, false);
   bool loginSucceeded = false;
   bool skipLoop = false;
