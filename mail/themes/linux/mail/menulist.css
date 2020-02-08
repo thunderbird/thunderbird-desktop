@@ -5,8 +5,7 @@
 @import url("chrome://messenger/content/menulist.css");
 
 menulist[is="menulist-editable"][editable="true"] {
-  -moz-appearance: textfield;
-  margin-inline-end: 2.4em;
+  -moz-appearance: none;
 }
 
 menulist[is="menulist-editable"][editable="true"] .menulist-dropmarker {
