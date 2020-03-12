@@ -2154,7 +2154,7 @@
     <!-- notificationbox will be added here lazily. -->
   </hbox>
 
-  <hbox id="status-bar" class="statusbar chromeclass-status">
+  <hbox id="status-bar" class="statusbar chromeclass-status" role="status">
     <statusbarpanel id="statusText" flex="1"/>
     <hbox id="statusbar-progresspanel"
           class="statusbarpanel statusbarpanel-progress"

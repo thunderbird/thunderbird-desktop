@@ -947,7 +947,7 @@
             hidden="true"/>
   </panel>
 
-  <statusbar id="status-bar" class="statusbar chromeclass-status">
+  <hbox id="status-bar" class="statusbar chromeclass-status" role="status">
     <statusbarpanel id="statusText" flex="1" value="&statusText.label;"/>
-  </statusbar>
+  </hbox>
 </window>

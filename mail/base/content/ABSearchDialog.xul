@@ -183,7 +183,7 @@
       </hbox>
     </vbox>
 
-  <hbox id="status-bar" class="statusbar chromeclass-status">
+  <hbox id="status-bar" class="statusbar chromeclass-status" role="status">
     <statusbarpanel id="statusText" crop="right" flex="1"/>
     <hbox id="statusbar-progresspanel" class="statusbarpanel statusbarpanel-progress">
       <html:progress class="progressmeter-statusbar" id="statusbar-icon" value="0" max="100"/>
