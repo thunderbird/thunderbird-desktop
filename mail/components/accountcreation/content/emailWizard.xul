@@ -291,20 +291,22 @@
           <row id="labels_row" align="center">
             <spacer/>
             <spacer/>
-            <label value="&hostname.label;" class="columnHeader"/>
-            <label value="&port.label;" class="columnHeader"/>
-            <label value="&ssl.label;" class="columnHeader"/>
-            <label value="&auth.label;" class="columnHeader"/>
+            <label id="hostnameLabelColumn" value="&hostname.label;" class="columnHeader"/>
+            <label id="portLabelColumn" value="&port.label;" class="columnHeader"/>
+            <label id="sslLabelColumn" value="&ssl.label;" class="columnHeader"/>
+            <label id="authLabelColumn" value="&auth.label;" class="columnHeader"/>
           </row>
           <row id="incoming_server_area">
             <hbox align="center" pack="end">
-              <label class="textbox-label"
+              <label id="incomingLabel"
+                     class="textbox-label"
                      value="&incoming.label;"
                      control="incoming_hostname"/>
             </hbox>
             <menulist id="incoming_protocol"
                       oncommand="gEmailConfigWizard.onChangedProtocolIncoming();"
-                      sizetopopup="always">
+                      sizetopopup="always"
+                      aria-labelledby="incomingLabel">
               <menupopup>
                 <menuitem label="&imap.label;" value="1"/>
                 <menuitem label="&pop3.label;" value="2"/>
@@ -312,18 +314,21 @@
             </menulist>
             <textbox id="incoming_hostname"
                      oninput="gEmailConfigWizard.onInputHostname();"
-                     class="host uri-element"/>
+                     class="host uri-element"
+                     aria-labelledby="incomingLabel hostnameLabelColumn"/>
             <menulist is="menulist-editable" id="incoming_port"
                       editable="true"
                       oninput="gEmailConfigWizard.onChangedPortIncoming();"
                       oncommand="gEmailConfigWizard.onChangedPortIncoming();"
-                      class="port">
+                      class="port"
+                      aria-labelledby="incomingLabel portLabelColumn">
               <menupopup/>
             </menulist>
             <menulist id="incoming_ssl"
                       class="security"
                       oncommand="gEmailConfigWizard.onChangedSSLIncoming();"
-                      sizetopopup="none">
+                      sizetopopup="none"
+                      aria-labelledby="incomingLabel sslLabelColumn">
               <menupopup>
                 <!-- values defined in nsMsgSocketType -->
                 <menuitem label="&autodetect.label;" value="0"/>
@@ -335,7 +340,8 @@
             <menulist id="incoming_authMethod"
                       class="auth"
                       oncommand="gEmailConfigWizard.onChangedInAuth();"
-                      sizetopopup="none">
+                      sizetopopup="none"
+                      aria-labelledby="incomingLabel authLabelColumn">
               <menupopup>
                 <menuitem label="&autodetect.label;" value="0"/>
                 <!-- values defined in nsMsgAuthMethod -->
@@ -350,7 +356,8 @@
             </menulist>
           </row>
           <row id="outgoing_server_area" align="center">
-            <label class="textbox-label"
+            <label id="outgoingLabel"
+                   class="textbox-label"
                    value="&outgoing.label;"
                    control="outgoing_hostname"/>
             <label id="outgoing_protocol"
@@ -361,20 +368,23 @@
                       oninput="gEmailConfigWizard.onInputHostname();"
                       oncommand="gEmailConfigWizard.onChangedOutgoingDropdown();"
                       onpopupshowing="gEmailConfigWizard.onOpenOutgoingDropdown();"
-                      class="host uri-element">
+                      class="host uri-element"
+                      aria-labelledby="outgoingLabel hostnameLabelColumn">
               <menupopup id="outgoing_hostname_popup"/>
             </menulist>
             <menulist is="menulist-editable" id="outgoing_port"
                       editable="true"
                       oninput="gEmailConfigWizard.onChangedPortOutgoing();"
                       oncommand="gEmailConfigWizard.onChangedPortOutgoing();"
-                      class="port">
+                      class="port"
+                      aria-labelledby="outgoingLabel portLabelColumn">
               <menupopup/>
             </menulist>
             <menulist id="outgoing_ssl"
                       class="security"
                       oncommand="gEmailConfigWizard.onChangedSSLOutgoing();"
-                      sizetopopup="none">
+                      sizetopopup="none"
+                      aria-labelledby="outgoingLabel sslLabelColumn">
               <menupopup>
                 <!-- @see incoming -->
                 <menuitem label="&autodetect.label;" value="0"/>
@@ -386,7 +396,8 @@
             <menulist id="outgoing_authMethod"
                       class="auth"
                       oncommand="gEmailConfigWizard.onChangedOutAuth(this.selectedItem);"
-                      sizetopopup="none">
+                      sizetopopup="none"
+                      aria-labelledby="outgoingLabel authLabelColumn">
               <menupopup>
                 <menuitem label="&autodetect.label;" value="0"/>
                 <!-- @see incoming -->
@@ -400,22 +411,26 @@
             </menulist>
           </row>
           <row id="username_area" align="center">
-            <label class="textbox-label"
+            <label id="usernameLabel"
+                   class="textbox-label"
                    value="&username.label;"/>
-            <label class="columnHeader"
+            <label id="incoming_label"
+                   class="columnHeader"
                    value="&incoming.label;"
                    control="incoming_username"/>
             <textbox id="incoming_username"
                      oninput="gEmailConfigWizard.onInputInUsername();"
-                     class="username"/>
+                     class="username"
+                     aria-labelledby="incoming_label usernameLabel"/>
             <spacer/>
-            <label class="columnHeader"
-                   id="outgoing_label"
+            <label id="outgoing_label"
+                   class="columnHeader"
                    value="&outgoing.label;"
                    control="outgoing_username"/>
             <textbox id="outgoing_username"
                      oninput="gEmailConfigWizard.onInputOutUsername();"
-                     class="username"/>
+                     class="username"
+                     aria-labelledby="outgoing_label usernameLabel"/>
           </row>
         </rows>
       </grid>
