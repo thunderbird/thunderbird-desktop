@@ -27,9 +27,16 @@ var TodayPane = {
   },
 
   /**
+   * Wrapper function to collect the Promise returned by _onLoad.
+   */
+  onLoad() {
+    this.loadPromise = this._onLoad();
+  },
+
+  /**
    * Load Handler, sets up the today pane controls.
    */
-  onLoad: async function() {
+  _onLoad: async function() {
     let agendaPanel = document.getElementById("agenda-panel");
     if (!("isVisible" in agendaPanel)) {
       // Wait for this XBL binding to load before doing anything.
@@ -85,7 +92,9 @@ var TodayPane = {
    * Sets up the label for the switcher that allows switching between today pane
    * views. (event+task, task only, event only)
    */
-  updateDisplay: function() {
+  updateDisplay: async function() {
+    await this.loadPromise;
+
     let agendaPanel = document.getElementById("agenda-panel");
     let currentMode = document.getElementById("modeBroadcaster").getAttribute("mode");
     let agendaIsVisible = agendaPanel.isVisible(currentMode);
@@ -458,13 +467,13 @@ var TodayPane = {
    *
    * @param aEvent        The DOM event occurring on attribute modification.
    */
-  onModeModified: function(aEvent) {
+  onModeModified: async function(aEvent) {
     if (aEvent.attrName == "mode") {
       let todaypane = document.getElementById("today-pane-panel");
       // Store the previous mode panel's width.
       todaypane.setModeAttribute("modewidths", todaypane.width, TodayPane.previousMode);
 
-      TodayPane.updateDisplay();
+      await TodayPane.updateDisplay();
       TodayPane.updateSplitterState();
       todaypane.width = todaypane.getModeAttribute("modewidths", "width");
       TodayPane.previousMode = document.getElementById("modeBroadcaster").getAttribute("mode");
@@ -480,9 +489,9 @@ var TodayPane = {
    *
    * @param aEvent        The DOM event occurring on activated command.
    */
-  toggleVisibility: function(aEvent) {
+  toggleVisibility: async function(aEvent) {
     document.getElementById("today-pane-panel").togglePane(aEvent);
-    TodayPane.updateDisplay();
+    await TodayPane.updateDisplay();
     TodayPane.updateSplitterState();
   },
 
