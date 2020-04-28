@@ -154,7 +154,6 @@ add_task(async function createAddressBook() {
   equal(book.UID.length, 36);
   equal(book.URI, `${SCHEME}://${FILE_NAME}`);
   equal(book.isMailList, false);
-  equal(book.isQuery, false);
   equal(book.supportsMailingLists, true);
   equal(book.dirPrefId, "ldap_2.servers.newbook");
 
@@ -300,7 +299,6 @@ add_task(async function createMailingList() {
   equal(list.UID.length, 36);
   equal(list.URI, `${SCHEME}://${FILE_NAME}/MailList1`);
   equal(list.isMailList, true);
-  equal(list.isQuery, false);
   equal(list.supportsMailingLists, false);
 
   // Check list enumerations.
