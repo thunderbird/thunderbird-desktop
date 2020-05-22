@@ -509,7 +509,7 @@ function test_generalContentPolicy() {
 
   for (let i = 0; i < TESTS.length; ++i) {
     // Check for denied in mail
-    info("Doing test: " + TESTS[i].description + " ...\n");
+    dump("Doing test: " + TESTS[i].description + " ...\n");
     addMsgToFolderAndCheckContent(folder, TESTS[i]);
 
     if (TESTS[i].checkDenied) {
