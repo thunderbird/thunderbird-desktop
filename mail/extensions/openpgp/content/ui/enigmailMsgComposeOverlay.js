@@ -796,18 +796,13 @@ Enigmail.msg = {
         }
         node = node.nextSibling;
       }
-      if (!bucketList.hasChildNodes()) {
-        try {
-          // TB only
-          UpdateAttachmentBucket(false);
-        } catch (ex) {}
-      }
     }
 
-    try {
-      // TB only
+    // If we removed all the children and the bucket wasn't meant
+    // to stay open, close it.
+    if (!Services.prefs.getBoolPref("mail.compose.show_attachment_pane")) {
       UpdateAttachmentBucket(bucketList.hasChildNodes());
-    } catch (ex) {}
+    }
 
     //this.processFinalState();
     if (selectedElement) {
@@ -1081,6 +1076,7 @@ Enigmail.msg = {
     // add attachment to msg
     this.addAttachment(keyAttachment);
 
+    // XXX TODO: ChangeAttachmentBucketVisibility() doesn't exist.
     try {
       // TB only
       ChangeAttachmentBucketVisibility(false);
@@ -1165,6 +1161,7 @@ Enigmail.msg = {
         }
       }
       if (!bucketList.hasChildNodes()) {
+        // XXX TODO: ChangeAttachmentBucketVisibility() doesn't exist.
         try {
           // TB only
           ChangeAttachmentBucketVisibility(true);
