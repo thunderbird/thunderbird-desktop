@@ -160,7 +160,7 @@ class BasePopup {
     switch (event.type) {
       case "unload":
       case "popuphiding":
-        if (!this.destroyed) {
+        if (event.target == this.viewNode && !this.destroyed) {
           this.destroy();
         }
         break;
