@@ -91,7 +91,7 @@
 #ifdef MSGCOMP_TRACE_PERFORMANCE
 static mozilla::LazyLogModule MsgComposeLogModule("MsgCompose");
 
-static uint32_t GetMessageSizeFromURI(const char *originalMsgURI) {
+static uint32_t GetMessageSizeFromURI(const char* originalMsgURI) {
   uint32_t msgSize = 0;
 
   if (originalMsgURI && *originalMsgURI) {
@@ -144,8 +144,8 @@ void nsMsgComposeService::Reset() {
 // Function to open a message compose window and pass an nsIMsgComposeParams
 // parameter to it.
 NS_IMETHODIMP
-nsMsgComposeService::OpenComposeWindowWithParams(const char *chrome,
-                                                 nsIMsgComposeParams *params) {
+nsMsgComposeService::OpenComposeWindowWithParams(const char* chrome,
+                                                 nsIMsgComposeParams* params) {
   NS_ENSURE_ARG_POINTER(params);
 #ifdef MSGCOMP_TRACE_PERFORMANCE
   if (mLogComposePerformance) {
@@ -185,9 +185,9 @@ nsMsgComposeService::OpenComposeWindowWithParams(const char *chrome,
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::DetermineComposeHTML(nsIMsgIdentity *aIdentity,
+nsMsgComposeService::DetermineComposeHTML(nsIMsgIdentity* aIdentity,
                                           MSG_ComposeFormat aFormat,
-                                          bool *aComposeHTML) {
+                                          bool* aComposeHTML) {
   NS_ENSURE_ARG_POINTER(aComposeHTML);
 
   *aComposeHTML = true;
@@ -227,8 +227,8 @@ nsMsgComposeService::DetermineComposeHTML(nsIMsgIdentity *aIdentity,
 
 MOZ_CAN_RUN_SCRIPT_FOR_DEFINITION nsresult
 nsMsgComposeService::GetOrigWindowSelection(MSG_ComposeType type,
-                                            nsIMsgWindow *aMsgWindow,
-                                            nsACString &aSelHTML) {
+                                            nsIMsgWindow* aMsgWindow,
+                                            nsACString& aSelHTML) {
   nsresult rv;
 
   // Good hygiene
@@ -288,7 +288,7 @@ nsMsgComposeService::GetOrigWindowSelection(MSG_ComposeType type,
 
       if (NS_SUCCEEDED(rv)) {
         const uint32_t length = selPlain.Length();
-        const char16_t *unicodeStr = selPlain.get();
+        const char16_t* unicodeStr = selPlain.get();
         int32_t endWordPos = lineBreaker->Next(unicodeStr, length, 0);
 
         // If there's not even one word, then there's not multiple words
@@ -296,7 +296,7 @@ nsMsgComposeService::GetOrigWindowSelection(MSG_ComposeType type,
 
         // If after the first word is only space, then there's not multiple
         // words
-        const char16_t *end;
+        const char16_t* end;
         for (end = unicodeStr + endWordPos; mozilla::intl::NS_IsSpace(*end);
              end++)
           ;
@@ -348,9 +348,9 @@ nsMsgComposeService::GetOrigWindowSelection(MSG_ComposeType type,
 
 MOZ_CAN_RUN_SCRIPT_FOR_DEFINITION NS_IMETHODIMP
 nsMsgComposeService::OpenComposeWindow(
-    const char *msgComposeWindowURL, nsIMsgDBHdr *origMsgHdr,
-    const char *originalMsgURI, MSG_ComposeType type, MSG_ComposeFormat format,
-    nsIMsgIdentity *aIdentity, const nsACString &from, nsIMsgWindow *aMsgWindow) {
+    const char* msgComposeWindowURL, nsIMsgDBHdr* origMsgHdr,
+    const char* originalMsgURI, MSG_ComposeType type, MSG_ComposeFormat format,
+    nsIMsgIdentity *aIdentity, const nsACString& from, nsIMsgWindow* aMsgWindow) {
   nsresult rv;
 
   // Check for any reply type that wants to ignore the quote.
@@ -468,7 +468,7 @@ nsMsgComposeService::OpenComposeWindow(
 }
 
 NS_IMETHODIMP nsMsgComposeService::GetParamsForMailto(
-    nsIURI *aURI, nsIMsgComposeParams **aParams) {
+    nsIURI* aURI, nsIMsgComposeParams** aParams) {
   nsresult rv = NS_OK;
   if (aURI) {
     nsCOMPtr<nsIMailtoUrl> aMailtoUrl = do_QueryInterface(aURI, &rv);
@@ -556,7 +556,7 @@ NS_IMETHODIMP nsMsgComposeService::GetParamsForMailto(
 }
 
 NS_IMETHODIMP nsMsgComposeService::OpenComposeWindowWithURI(
-    const char *aMsgComposeWindowURL, nsIURI *aURI, nsIMsgIdentity *identity) {
+    const char* aMsgComposeWindowURL, nsIURI* aURI, nsIMsgIdentity* identity) {
   nsCOMPtr<nsIMsgComposeParams> pMsgComposeParams;
   nsresult rv = GetParamsForMailto(aURI, getter_AddRefs(pMsgComposeParams));
   if (NS_SUCCEEDED(rv)) {
@@ -566,10 +566,10 @@ NS_IMETHODIMP nsMsgComposeService::OpenComposeWindowWithURI(
   return rv;
 }
 
-NS_IMETHODIMP nsMsgComposeService::InitCompose(nsIMsgComposeParams *aParams,
-                                               mozIDOMWindowProxy *aWindow,
-                                               nsIDocShell *aDocShell,
-                                               nsIMsgCompose **_retval) {
+NS_IMETHODIMP nsMsgComposeService::InitCompose(nsIMsgComposeParams* aParams,
+                                               mozIDOMWindowProxy* aWindow,
+                                               nsIDocShell* aDocShell,
+                                               nsIMsgCompose** _retval) {
   nsresult rv;
   nsCOMPtr<nsIMsgCompose> msgCompose =
       do_CreateInstance(NS_MSGCOMPOSE_CONTRACTID, &rv);
@@ -583,7 +583,7 @@ NS_IMETHODIMP nsMsgComposeService::InitCompose(nsIMsgComposeParams *aParams,
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::GetDefaultIdentity(nsIMsgIdentity **_retval) {
+nsMsgComposeService::GetDefaultIdentity(nsIMsgIdentity** _retval) {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nullptr;
 
@@ -601,12 +601,12 @@ nsMsgComposeService::GetDefaultIdentity(nsIMsgIdentity **_retval) {
 
 /* readonly attribute boolean logComposePerformance; */
 NS_IMETHODIMP nsMsgComposeService::GetLogComposePerformance(
-    bool *aLogComposePerformance) {
+    bool* aLogComposePerformance) {
   *aLogComposePerformance = mLogComposePerformance;
   return NS_OK;
 }
 
-NS_IMETHODIMP nsMsgComposeService::TimeStamp(const char *label,
+NS_IMETHODIMP nsMsgComposeService::TimeStamp(const char* label,
                                              bool resetTime) {
   if (!mLogComposePerformance) return NS_OK;
 
@@ -668,11 +668,11 @@ nsMsgTemplateReplyHelper::nsMsgTemplateReplyHelper() {
 
 nsMsgTemplateReplyHelper::~nsMsgTemplateReplyHelper() {}
 
-NS_IMETHODIMP nsMsgTemplateReplyHelper::OnStartRunningUrl(nsIURI *aUrl) {
+NS_IMETHODIMP nsMsgTemplateReplyHelper::OnStartRunningUrl(nsIURI* aUrl) {
   return NS_OK;
 }
 
-NS_IMETHODIMP nsMsgTemplateReplyHelper::OnStopRunningUrl(nsIURI *aUrl,
+NS_IMETHODIMP nsMsgTemplateReplyHelper::OnStopRunningUrl(nsIURI* aUrl,
                                                          nsresult aExitCode) {
   NS_ENSURE_SUCCESS(aExitCode, aExitCode);
   nsresult rv;
@@ -750,10 +750,10 @@ NS_IMETHODIMP nsMsgTemplateReplyHelper::OnStopRunningUrl(nsIURI *aUrl,
 }
 
 NS_IMETHODIMP
-nsMsgTemplateReplyHelper::OnStartRequest(nsIRequest *request) { return NS_OK; }
+nsMsgTemplateReplyHelper::OnStartRequest(nsIRequest* request) { return NS_OK; }
 
 NS_IMETHODIMP
-nsMsgTemplateReplyHelper::OnStopRequest(nsIRequest *request, nsresult status) {
+nsMsgTemplateReplyHelper::OnStopRequest(nsIRequest* request, nsresult status) {
   if (NS_SUCCEEDED(status)) {
     // now we've got the message body in mTemplateBody -
     // need to set body in compose params and send the reply.
@@ -762,8 +762,8 @@ nsMsgTemplateReplyHelper::OnStopRequest(nsIRequest *request, nsresult status) {
 }
 
 NS_IMETHODIMP
-nsMsgTemplateReplyHelper::OnDataAvailable(nsIRequest *request,
-                                          nsIInputStream *inStream,
+nsMsgTemplateReplyHelper::OnDataAvailable(nsIRequest* request,
+                                          nsIInputStream* inStream,
                                           uint64_t srcOffset, uint32_t count) {
   nsresult rv = NS_OK;
 
@@ -816,8 +816,8 @@ nsMsgTemplateReplyHelper::OnDataAvailable(nsIRequest *request,
 }
 
 NS_IMETHODIMP nsMsgComposeService::ReplyWithTemplate(
-    nsIMsgDBHdr *aMsgHdr, const char *templateUri, nsIMsgWindow *aMsgWindow,
-    nsIMsgIncomingServer *aServer) {
+    nsIMsgDBHdr* aMsgHdr, const char* templateUri, nsIMsgWindow* aMsgWindow,
+    nsIMsgIncomingServer* aServer) {
   // To reply with template, we need the message body of the template.
   // I think we're going to need to stream the template message to ourselves,
   // and construct the body, and call setBody on the compFields.
@@ -871,7 +871,7 @@ NS_IMETHODIMP nsMsgComposeService::ReplyWithTemplate(
   nsCOMPtr<nsIMsgFolder> templateFolder;
   nsCOMPtr<nsIMsgDatabase> templateDB;
   nsCString templateMsgHdrUri;
-  const char *query = PL_strstr(templateUri, "?messageId=");
+  const char* query = PL_strstr(templateUri, "?messageId=");
   if (!query) return NS_ERROR_FAILURE;
 
   nsAutoCString folderUri(Substring(templateUri, query));
@@ -880,9 +880,9 @@ NS_IMETHODIMP nsMsgComposeService::ReplyWithTemplate(
   rv = templateFolder->GetMsgDatabase(getter_AddRefs(templateDB));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const char *subject = PL_strstr(templateUri, "&subject=");
+  const char* subject = PL_strstr(templateUri, "&subject=");
   if (subject) {
-    const char *subjectEnd = subject + strlen(subject);
+    const char* subjectEnd = subject + strlen(subject);
     nsAutoCString messageId(Substring(query + 11, subject));
     nsAutoCString subjectString(Substring(subject + 9, subjectEnd));
     templateDB->GetMsgHdrForMessageID(messageId.get(),
@@ -927,10 +927,10 @@ NS_IMETHODIMP nsMsgComposeService::ReplyWithTemplate(
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::ForwardMessage(const nsAString &forwardTo,
-                                    nsIMsgDBHdr *aMsgHdr,
-                                    nsIMsgWindow *aMsgWindow,
-                                    nsIMsgIncomingServer *aServer,
+nsMsgComposeService::ForwardMessage(const nsAString& forwardTo,
+                                    nsIMsgDBHdr* aMsgHdr,
+                                    nsIMsgWindow* aMsgWindow,
+                                    nsIMsgIncomingServer* aServer,
                                     uint32_t aForwardType) {
   NS_ENSURE_ARG_POINTER(aMsgHdr);
 
@@ -1131,8 +1131,8 @@ nsresult nsMsgComposeService::AddGlobalHtmlDomains() {
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::RegisterComposeDocShell(nsIDocShell *aDocShell,
-                                             nsIMsgCompose *aComposeObject) {
+nsMsgComposeService::RegisterComposeDocShell(nsIDocShell* aDocShell,
+                                             nsIMsgCompose* aComposeObject) {
   NS_ENSURE_ARG_POINTER(aDocShell);
   NS_ENSURE_ARG_POINTER(aComposeObject);
 
@@ -1149,7 +1149,7 @@ nsMsgComposeService::RegisterComposeDocShell(nsIDocShell *aDocShell,
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::UnregisterComposeDocShell(nsIDocShell *aDocShell) {
+nsMsgComposeService::UnregisterComposeDocShell(nsIDocShell* aDocShell) {
   NS_ENSURE_ARG_POINTER(aDocShell);
 
   nsresult rv;
@@ -1162,8 +1162,8 @@ nsMsgComposeService::UnregisterComposeDocShell(nsIDocShell *aDocShell) {
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::GetMsgComposeForDocShell(nsIDocShell *aDocShell,
-                                              nsIMsgCompose **aComposeObject) {
+nsMsgComposeService::GetMsgComposeForDocShell(nsIDocShell* aDocShell,
+                                              nsIMsgCompose** aComposeObject) {
   NS_ENSURE_ARG_POINTER(aDocShell);
   NS_ENSURE_ARG_POINTER(aComposeObject);
 
@@ -1192,10 +1192,10 @@ nsMsgComposeService::GetMsgComposeForDocShell(nsIDocShell *aDocShell,
  * contents for a draft or template.
  */
 nsresult nsMsgComposeService::LoadDraftOrTemplate(
-    const nsACString &aMsgURI, nsMimeOutputType aOutType,
-    nsIMsgIdentity *aIdentity, const char *aOriginalMsgURI,
-    nsIMsgDBHdr *aOrigMsgHdr, bool aForwardInline, bool overrideComposeFormat,
-    nsIMsgWindow *aMsgWindow) {
+    const nsACString& aMsgURI, nsMimeOutputType aOutType,
+    nsIMsgIdentity* aIdentity, const char* aOriginalMsgURI,
+    nsIMsgDBHdr* aOrigMsgHdr, bool aForwardInline, bool overrideComposeFormat,
+    nsIMsgWindow* aMsgWindow) {
   return RunMessageThroughMimeDraft(
       aMsgURI, aOutType, aIdentity, aOriginalMsgURI, aOrigMsgHdr,
       aForwardInline, EmptyString(), overrideComposeFormat, aMsgWindow);
@@ -1225,10 +1225,10 @@ nsresult nsMsgComposeService::LoadDraftOrTemplate(
  * @param aMsgWindow msgWindow to pass into DisplayMessage.
  */
 nsresult nsMsgComposeService::RunMessageThroughMimeDraft(
-    const nsACString &aMsgURI, nsMimeOutputType aOutType,
-    nsIMsgIdentity *aIdentity, const char *aOriginalMsgURI,
-    nsIMsgDBHdr *aOrigMsgHdr, bool aForwardInline, const nsAString &aForwardTo,
-    bool aOverrideComposeFormat, nsIMsgWindow *aMsgWindow) {
+    const nsACString& aMsgURI, nsMimeOutputType aOutType,
+    nsIMsgIdentity* aIdentity, const char* aOriginalMsgURI,
+    nsIMsgDBHdr* aOrigMsgHdr, bool aForwardInline, const nsAString& aForwardTo,
+    bool aOverrideComposeFormat, nsIMsgWindow* aMsgWindow) {
   nsCOMPtr<nsIMsgMessageService> messageService;
   nsresult rv =
       GetMessageServiceFromURI(aMsgURI, getter_AddRefs(messageService));
@@ -1323,7 +1323,7 @@ nsresult nsMsgComposeService::RunMessageThroughMimeDraft(
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::Handle(nsICommandLine *aCmdLine) {
+nsMsgComposeService::Handle(nsICommandLine* aCmdLine) {
   NS_ENSURE_ARG_POINTER(aCmdLine);
 
   nsresult rv;
@@ -1404,7 +1404,7 @@ nsMsgComposeService::Handle(nsICommandLine *aCmdLine) {
 }
 
 NS_IMETHODIMP
-nsMsgComposeService::GetHelpInfo(nsACString &aResult) {
+nsMsgComposeService::GetHelpInfo(nsACString& aResult) {
   // clang-format off
   aResult.AssignLiteral(
     "  -compose [ <options> ] Compose a mail or news message. Options are specified\n"

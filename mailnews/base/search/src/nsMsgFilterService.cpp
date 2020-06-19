@@ -126,8 +126,8 @@ nsMsgFilterService::~nsMsgFilterService() {
 }
 
 NS_IMETHODIMP nsMsgFilterService::OpenFilterList(
-    nsIFile *aFilterFile, nsIMsgFolder *rootFolder, nsIMsgWindow *aMsgWindow,
-    nsIMsgFilterList **resultFilterList) {
+    nsIFile* aFilterFile, nsIMsgFolder* rootFolder, nsIMsgWindow* aMsgWindow,
+    nsIMsgFilterList** resultFilterList) {
   NS_ENSURE_ARG_POINTER(aFilterFile);
   NS_ENSURE_ARG_POINTER(resultFilterList);
 
@@ -201,14 +201,14 @@ NS_IMETHODIMP nsMsgFilterService::OpenFilterList(
 }
 
 NS_IMETHODIMP nsMsgFilterService::CloseFilterList(
-    nsIMsgFilterList *filterList) {
+    nsIMsgFilterList* filterList) {
   // NS_ASSERTION(false,"CloseFilterList doesn't do anything yet");
   return NS_OK;
 }
 
 /* save without deleting */
-NS_IMETHODIMP nsMsgFilterService::SaveFilterList(nsIMsgFilterList *filterList,
-                                                 nsIFile *filterFile) {
+NS_IMETHODIMP nsMsgFilterService::SaveFilterList(nsIMsgFilterList* filterList,
+                                                 nsIFile* filterFile) {
   NS_ENSURE_ARG_POINTER(filterFile);
   NS_ENSURE_ARG_POINTER(filterList);
 
@@ -237,12 +237,12 @@ NS_IMETHODIMP nsMsgFilterService::SaveFilterList(nsIMsgFilterList *filterList,
 }
 
 NS_IMETHODIMP nsMsgFilterService::CancelFilterList(
-    nsIMsgFilterList *filterList) {
+    nsIMsgFilterList* filterList) {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-nsresult nsMsgFilterService::BackUpFilterFile(nsIFile *aFilterFile,
-                                              nsIMsgWindow *aMsgWindow) {
+nsresult nsMsgFilterService::BackUpFilterFile(nsIFile* aFilterFile,
+                                              nsIMsgWindow* aMsgWindow) {
   AlertBackingUpFilterFile(aMsgWindow);
 
   nsCOMPtr<nsIFile> localParentDir;
@@ -263,14 +263,14 @@ nsresult nsMsgFilterService::BackUpFilterFile(nsIFile *aFilterFile,
 }
 
 nsresult nsMsgFilterService::AlertBackingUpFilterFile(
-    nsIMsgWindow *aMsgWindow) {
+    nsIMsgWindow* aMsgWindow) {
   return ThrowAlertMsg("filterListBackUpMsg", aMsgWindow);
 }
 
 // Do not use this routine if you have to call it very often because it creates
 // a new bundle each time.
-nsresult nsMsgFilterService::GetStringFromBundle(const char *aMsgName,
-                                                 nsAString &aResult) {
+nsresult nsMsgFilterService::GetStringFromBundle(const char* aMsgName,
+                                                 nsAString& aResult) {
   nsCOMPtr<nsIStringBundle> bundle;
   nsresult rv = GetFilterStringBundle(getter_AddRefs(bundle));
   if (NS_SUCCEEDED(rv) && bundle)
@@ -278,7 +278,7 @@ nsresult nsMsgFilterService::GetStringFromBundle(const char *aMsgName,
   return rv;
 }
 
-nsresult nsMsgFilterService::GetFilterStringBundle(nsIStringBundle **aBundle) {
+nsresult nsMsgFilterService::GetFilterStringBundle(nsIStringBundle** aBundle) {
   NS_ENSURE_ARG_POINTER(aBundle);
 
   nsCOMPtr<nsIStringBundleService> bundleService =
@@ -292,8 +292,8 @@ nsresult nsMsgFilterService::GetFilterStringBundle(nsIStringBundle **aBundle) {
   return NS_OK;
 }
 
-nsresult nsMsgFilterService::ThrowAlertMsg(const char *aMsgName,
-                                           nsIMsgWindow *aMsgWindow) {
+nsresult nsMsgFilterService::ThrowAlertMsg(const char* aMsgName,
+                                           nsIMsgWindow* aMsgWindow) {
   nsString alertString;
   nsresult rv = GetStringFromBundle(aMsgName, alertString);
   nsCOMPtr<nsIMsgWindow> msgWindow = aMsgWindow;
@@ -343,9 +343,9 @@ class nsMsgFilterAfterTheFact : public nsIUrlListener,
                                 public nsIMsgSearchNotify,
                                 public nsIMsgCopyServiceListener {
  public:
-  nsMsgFilterAfterTheFact(nsIMsgWindow *aMsgWindow,
-                          nsIMsgFilterList *aFilterList, nsIArray *aFolderList,
-                          nsIMsgOperationListener *aCallback);
+  nsMsgFilterAfterTheFact(nsIMsgWindow* aMsgWindow,
+                          nsIMsgFilterList* aFilterList, nsIArray* aFolderList,
+                          nsIMsgOperationListener* aCallback);
   NS_DECL_ISUPPORTS
   NS_DECL_NSIURLLISTENER
   NS_DECL_NSIMSGSEARCHNOTIFY
@@ -361,9 +361,9 @@ class nsMsgFilterAfterTheFact : public nsIUrlListener,
   nsresult ApplyFilter();
   nsresult OnEndExecution();  // do what we have to do to cleanup.
   bool ContinueExecutionPrompt();
-  nsresult DisplayConfirmationPrompt(nsIMsgWindow *msgWindow,
-                                     const char16_t *confirmString,
-                                     bool *confirmed);
+  nsresult DisplayConfirmationPrompt(nsIMsgWindow* msgWindow,
+                                     const char16_t* confirmString,
+                                     bool* confirmed);
   nsCOMPtr<nsIMsgWindow> m_msgWindow;
   nsCOMPtr<nsIMsgFilterList> m_filters;
   nsCOMPtr<nsIArray> m_folders;
@@ -388,8 +388,8 @@ NS_IMPL_ISUPPORTS(nsMsgFilterAfterTheFact, nsIUrlListener, nsIMsgSearchNotify,
                   nsIMsgCopyServiceListener)
 
 nsMsgFilterAfterTheFact::nsMsgFilterAfterTheFact(
-    nsIMsgWindow *aMsgWindow, nsIMsgFilterList *aFilterList,
-    nsIArray *aFolderList, nsIMsgOperationListener *aCallback) {
+    nsIMsgWindow* aMsgWindow, nsIMsgFilterList* aFilterList,
+    nsIArray* aFolderList, nsIMsgOperationListener* aCallback) {
   MOZ_LOG(FILTERLOGMODULE, LogLevel::Debug, ("(Post) nsMsgFilterAfterTheFact"));
   m_curFilterIndex = m_curFolderIndex = m_nextAction = 0;
   m_msgWindow = aMsgWindow;
@@ -559,12 +559,12 @@ nsresult nsMsgFilterAfterTheFact::AdvanceToNextFolder() {
   return rv;
 }
 
-NS_IMETHODIMP nsMsgFilterAfterTheFact::OnStartRunningUrl(nsIURI *aUrl) {
+NS_IMETHODIMP nsMsgFilterAfterTheFact::OnStartRunningUrl(nsIURI* aUrl) {
   return NS_OK;
 }
 
 // This is the return from a folder parse
-NS_IMETHODIMP nsMsgFilterAfterTheFact::OnStopRunningUrl(nsIURI *aUrl,
+NS_IMETHODIMP nsMsgFilterAfterTheFact::OnStopRunningUrl(nsIURI* aUrl,
                                                         nsresult aExitCode) {
   if (NS_SUCCEEDED(aExitCode)) return RunNextFilter();
 
@@ -577,8 +577,8 @@ NS_IMETHODIMP nsMsgFilterAfterTheFact::OnStopRunningUrl(nsIURI *aUrl,
   return AdvanceToNextFolder();
 }
 
-NS_IMETHODIMP nsMsgFilterAfterTheFact::OnSearchHit(nsIMsgDBHdr *header,
-                                                   nsIMsgFolder *folder) {
+NS_IMETHODIMP nsMsgFilterAfterTheFact::OnSearchHit(nsIMsgDBHdr* header,
+                                                   nsIMsgFolder* folder) {
   NS_ENSURE_ARG_POINTER(header);
   NS_ENSURE_TRUE(m_searchHitHdrs, NS_ERROR_NOT_INITIALIZED);
 
@@ -1062,10 +1062,10 @@ nsresult nsMsgFilterAfterTheFact::ApplyFilter() {
 }
 
 NS_IMETHODIMP nsMsgFilterService::GetTempFilterList(
-    nsIMsgFolder *aFolder, nsIMsgFilterList **aFilterList) {
+    nsIMsgFolder* aFolder, nsIMsgFilterList** aFilterList) {
   NS_ENSURE_ARG_POINTER(aFilterList);
 
-  nsMsgFilterList *filterList = new nsMsgFilterList;
+  nsMsgFilterList* filterList = new nsMsgFilterList;
   filterList->SetFolder(aFolder);
   filterList->m_temporaryList = true;
   NS_ADDREF(*aFilterList = filterList);
@@ -1073,10 +1073,10 @@ NS_IMETHODIMP nsMsgFilterService::GetTempFilterList(
 }
 
 NS_IMETHODIMP
-nsMsgFilterService::ApplyFiltersToFolders(nsIMsgFilterList *aFilterList,
-                                          nsIArray *aFolders,
-                                          nsIMsgWindow *aMsgWindow,
-                                          nsIMsgOperationListener *aCallback) {
+nsMsgFilterService::ApplyFiltersToFolders(nsIMsgFilterList* aFilterList,
+                                          nsIArray* aFolders,
+                                          nsIMsgWindow* aMsgWindow,
+                                          nsIMsgOperationListener* aCallback) {
   MOZ_LOG(FILTERLOGMODULE, LogLevel::Debug,
           ("(Post) nsMsgFilterService::ApplyFiltersToFolders"));
   NS_ENSURE_ARG_POINTER(aFilterList);
@@ -1103,13 +1103,13 @@ nsMsgFilterService::ApplyFiltersToFolders(nsIMsgFilterList *aFilterList,
 }
 
 NS_IMETHODIMP nsMsgFilterService::AddCustomAction(
-    nsIMsgFilterCustomAction *aAction) {
+    nsIMsgFilterCustomAction* aAction) {
   mCustomActions.AppendObject(aAction);
   return NS_OK;
 }
 
 NS_IMETHODIMP nsMsgFilterService::GetCustomActions(
-    nsISimpleEnumerator **aResult) {
+    nsISimpleEnumerator** aResult) {
   NS_ENSURE_ARG_POINTER(aResult);
 
   return NS_NewArrayEnumerator(aResult, mCustomActions,
@@ -1117,8 +1117,8 @@ NS_IMETHODIMP nsMsgFilterService::GetCustomActions(
 }
 
 NS_IMETHODIMP
-nsMsgFilterService::GetCustomAction(const nsACString &aId,
-                                    nsIMsgFilterCustomAction **aResult) {
+nsMsgFilterService::GetCustomAction(const nsACString& aId,
+                                    nsIMsgFilterCustomAction** aResult) {
   NS_ENSURE_ARG_POINTER(aResult);
 
   for (int32_t i = 0; i < mCustomActions.Count(); i++) {
@@ -1133,13 +1133,13 @@ nsMsgFilterService::GetCustomAction(const nsACString &aId,
   return NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP nsMsgFilterService::AddCustomTerm(nsIMsgSearchCustomTerm *aTerm) {
+NS_IMETHODIMP nsMsgFilterService::AddCustomTerm(nsIMsgSearchCustomTerm* aTerm) {
   mCustomTerms.AppendObject(aTerm);
   return NS_OK;
 }
 
 NS_IMETHODIMP nsMsgFilterService::GetCustomTerms(
-    nsISimpleEnumerator **aResult) {
+    nsISimpleEnumerator** aResult) {
   NS_ENSURE_ARG_POINTER(aResult);
 
   return NS_NewArrayEnumerator(aResult, mCustomTerms,
@@ -1147,8 +1147,8 @@ NS_IMETHODIMP nsMsgFilterService::GetCustomTerms(
 }
 
 NS_IMETHODIMP
-nsMsgFilterService::GetCustomTerm(const nsACString &aId,
-                                  nsIMsgSearchCustomTerm **aResult) {
+nsMsgFilterService::GetCustomTerm(const nsACString& aId,
+                                  nsIMsgSearchCustomTerm** aResult) {
   NS_ENSURE_ARG_POINTER(aResult);
 
   for (int32_t i = 0; i < mCustomTerms.Count(); i++) {
@@ -1170,7 +1170,7 @@ nsMsgFilterService::GetCustomTerm(const nsACString &aId,
  */
 NS_IMETHODIMP
 nsMsgFilterService::FilterTypeName(nsMsgFilterTypeType filterType,
-                                   nsACString &typeName) {
+                                   nsACString& typeName) {
   typeName.Truncate();
   if (filterType == nsMsgFilterType::None) {
     typeName.Assign("None");
@@ -1216,11 +1216,11 @@ nsMsgFilterService::FilterTypeName(nsMsgFilterTypeType filterType,
 // apply filters to a list of messages, rather than an entire folder
 class nsMsgApplyFiltersToMessages : public nsMsgFilterAfterTheFact {
  public:
-  nsMsgApplyFiltersToMessages(nsIMsgWindow *aMsgWindow,
-                              nsIMsgFilterList *aFilterList,
-                              nsIArray *aFolderList, nsIArray *aMsgHdrList,
+  nsMsgApplyFiltersToMessages(nsIMsgWindow* aMsgWindow,
+                              nsIMsgFilterList* aFilterList,
+                              nsIArray* aFolderList, nsIArray* aMsgHdrList,
                               nsMsgFilterTypeType aFilterType,
-                              nsIMsgOperationListener *aCallback);
+                              nsIMsgOperationListener* aCallback);
 
  protected:
   virtual nsresult RunNextFilter();
@@ -1230,9 +1230,9 @@ class nsMsgApplyFiltersToMessages : public nsMsgFilterAfterTheFact {
 };
 
 nsMsgApplyFiltersToMessages::nsMsgApplyFiltersToMessages(
-    nsIMsgWindow *aMsgWindow, nsIMsgFilterList *aFilterList,
-    nsIArray *aFolderList, nsIArray *aMsgHdrList,
-    nsMsgFilterTypeType aFilterType, nsIMsgOperationListener *aCallback)
+    nsIMsgWindow* aMsgWindow, nsIMsgFilterList* aFilterList,
+    nsIArray* aFolderList, nsIArray* aMsgHdrList,
+    nsMsgFilterTypeType aFilterType, nsIMsgOperationListener* aCallback)
     : nsMsgFilterAfterTheFact(aMsgWindow, aFilterList, aFolderList, aCallback),
       m_filterType(aFilterType) {
   MOZ_LOG(FILTERLOGMODULE, LogLevel::Debug,
@@ -1340,9 +1340,9 @@ nsresult nsMsgApplyFiltersToMessages::RunNextFilter() {
 }
 
 NS_IMETHODIMP nsMsgFilterService::ApplyFilters(
-    nsMsgFilterTypeType aFilterType, nsIArray *aMsgHdrList,
-    nsIMsgFolder *aFolder, nsIMsgWindow *aMsgWindow,
-    nsIMsgOperationListener *aCallback) {
+    nsMsgFilterTypeType aFilterType, nsIArray* aMsgHdrList,
+    nsIMsgFolder* aFolder, nsIMsgWindow* aMsgWindow,
+    nsIMsgOperationListener* aCallback) {
   MOZ_LOG(FILTERLOGMODULE, LogLevel::Debug,
           ("(Post) nsMsgApplyFiltersToMessages::ApplyFilters"));
   NS_ENSURE_ARG_POINTER(aFolder);
@@ -1401,7 +1401,7 @@ NS_IMETHODIMP nsMsgFilterAfterTheFact::SetMessageKey(nsMsgKey /* aKey */) {
   return NS_OK;
 }
 
-NS_IMETHODIMP nsMsgFilterAfterTheFact::GetMessageId(nsACString &messageId) {
+NS_IMETHODIMP nsMsgFilterAfterTheFact::GetMessageId(nsACString& messageId) {
   return NS_OK;
 }
 
@@ -1452,7 +1452,7 @@ bool nsMsgFilterAfterTheFact::ContinueExecutionPrompt() {
 }
 
 nsresult nsMsgFilterAfterTheFact::DisplayConfirmationPrompt(
-    nsIMsgWindow *msgWindow, const char16_t *confirmString, bool *confirmed) {
+    nsIMsgWindow* msgWindow, const char16_t* confirmString, bool* confirmed) {
   if (msgWindow) {
     nsCOMPtr<nsIDocShell> docShell;
     msgWindow->GetRootDocShell(getter_AddRefs(docShell));

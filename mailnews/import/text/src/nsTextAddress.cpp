@@ -32,8 +32,8 @@ nsTextAddress::nsTextAddress() {
 nsTextAddress::~nsTextAddress() {}
 
 nsresult nsTextAddress::GetUnicharLineStreamForFile(
-    nsIFile *aFile, nsIInputStream *aInputStream,
-    nsIUnicharLineInputStream **aStream) {
+    nsIFile* aFile, nsIInputStream* aInputStream,
+    nsIUnicharLineInputStream** aStream) {
   nsAutoCString charset;
   nsresult rv = MsgDetectCharsetFromFile(aFile, charset);
   if (NS_FAILED(rv)) {
@@ -51,11 +51,11 @@ nsresult nsTextAddress::GetUnicharLineStreamForFile(
   return CallQueryInterface(converterStream, aStream);
 }
 
-nsresult nsTextAddress::ImportAddresses(bool *pAbort, const char16_t *pName,
-                                        nsIFile *pSrc,
-                                        nsIAbDirectory *pDirectory,
-                                        nsIImportFieldMap *fieldMap,
-                                        nsString &errors, uint32_t *pProgress) {
+nsresult nsTextAddress::ImportAddresses(bool* pAbort, const char16_t* pName,
+                                        nsIFile* pSrc,
+                                        nsIAbDirectory* pDirectory,
+                                        nsIImportFieldMap* fieldMap,
+                                        nsString& errors, uint32_t* pProgress) {
   // Open the source file for reading, read each line and process it!
   m_directory = pDirectory;
   m_fieldMap = fieldMap;
@@ -133,8 +133,8 @@ nsresult nsTextAddress::ImportAddresses(bool *pAbort, const char16_t *pName,
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-nsresult nsTextAddress::ReadRecord(nsIUnicharLineInputStream *aLineStream,
-                                   nsAString &aLine, bool *aMore) {
+nsresult nsTextAddress::ReadRecord(nsIUnicharLineInputStream* aLineStream,
+                                   nsAString& aLine, bool* aMore) {
   bool more = true;
   uint32_t numQuotes = 0;
   nsresult rv;
@@ -164,7 +164,7 @@ nsresult nsTextAddress::ReadRecord(nsIUnicharLineInputStream *aLineStream,
   return rv;
 }
 
-nsresult nsTextAddress::ReadRecordNumber(nsIFile *aSrc, nsAString &aLine,
+nsresult nsTextAddress::ReadRecordNumber(nsIFile* aSrc, nsAString& aLine,
                                          int32_t rNum) {
   nsCOMPtr<nsIInputStream> inputStream;
   nsresult rv = NS_NewLocalFileInputStream(getter_AddRefs(inputStream), aSrc);
@@ -210,7 +210,7 @@ nsresult nsTextAddress::ReadRecordNumber(nsIFile *aSrc, nsAString &aLine,
   return NS_ERROR_FAILURE;
 }
 
-int32_t nsTextAddress::CountFields(const nsAString &aLine, char16_t delim) {
+int32_t nsTextAddress::CountFields(const nsAString& aLine, char16_t delim) {
   int32_t pos = 0;
   int32_t maxLen = aLine.Length();
   int32_t count = 0;
@@ -244,8 +244,8 @@ int32_t nsTextAddress::CountFields(const nsAString &aLine, char16_t delim) {
   return count;
 }
 
-bool nsTextAddress::GetField(const nsAString &aLine, int32_t index,
-                             nsString &field, char16_t delim) {
+bool nsTextAddress::GetField(const nsAString& aLine, int32_t index,
+                             nsString& field, char16_t delim) {
   bool result = false;
   int32_t pos = 0;
   int32_t maxLen = aLine.Length();
@@ -329,7 +329,7 @@ bool nsTextAddress::GetField(const nsAString &aLine, int32_t index,
   return result;
 }
 
-nsresult nsTextAddress::DetermineDelim(nsIFile *aSrc) {
+nsresult nsTextAddress::DetermineDelim(nsIFile* aSrc) {
   nsCOMPtr<nsIInputStream> inputStream;
   nsresult rv = NS_NewLocalFileInputStream(getter_AddRefs(inputStream), aSrc);
   if (NS_FAILED(rv)) {
@@ -382,7 +382,7 @@ nsresult nsTextAddress::DetermineDelim(nsIFile *aSrc) {
     This is where the real work happens!
     Go through the field map and set the data in a new database row
 */
-nsresult nsTextAddress::ProcessLine(const nsAString &aLine, nsString &errors) {
+nsresult nsTextAddress::ProcessLine(const nsAString& aLine, nsString& errors) {
   if (!m_fieldMap) {
     IMPORT_LOG0("*** Error, text import needs a field map\n");
     return NS_ERROR_FAILURE;
@@ -421,7 +421,7 @@ nsresult nsTextAddress::ProcessLine(const nsAString &aLine, nsString &errors) {
     }
   }
 
-  nsIAbCard *outCard;
+  nsIAbCard* outCard;
   rv = m_directory->AddCard(newCard, &outCard);
 
   return rv;
