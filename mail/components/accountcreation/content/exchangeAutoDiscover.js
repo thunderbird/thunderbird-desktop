@@ -87,8 +87,6 @@ function fetchConfigFromExchange(
     },
     username: username || emailAddress,
     password,
-    // url3 is HTTP (not HTTPS), so suppress password. Even MS spec demands so.
-    requireSecureAuth: true,
     allowAuthPrompt: false,
   };
   let call;
@@ -129,21 +127,99 @@ function fetchConfigFromExchange(
   call.setAbortable(fetch);
 
   call = priority.addCall();
-  fetch3 = new FetchHTTP(
-    url3,
-    callArgs,
-    call.successCallback(),
-    call.errorCallback()
-  );
+  let call3ErrorCallback = call.errorCallback();
+  // url3 is HTTP (not HTTPS), so suppress password. Even MS spec demands so.
+  let call3Args = deepCopy(callArgs);
+  delete call3Args.username;
+  delete call3Args.password;
+  fetch3 = new FetchHTTP(url3, call3Args, call.successCallback(), ex => {
+    // url3 is an HTTP URL that will redirect to the real one, usually a
+    // HTTPS URL of the hoster. XMLHttpRequest unfortunately loses the call
+    // parameters, drops the auth, drops the body, and turns POST into GET,
+    // which cause the call to fail. For AutoDiscover mechanism to work,
+    // we need to repeat the call with the correct parameters again.
+    let redirectURL = fetch3._request.responseURL;
+    if (!redirectURL.startsWith("https:")) {
+      call3ErrorCallback(ex);
+      return;
+    }
+    let redirectURI = Services.io.newURI(redirectURL);
+    let redirectDomain = Services.eTLD.getBaseDomain(redirectURI);
+    let originalDomain = Services.eTLD.getBaseDomainFromHost(domain);
+
+    function fetchRedirect() {
+      let fetchCall = priority.addCall();
+      let fetch = new FetchHTTP(
+        redirectURL,
+        callArgs, // now with auth
+        fetchCall.successCallback(),
+        fetchCall.errorCallback()
+      );
+      fetchCall.setAbortable(fetch);
+      fetch.start();
+    }
+
+    const kSafeDomains = ["office365.com", "outlook.com"];
+    if (
+      redirectDomain != originalDomain &&
+      !kSafeDomains.includes(redirectDomain)
+    ) {
+      // Given that we received the redirect URL from an insecure HTTP call,
+      // we ask the user whether he trusts the redirect domain.
+      gEmailWizardLogger.info("AutoDiscover HTTP redirected to other domain");
+      let dialogSuccessive = new SuccessiveAbortable();
+      // Because the dialog implements Abortable, the dialog will cancel and
+      // close automatically, if a slow higher priority call returns late.
+      let dialogCall = priority.addCall();
+      dialogCall.setAbortable(dialogSuccessive);
+      call3ErrorCallback(new Exception("Redirected"));
+      dialogSuccessive.current = new TimeoutAbortable(
+        setTimeout(() => {
+          let loc = Services.locale.appLocaleAsBCP47;
+          // hardcoded otherDomain.label
+          let otherDomain =
+            esr10n.otherDomainLabel[loc] || esr10n.otherDomainLabel["en-US"];
+          let brandshortName = document
+            .getElementById("bundle_brand")
+            .getString("brandShortName");
+          let questionLabel = otherDomain
+            .replace("%1$S", brandshortName)
+            .replace("%2$S", redirectDomain);
+          // hardcoded otherDomain_ok.label
+          let okLabel =
+            esr10n.otherDomainOkLabel[loc] ||
+            esr10n.otherDomainOkLabel["en-US"];
+          // hardcoded otherDomain_cancel.label
+          let cancelLabel =
+            esr10n.otherDomainCancelLabel[loc] ||
+            esr10n.otherDomainCancelLabel["en-US"];
+          dialogSuccessive.current = confirmDialog(
+            questionLabel,
+            okLabel,
+            cancelLabel,
+            () => {
+              // User agreed.
+              fetchRedirect();
+              // Remove the dialog from the call stack.
+              dialogCall.errorCallback()(new Exception("Proceed to fetch"));
+            },
+            ex => {
+              // User rejected, or action cancelled otherwise.
+              dialogCall.errorCallback()(ex);
+            }
+          );
+          // Account for a slow server response.
+          // This will prevent showing the warning message when not necessary.
+          // The timeout is just for optics. The Abortable ensures that it works.
+        }, 2000)
+      );
+    } else {
+      fetchRedirect();
+      call3ErrorCallback(new Exception("Redirected"));
+    }
+  });
   fetch3.start();
   call.setAbortable(fetch3);
-
-  // url3 is an HTTP URL that will redirect to the real one, usually a HTTPS
-  // URL of the hoster. XMLHttpRequest unfortunately loses the call
-  // parameters, drops the auth, drops the body, and turns POST into GET,
-  // which cause the call to fail, but FetchHTTP fixes this and automatically
-  // repeats the call. We need that, otherwise the whole AutoDiscover
-  // mechanism doesn't work.
 
   successive.current = priority;
   return successive;
@@ -569,3 +645,187 @@ function detectStandardProtocols(config, domain, successCallback) {
     "both"
   );
 }
+
+var esr10n = {
+  // otherDomain.label
+  otherDomainLabel: {
+    "en-US":
+      "%1$S found your account setup information on %2$S. Do you want to proceed and submit your credentials?",
+    "sv-SE":
+      "%1$S hittade din kontoinställningsinformation på %2$S. Vill du fortsätta och skicka in dina autentiseringsuppgifter?",
+    sl:
+      "%1$S je našel podatke za nastavitev računa na %2$S. Ali želite nadaljevati in vnesti svoje prijavne podatke?",
+    "ja-JP-mac":
+      "%1$S が %2$S 上にあなたのアカウントセットアップ情報を見つけました。続けて認証情報を送信してもよろしいですか？",
+    kk:
+      "%1$S %2$S жерінде сіздің тіркелгіңіздің баптау ақпаратын тапты. Жалғастырып, тіркеу мәліметтерін жіберуді қалайсыз ба?",
+    "nb-NO":
+      "%1$S fant kontooppsettinformasjonen din på %2$S. Vil du fortsette og sende inn informasjonen din?",
+    sq:
+      "%1$S-i gjeti të dhëna ujdisjeje të llogarisë tuaj në %2$S. Doni të vazhdohet dhe të parashtrohen kredencialet tuaja?",
+    ja:
+      "%1$S が %2$S 上にあなたのアカウントセットアップ情報を見つけました。続けて認証情報を送信してもよろしいですか？",
+    "en-GB":
+      "%1$S found your account setup information on %2$S. Do you want to proceed and submit your credentials?",
+    "nn-NO":
+      "%1$S fann kontooppsettinformasjonen din på %2$S. Vil du fortsetje og sende inn informasjonen din?",
+    "en-CA":
+      "%1$S found your account setup information on %2$S. Do you want to proceed and submit your credentials?",
+    ru:
+      "%1$S обнаружил информацию по настройке вашей учётной записи на %2$S. Вы хотите продолжить и отправить свои учётные данные?",
+    ka:
+      "%1$S პოულობს თქვენი ანგარიშის მონაცემებს %2$S-ზე. გსურთ, განაგრძოთ და გაგზავნოთ ანგარიშის მონაცემები?",
+    cy:
+      "Mae %1$S wedi canfod manylion gosod eich cyfrif ar %2$S. Hoffech chi barhau a chyflwyno'ch manylion?",
+    "es-ES":
+      " %1$S ha encontrado su información de configuración de cuenta en %2$S. ¿Desea continuar y enviar sus credenciales?",
+    tr:
+      "%1$S, %2$S üzerinde hesap kurulum bilgilerinizi buldu. Devam etmek ve kimlik bilgilerinizi göndermek ister misiniz?",
+    "hy-AM":
+      "%1$S-ը գտավ ձեր հաշվի տեղակայման մասին տեղեկատվությունը %2$S-ում: Ցանկանո՞ւմ եք շարունակել և ներկայացնել ձեր հավատարմագրերը:",
+    "zh-CN": "%1$S 在 %2$S 上找到了您的账户设置信息，您要继续并提交凭据吗？",
+    it:
+      "%1$S ha trovato le informazioni per la configurazione dell’account su %2$S. Desideri procedere e inviare le tue credenziali?",
+    fr:
+      "%1$S a trouvé les informations de configuration de votre compte sur %2$S. Voulez-vous continuer et soumettre vos informations d’identification ?",
+    "pt-PT":
+      "%1$S encontrou as informações de configuração da sua conta em %2$S. Deseja continuar e enviar as suas credenciais?",
+    th:
+      "%1$S พบข้อมูลการตั้งค่าบัญชีของคุณบน %2$S คุณต้องการดำเนินการต่อแล้วส่งข้อมูลประจำตัวของคุณหรือไม่?",
+    kab:
+      "%1$S yufa-d talɣut n twila n umiḍan-ik deg %2$S. Tebɣiḍ ad tkemmleḍ daɣen ad tazneḍ talɣut n usulu ?",
+    uk:
+      "%1$S знайшов налаштування для вашого облікового запису на %2$S. Хочете продовжити і ввести свої облікові дані?",
+    "zh-TW": "%1$S 找到您在 %2$S 的帳號設定資訊。您想要繼續並送出登入資訊嗎？",
+    "es-AR":
+      "%1$S encontró la información de configuración de su cuenta en %2$S. ¿QUiere continuar y enviar sus credenciales?",
+    pl:
+      "%1$S znalazł informacje o konfiguracji tego konta w serwisie %2$S. Czy chcesz kontynuować i wysłać swoje dane logowania?",
+    eu:
+      "%1$S zure kontuko ezarpen informazioa aurkitu du hemen: %2$S.  Jarraitu nahi duzu eta zure kredentzialak aurkeztu?",
+    vi:
+      "%1$S đã tìm thấy thông tin thiết lập tài khoản của bạn trên %2$S. Bạn có muốn tiến hành và gửi thông tin của bạn?",
+    id:
+      "%1$S menermukan informasi pengaturan akun Anda di %2$S. Apakah Anda ingin melanjutkan dan mengirimkan kredensial Anda?",
+    da:
+      "%1$S fandt oplysninger om dine kontoindstillinger på %2$S. Vil du fortsætte og indsende dine login-informationer?",
+    fi:
+      "%1$S löysi tilisi asetustiedot verkkoalueelta %2$S. Haluatko jatkaa ja lähettää käyttöoikeustietosi?",
+    de:
+      "%1$S erkannte Informationen zur Konteneinrichtung auf %2$S. Wollen Sie fortfahren und Ihre Zugangsdaten senden?",
+    nl:
+      "%1$S heeft uw accountinstellingen van %2$S gevonden. Wilt u doorgaan en uw aanmeldgegevens versturen?",
+    ca:
+      "El %1$S ha trobat la informació de configuració del vostre compte a %2$S. Voleu continuar i enviar les vostres credencials?",
+    "fy-NL":
+      "%1$S hat jo accountynstellingen fan %2$S fûn. Wolle jo trochgean en jo oanmeldgegevens ferstjoere?",
+    ko:
+      "%1$S가 %2$S의 계정 설정 정보를 찾았습니다. 자격 증명을 진행하고 제출 하시겠습니까?",
+    "pt-BR":
+      "O %1$S encontrou as informações de configuração da sua conta em %2$S. Quer continuar e enviar suas credenciais?",
+    hsb:
+      "%1$S je informacije wo konfiguraciji konta na %2$S namakał. Chceće pokročować a swoje přizjewjenske daty wotpósłać?",
+    dsb:
+      "%1$S jo namakał informacije wó konfiguraciji konta na %2$S. Cośo pókšacowaś a swóje pśizjawjeńske daty wótpósłaś?",
+    rm:
+      "%1$S ha chattà las infurmaziuns per configurar tes conto sin %2$S. Vuls ti cuntinuar e trametter tias infurmaziuns d'annunzia?",
+    el:
+      "Το %1$S βρήκε τις πληροφορίες ρύθμισης του λογαριασμού σας στο %2$S. Θέλετε να συνεχίσετε και να υποβάλετε τα διαπιστευτήριά σας;",
+    hu:
+      "A %1$S megtalálta a fiókinformációit ehhez: %2$S. Folytatja és elküldi a hitelesítő adatait?",
+  },
+  // otherDomain_ok.label
+  otherDomainOkLabel: {
+    "en-US": "Login",
+    "sv-SE": "Inloggning",
+    sl: "Prijava",
+    "ja-JP-mac": "ログイン",
+    kk: "Логин",
+    "nb-NO": "Logg inn",
+    sq: "Kredenciale Hyrjesh",
+    ja: "ログイン",
+    "en-GB": "Login",
+    "nn-NO": "Inloggning",
+    "en-CA": "Login",
+    ru: "Войти",
+    ka: "შესვლა",
+    cak: "Rutikirisaxik molojri'ïl",
+    cy: "Mewngofnodi",
+    "es-ES": " Nombre de usuario",
+    tr: "Giriş yap",
+    "hy-AM": "Մուտք",
+    "zh-CN": "登录",
+    it: "Accedi",
+    fr: "Connexion",
+    "pt-PT": "Iniciar sessão",
+    th: "เข้าสู่ระบบ",
+    kab: "Kcem",
+    uk: "Вхід",
+    "zh-TW": "登入",
+    "es-AR": "Iniciar sesión",
+    pl: "Zaloguj się",
+    eu: "Saio-hasiera",
+    vi: "Đăng nhập",
+    id: "Info masuk",
+    da: "Login",
+    fi: "Kirjaudu",
+    de: "Senden",
+    nl: "Aanmelden",
+    ca: "Inici de sessió",
+    "fy-NL": "Oanmelde",
+    ko: "로그인",
+    "pt-BR": "Entrar",
+    hsb: "Přizjewjenje",
+    dsb: "Pśizjawjenje",
+    rm: "S'annunziar",
+    el: "Σύνδεση",
+    hu: "Bejelentkezés",
+  },
+  // otherDomain_cancel.label
+  otherDomainCancelLabel: {
+    "en-US": "Cancel",
+    "sv-SE": "Avbryt",
+    sl: "Prekliči",
+    "ja-JP-mac": "キャンセル",
+    kk: "Бас тарту",
+    "nb-NO": "Avbryt",
+    sq: "Anuloje",
+    ja: "キャンセル",
+    "en-GB": "Cancel",
+    "nn-NO": "Avbryt",
+    "en-CA": "Cancel",
+    ru: "Отмена",
+    ka: "გაუქმება",
+    cak: "Tiq'at",
+    cy: "Diddymu",
+    "es-ES": " Cancelar",
+    tr: "Vazgeç",
+    "hy-AM": "Չեղարկել",
+    "zh-CN": "取消",
+    it: "Annulla",
+    fr: "Annuler",
+    "pt-PT": "Cancelar",
+    th: "ยกเลิก",
+    kab: "Sefsex",
+    uk: "Скасувати",
+    "zh-TW": "取消",
+    "es-AR": "Cancelar",
+    pl: "Anuluj",
+    eu: "Utzi",
+    vi: "Hủy bỏ",
+    id: "Batal",
+    da: "Annuller",
+    fi: "Peruuta",
+    de: "Abbrechen",
+    nl: "Annuleren",
+    ca: "Cancel·la",
+    "fy-NL": "Annulearje",
+    ko: "취소",
+    "pt-BR": "Cancelar",
+    hsb: "Přetorhnyć",
+    dsb: "Pśetergnuś",
+    rm: "Interrumper",
+    el: "Ακύρωση",
+    hu: "Mégse",
+  },
+};

@@ -226,6 +226,14 @@
     </hbox>
     <vbox id="status-lines"/>
 
+    <vbox id="confirmationDialog" hidden="true">
+       <description id="confirmationQuestion" class="autoconfigLabel"/>
+       <hbox id="confirmationButtons" pack="end">
+         <button id="confirmationCancelButton"/>
+         <button id="confirmationOKButton"/>
+       </hbox>
+    </vbox>
+
     <groupbox id="result_area" hidden="true">
       <radiogroup id="result_servertype" orient="horizontal">
         <radio id="result_select_imap" label="&imapLong.label;" value="imap"
