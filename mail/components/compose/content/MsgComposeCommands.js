@@ -4161,7 +4161,9 @@ function udpateAddressingInputAriaLabel(row) {
  */
 function updateTooltipsOfAddressingFields(row) {
   let type = row.querySelector(".address-label-container > label").value;
-  let tooltip = l10n.formatValueSync("remove-address-row-type", { type });
+  let tooltip = l10nCompose.formatValueSync("remove-address-row-type", {
+    type,
+  });
   row
     .querySelector(".aw-firstColBox > label")
     .setAttribute("tooltiptext", tooltip);
