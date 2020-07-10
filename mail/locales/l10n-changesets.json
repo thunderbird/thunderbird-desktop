@@ -139,6 +139,16 @@
         ],
         "revision": "5b9ebfdfc9d7"
     },
+    "en-CA": {
+        "platforms": [
+            "linux",
+            "linux64",
+            "macosx64",
+            "win32",
+            "win64"
+        ],
+        "revision": "0038201d6ba1"
+    },
     "en-GB": {
         "platforms": [
             "linux",
@@ -573,6 +583,16 @@
             "win64"
         ],
         "revision": "52ed4631442e"
+    },
+    "th": {
+        "platforms": [
+            "linux",
+            "linux64",
+            "macosx64",
+            "win32",
+            "win64"
+        ],
+        "revision": "339136ddc7cf"
     },
     "tr": {
         "platforms": [
