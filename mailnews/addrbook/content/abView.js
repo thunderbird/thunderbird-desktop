@@ -18,7 +18,7 @@ function ABView(directory, searchQuery, listener, sortColumn, sortDirection) {
   } else {
     for (let dir of directories) {
       for (let card of dir.childCards) {
-        this._rowMap.push(new abViewCard(card));
+        this._rowMap.push(new abViewCard(card, dir));
       }
     }
     if (this.listener) {
@@ -88,6 +88,9 @@ ABView.prototype = {
   getCardFromRow(row) {
     return this._rowMap[row] ? this._rowMap[row].card : null;
   },
+  getDirectoryFromRow(row) {
+    return this._rowMap[row] ? this._rowMap[row].directory : null;
+  },
   sortBy(sortColumn, sortDirection, resort) {
     if (sortColumn == this.sortColumn && !resort) {
       if (sortDirection == this.sortDirection) {
@@ -150,7 +153,7 @@ ABView.prototype = {
         if (subject == this.directory) {
           this._rowMap.length = 0;
           for (let card of this.directory.childCards) {
-            this._rowMap.push(new abViewCard(card));
+            this._rowMap.push(new abViewCard(card, this.directory));
           }
           this.sortBy(this.sortColumn, this.sortDirection, true);
           if (this.listener) {
@@ -232,18 +235,29 @@ ABView.prototype = {
   },
 };
 
-function abViewCard(card) {
+/**
+ * Representation of a card, used as a table row in ABView.
+ *
+ * @param {nsIAbCard} card - contact or mailing list card for this row.
+ * @param {nsIAbDirectory} [directoryHint] - the directory containing card,
+ *     if available (this is a performance optimization only).
+ */
+function abViewCard(card, directoryHint) {
   this.card = card;
   this._getTextCache = {};
+  if (directoryHint) {
+    this._directory = directoryHint;
+  } else {
+    let directoryId = this.card.directoryId.split("&")[0];
+    this._directory = MailServices.ab.getDirectoryFromId(directoryId);
+  }
 }
 abViewCard.prototype = {
   _getText(columnID) {
     try {
       switch (columnID) {
-        case "addrbook": {
-          let { directoryId } = this.card;
-          return directoryId.substring(directoryId.indexOf("&") + 1);
-        }
+        case "addrbook":
+          return this._directory.dirName;
         case "GeneratedName":
           return this.card.generateName(
             Services.prefs.getIntPref("mail.addr_book.lastnamefirst", 0)
@@ -281,5 +295,8 @@ abViewCard.prototype = {
   },
   getProperties() {
     return this.card.isMailList ? "MailList" : "";
+  },
+  get directory() {
+    return this._directory;
   },
 };
