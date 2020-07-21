@@ -959,6 +959,8 @@ nsresult nsImapProtocol::SetupWithUrlCallback(nsIProxyInfo* aProxyInfo) {
 
   AutoTArray<nsCString, 1> connectionTypeArray;
   if (connectionType) connectionTypeArray.AppendElement(connectionType);
+  // NOTE: Some errors won't show up until the first read attempt (SSL bad
+  // certificate errors, for example).
   rv = socketService->CreateTransport(connectionTypeArray, m_realHostName, port,
                                       aProxyInfo, getter_AddRefs(m_transport));
   if (NS_FAILED(rv) && m_socketType == nsMsgSocketType::trySTARTTLS) {
@@ -1815,13 +1817,22 @@ bool nsImapProtocol::ProcessCurrentURL() {
   bool suspendUrl = false;
   m_runningUrl->GetMoreHeadersToDownload(&suspendUrl);
   if (mailnewsurl && m_imapMailFolderSink) {
-    if (logonFailed)
-      rv = NS_ERROR_FAILURE;
-    else if (GetServerStateParser().CommandFailed())
-      rv = NS_MSG_ERROR_IMAP_COMMAND_FAILED;
-    else
-      rv = GetConnectionStatus();
-    // we are done with this url.
+    rv = GetConnectionStatus();
+    // There are error conditions to check even if the connection is OK.
+    if (NS_SUCCEEDED(rv)) {
+      if (logonFailed) {
+        rv = NS_ERROR_FAILURE;
+      } else if (GetServerStateParser().CommandFailed()) {
+        rv = NS_MSG_ERROR_IMAP_COMMAND_FAILED;
+      }
+    }
+    if (NS_FAILED(rv)) {
+      MOZ_LOG(IMAP, LogLevel::Debug,
+              ("URL failed with code 0x%x (%s)", rv,
+               mailnewsurl->GetSpecOrDefault().get()));
+    }
+    // Inform any nsIUrlListeners that the URL has finished. This will invoke
+    // nsIUrlListener.onStopRunningUrl().
     m_imapMailFolderSink->SetUrlState(this, mailnewsurl, false, suspendUrl, rv);
     // doom the cache entry
     if (NS_FAILED(rv) && DeathSignalReceived() && m_mockChannel) {
@@ -4711,6 +4722,12 @@ void nsImapProtocol::ClearAllFolderRights() {
   if (m_imapMailFolderSink) m_imapMailFolderSink->ClearFolderRights();
 }
 
+// Reads a line from the socket.
+// Upon failure, the thread will be flagged for shutdown, and
+// m_connectionStatus will be set to a failing code.
+// Remember that some socket errors are deferred until the first read
+// attempt, so this function could be the first place we hear about
+// connection issues (e.g. bad certificates for SSL).
 char* nsImapProtocol::CreateNewLineFromSocket() {
   bool needMoreData = false;
   char* newLine = nullptr;
@@ -4726,8 +4743,8 @@ char* nsImapProtocol::CreateNewLineFromSocket() {
     newLine = m_inputStreamBuffer->ReadNextLine(m_inputStream, numBytesInLine,
                                                 needMoreData, &rv);
     MOZ_LOG(IMAP, LogLevel::Debug,
-            ("ReadNextLine [stream=%p nb=%u needmore=%u]", m_inputStream.get(),
-             numBytesInLine, needMoreData));
+            ("ReadNextLine [rv=0x%x stream=%p nb=%u needmore=%u]", rv,
+             m_inputStream.get(), numBytesInLine, needMoreData));
 
   } while (!newLine && NS_SUCCEEDED(rv) &&
            !DeathSignalReceived());  // until we get the next line and haven't
@@ -4774,6 +4791,13 @@ char* nsImapProtocol::CreateNewLineFromSocket() {
                                       : "imapServerDroppedConnection");
         break;
       default:
+        // Often SSL errors won't show up until we start trying to read.
+        // So we might end up here with ERROR_CLASS_SSL_PROTOCOL or
+        // ERROR_CLASS_BAD_CERT errors. Since we're in the IMAP thread we
+        // can't use nsINSSErrorsService to disambiguate them. If we _do_
+        // need to do that here, NSSErrorsService::GetErrorClass() could be
+        // reimplemented here using easily enough using other
+        // publicly-accessible macros and functions. 	
         break;
     }
 
@@ -4811,6 +4835,7 @@ char* nsImapProtocol::CreateNewLineFromSocket() {
 nsresult nsImapProtocol::GetConnectionStatus() { return m_connectionStatus; }
 
 void nsImapProtocol::SetConnectionStatus(nsresult status) {
+  MOZ_LOG(IMAP, LogLevel::Debug, ("SetConnectionStatus(0x%x)", status));
   m_connectionStatus = status;
 }
 
