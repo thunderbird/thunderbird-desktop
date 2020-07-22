@@ -2016,7 +2016,10 @@ void nsImapServerResponseParser::capability_data() {
   NS_ASSERTION(navCon,
                "null imap protocol connection while parsing capability "
                "response");  // we should always have this
-  if (navCon) navCon->CommitCapability();
+  if (navCon) {
+    navCon->CommitCapability();
+    fServerConnection.SetCapabilityResponseOccurred();
+  }
   skip_to_CRLF();
 }
 
