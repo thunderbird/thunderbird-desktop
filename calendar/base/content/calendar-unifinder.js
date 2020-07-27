@@ -124,7 +124,11 @@ var unifinderObserver = {
   // calICompositeObserver:
   onCalendarAdded(aAddedCalendar) {
     if (!aAddedCalendar.getProperty("disabled")) {
-      addItemsFromCalendar(aAddedCalendar, addItemsFromSingleCalendarInternal);
+      if (isUnifinderHidden()) {
+        gUnifinderNeedsRefresh = true;
+      } else {
+        addItemsFromCalendar(aAddedCalendar, addItemsFromSingleCalendarInternal);
+      }
     }
   },
 
@@ -964,11 +968,6 @@ function focusSearch() {
  * is selected, this function is called so that unifinder setup completes.
  */
 function ensureUnifinderLoaded() {
-  if (ensureUnifinderLoaded.done) {
-    return;
-  }
-  ensureUnifinderLoaded.done = true;
-
   if (!isUnifinderHidden() && gUnifinderNeedsRefresh) {
     refreshEventTree();
   }
