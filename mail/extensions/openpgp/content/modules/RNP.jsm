@@ -2249,7 +2249,7 @@ var RNP = {
                 // a key is acceptable, either:
                 // - without secret key, it's accepted verified or unverified
                 // - with secret key, must be marked as personal
-                
+
                 let have_secret = new ctypes.bool();
                 if (RNPLib.rnp_key_have_secret(handle, have_secret.address())) {
                   throw new Error("rnp_key_have_secret failed");
@@ -2263,7 +2263,9 @@ var RNP = {
                 RNPLib.rnp_buffer_destroy(fingerprint);
 
                 if (have_secret.value) {
-                  let isAccepted = await PgpSqliteDb2.isAcceptedAsPersonalKey(fpr);
+                  let isAccepted = await PgpSqliteDb2.isAcceptedAsPersonalKey(
+                    fpr
+                  );
                   if (isAccepted) {
                     foundHandle = handle;
                     have_handle = false;
