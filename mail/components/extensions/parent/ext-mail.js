@@ -828,6 +828,9 @@ class Tab extends TabBase {
     if (this.isComposeTab) {
       return this.nativeTab.GetCurrentEditorElement();
     }
+    if (this.nativeTab.getBrowser) {
+      return this.nativeTab.getBrowser();
+    }
     return null;
   }
 
