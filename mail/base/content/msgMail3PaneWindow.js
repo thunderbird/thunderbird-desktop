@@ -374,6 +374,11 @@ function UpdateMailPaneConfig(aMsgWindowInitialized) {
       desiredParent.appendChild(messagePaneSplitter);
       desiredParent.appendChild(messagePaneBoxWrapper);
     }
+    if (msgWindow) {
+      // Reassigning statusFeedback adds a progress listener to the new docShell.
+      // eslint-disable-next-line no-self-assign
+      msgWindow.statusFeedback = msgWindow.statusFeedback;
+    }
     hdrToolbox.palette = cloneToolboxPalette;
     hdrToolbar = document.getElementById("header-view-toolbar");
     hdrToolbar.firstPermanentChild = firstPermanentChild;
