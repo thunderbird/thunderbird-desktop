@@ -801,6 +801,9 @@ var MailMigrator = {
       }
 
       let newFileName = oldFileName.replace(/(\.na2)?\.mab$/, ".sqlite");
+      console.log(
+        `Updating ${prefName} preferences from ${oldFileName} to ${newFileName}`
+      );
 
       Services.prefs.setStringPref(`${prefName}.filename`, newFileName);
       if (
@@ -816,7 +819,7 @@ var MailMigrator = {
         );
       }
 
-      await migrateBook(oldFileName, newFileName);
+      booksToMigrate.set(oldFileName, newFileName);
     }
 
     async function migrateBook(
@@ -911,8 +914,10 @@ var MailMigrator = {
       oldFile.renameTo(profileDir, backupFile.leafName);
     }
 
+    let booksToMigrate = new Map();
     let uniqueListNames = new Set();
     let profileDir = Services.dirsvc.get("ProfD", Ci.nsIFile);
+
     for (let name of Services.prefs.getChildList("ldap_2.servers.")) {
       try {
         if (name.endsWith(".uri")) {
@@ -948,6 +953,14 @@ var MailMigrator = {
     } catch (ex) {
       Cu.reportError(ex);
     }
+
+    // Migrating the books before all of the preferences are set is a bad idea.
+    // The act of migrating wakes up the address book manager, which tries to
+    // use the preferences to create AddrBookDirectory objects.
+    for (let [oldFileName, newFileName] of booksToMigrate) {
+      await migrateBook(oldFileName, newFileName);
+    }
+
     try {
       await migrateBook("abook.mab", "abook.sqlite", false);
     } catch (ex) {
