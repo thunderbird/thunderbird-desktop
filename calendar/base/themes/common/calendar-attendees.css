@@ -24,7 +24,7 @@ html|input.textbox-addressingWidget:disabled {
 }
 
 :root[lwt-tree] .item-attendees-box {
-    appearance: none;
+    -moz-appearance: none;
     background-color: var(--field-background-color);
     color: var(--field-text-color);
     border: 1px solid var(--field-border-color);
