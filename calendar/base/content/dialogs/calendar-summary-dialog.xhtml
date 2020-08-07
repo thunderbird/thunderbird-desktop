@@ -13,6 +13,7 @@
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/primaryToolbar.css"?>
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/messenger.css"?>
 <?xml-stylesheet type="text/css" href="chrome://calendar/content/widgets/calendar-item-summary.css"?>
+<?xml-stylesheet type="text/css" href="chrome://messenger/skin/themeableDialog.css"?>
 
 <!DOCTYPE window [
   <!ENTITY % globalDTD SYSTEM "chrome://calendar/locale/global.dtd" >
@@ -31,6 +32,7 @@
         onload="onLoad()"
         onunload="onUnload()"
         persist="screenX screenY width height"
+        lightweightthemes="true"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml">
 
@@ -45,6 +47,7 @@
   <script src="chrome://calendar/content/calendar-item-editing.js"/>
   <script src="chrome://calendar/content/calApplicationUtils.js"/>
   <script src="chrome://calendar/content/widgets/calendar-item-summary.js"/>
+  <script src="chrome://messenger/content/dialogShadowDom.js"/>
 
   <toolbox id="summary-toolbox"
            class="mail-toolbox"
