@@ -71,7 +71,7 @@ let abResultsPaneObserver = {
     event.dataTransfer.setData("text/unicode", selectedAddresses);
 
     let card = GetSelectedCard();
-    if (card && card.displayName && !card.isMailList) {
+    if (card && card.displayName) {
       try {
         // A card implementation may throw NS_ERROR_NOT_IMPLEMENTED.
         // Don't break drag-and-drop if that happens.
@@ -173,9 +173,20 @@ var abDirTreeObserver = {
       return false;
     }
 
+    // XXX Due to bug 373125/bug 349044 we can't specify a default action,
+    // so we default to move and this means that the user would have to press
+    // ctrl to copy which most users don't realize.
+    //
     // If target directory is a mailing list, then only allow copies.
+    //    if (targetDirectory.isMailList &&
+    //   dragSession.dragAction != Ci.nsIDragService.DRAGDROP_ACTION_COPY)
+    // return false;
+
+    var srcDirectory = GetDirectoryFromURI(srcURI);
+
+    // Only allow copy from read-only directories.
     if (
-      targetDirectory.isMailList &&
+      srcDirectory.readOnly &&
       dragSession.dragAction != Ci.nsIDragService.DRAGDROP_ACTION_COPY
     ) {
       return false;
@@ -193,15 +204,8 @@ var abDirTreeObserver = {
       .split(",")
       .map(j => parseInt(j, 10));
 
-    for (let row of rows) {
-      // For read-only directories, only allow copy operations.
-      if (
-        gAbView.getDirectoryFromRow(row).readOnly &&
-        dragSession.dragAction != Ci.nsIDragService.DRAGDROP_ACTION_COPY
-      ) {
-        return false;
-      }
-      let card = gAbView.getCardFromRow(row);
+    for (var j = 0; j < rows.length; j++) {
+      let card = gAbView.getCardFromRow(rows[j]);
       if (!card.UID) {
         Cu.reportError(new Error("Card must have a UID to be dropped here."));
         return false;
