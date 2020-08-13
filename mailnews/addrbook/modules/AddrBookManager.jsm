@@ -172,8 +172,7 @@ function ensureInitialized() {
                 "@mozilla.org/addressbook/outlookinterface;1"
               ].getService(Ci.nsIAbOutlookInterface);
               for (let folderURI of outlookInterface.getFolderURIs(uri)) {
-                let dir = createDirectoryObject(folderURI, true);
-                store.set(folderURI, dir);
+                createDirectoryObject(folderURI, true);
               }
             }
             break;
@@ -224,7 +223,16 @@ AddrBookManager.prototype = {
 
   get directories() {
     ensureInitialized();
-    return new SimpleEnumerator(sortedDirectoryList.slice());
+    let dirs = [...store.values()];
+    dirs.sort((a, b) => {
+      let aPosition = a.dirPrefId ? a.getIntValue("position", 0) : 0;
+      let bPosition = b.dirPrefId ? b.getIntValue("position", 0) : 0;
+      if (aPosition != bPosition) {
+        return aPosition - bPosition;
+      }
+      return a.URI < b.URI ? -1 : 1;
+    });
+    return new SimpleEnumerator(dirs);
   },
   getDirectory(uri) {
     if (uri.startsWith("moz-abdirectory://")) {
