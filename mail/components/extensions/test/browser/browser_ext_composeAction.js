@@ -48,6 +48,8 @@ async function test_it(extensionDetails, toolbarId) {
   await promiseAnimationFrame(composeWindow);
   await new Promise(resolve => composeWindow.setTimeout(resolve));
 
+  await focusWindow(composeWindow);
+
   try {
     let toolbar = composeDocument.getElementById(toolbarId);
 
