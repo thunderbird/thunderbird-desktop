@@ -338,10 +338,6 @@ var abDirTreeObserver = {
       );
     }
 
-    if (srcURI == kAllDirectoryRoot + "?") {
-      SetAbView();
-    }
-
     document.getElementById("statusText").label = cardsTransferredText;
   },
 
