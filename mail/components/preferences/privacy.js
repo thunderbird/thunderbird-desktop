@@ -165,7 +165,7 @@ var gPrivacyPane = {
       "network.cookie.lifetimePolicy"
     );
 
-    exceptionsButton.disabled = !acceptCookies || cookieBehaviorLocked;
+    exceptionsButton.disabled = cookieBehaviorLocked;
     acceptThirdPartyLabel.disabled = acceptThirdPartyMenu.disabled =
       !acceptCookies || cookieBehaviorLocked;
     keepUntil.disabled = menu.disabled =
