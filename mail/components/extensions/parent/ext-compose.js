@@ -167,7 +167,7 @@ async function openComposeWindow(relatedMessageId, type, details, extension) {
         ].createInstance(Ci.nsIMsgAttachment);
         attachment.name = data.name || data.file.name;
         attachment.size = data.file.size;
-        attachment.url = await writeTempFile(data.file);
+        attachment.url = await fileURLForFile(data.file);
 
         composeFields.addAttachment(attachment);
       }
@@ -238,8 +238,12 @@ async function setComposeDetails(composeWindow, details, extension) {
   composeWindow.SetComposeDetails(details);
 }
 
-async function writeTempFile(file) {
-  // TODO if the file represents a real file, just use that.
+async function fileURLForFile(file) {
+  if (file.mozFullPath) {
+    let realFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+    realFile.initWithPath(file.mozFullPath);
+    return Services.io.newFileURI(realFile).spec;
+  }
 
   let tempDir = OS.Constants.Path.tmpDir;
   let destFile = OS.Path.join(tempDir, file.name);
@@ -570,7 +574,7 @@ this.compose = class extends ExtensionAPI {
           ].createInstance(Ci.nsIMsgAttachment);
           attachment.name = data.name || data.file.name;
           attachment.size = data.file.size;
-          attachment.url = await writeTempFile(data.file);
+          attachment.url = await fileURLForFile(data.file);
 
           tab.nativeTab.AddAttachments([attachment]);
 
@@ -598,7 +602,7 @@ this.compose = class extends ExtensionAPI {
           }
           if (data.file) {
             attachment.size = data.file.size;
-            attachment.url = await writeTempFile(data.file);
+            attachment.url = await fileURLForFile(data.file);
           }
 
           window.AttachmentsChanged();
