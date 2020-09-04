@@ -2338,10 +2338,6 @@
       row.classList.add("hidden");
 
       let closeLabel = document.createXULElement("label");
-      let tooltip = l10n.formatValueSync("remove-address-row-type", {
-        type: recipient.labelId,
-      });
-      closeLabel.setAttribute("tooltiptext", tooltip);
       closeLabel.addEventListener("click", event => {
         closeLabelOnClick(event);
       });
