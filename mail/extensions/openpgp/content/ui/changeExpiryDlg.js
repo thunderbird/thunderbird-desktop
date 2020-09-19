@@ -111,7 +111,7 @@ function enableExpiryInput() {
   document.querySelector("dialog").getButton("accept").disabled = disOk;
 }
 
-function onAccept() {
+async function onAccept() {
   let choice = gRadio.value;
   if (choice == "keep-existing") {
     return true;
