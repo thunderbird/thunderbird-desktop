@@ -158,8 +158,10 @@ const ThemeVariableMap = [
       processColor(rgbaChannels, element) {
         if (!rgbaChannels) {
           element.removeAttribute("lwt-tree");
+          element.removeAttribute("lwt-tree-brighttext");
           return null;
         }
+
 
         const { r, g, b } = rgbaChannels;
         let luminance = 0.2125 * r + 0.7154 * g + 0.0721 * b;
