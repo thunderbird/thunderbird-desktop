@@ -11,8 +11,8 @@ let folder = rootFolder.getChildNamed("test");
 createMessages(folder, 3);
 
 add_task(async function testIdentity() {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
       let [account] = await browser.accounts.list();
       let [defaultIdentity, nonDefaultIdentity] = account.identities;
       let folder = account.folders.find(f => f.name == "test");
@@ -48,20 +48,18 @@ add_task(async function testIdentity() {
           browser.test.assertEq("object", typeof tab);
           browser.test.assertEq("number", typeof tab.id);
           browser.test.sendMessage("checkIdentity", test.isDefault);
-          await window.waitForMessage();
+          await new Promise(resolve => {
+            browser.test.onMessage.addListener(function listener() {
+              browser.test.onMessage.removeListener(listener);
+              resolve();
+            });
+          });
         }
       }
 
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
-    manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
-      permissions: ["accountsRead", "messagesRead"],
-    },
+    manifest: { permissions: ["accountsRead", "messagesRead"] },
   });
 
   extension.onMessage("checkIdentity", async isDefault => {
@@ -83,14 +81,29 @@ add_task(async function testIdentity() {
 });
 
 add_task(async function testHeaders() {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
+      function waitForEvent(eventName) {
+        return new Promise(resolve => {
+          let listener = window => {
+            browser.windows[eventName].removeListener(listener);
+            resolve(window);
+          };
+          browser.windows[eventName].addListener(listener);
+        });
+      }
+
       async function checkHeaders(expected) {
-        let [createdWindow] = await createdWindowPromise;
+        let createdWindow = await createdWindowPromise;
         browser.test.assertEq("messageCompose", createdWindow.type);
         browser.test.sendMessage("checkHeaders", expected);
-        await window.waitForMessage();
-        let removedWindowPromise = window.waitForEvent("windows.onRemoved");
+        await new Promise(resolve => {
+          browser.test.onMessage.addListener(function listener() {
+            browser.test.onMessage.removeListener(listener);
+            resolve();
+          });
+        });
+        let removedWindowPromise = waitForEvent("onRemoved");
         browser.windows.remove(createdWindow.id);
         await removedWindowPromise;
       }
@@ -125,13 +138,13 @@ add_task(async function testHeaders() {
 
       // Start a new message.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew();
       await checkHeaders({});
 
       // Start a new message, with a subject and recipients as strings.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew({
         to: "Sherlock Holmes <sherlock@bakerstreet.invalid>",
         cc: "John Watson <john@bakerstreet.invalid>",
@@ -145,7 +158,7 @@ add_task(async function testHeaders() {
 
       // Start a new message, with a subject and recipients as string arrays.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew({
         to: ["Sherlock Holmes <sherlock@bakerstreet.invalid>"],
         cc: ["John Watson <john@bakerstreet.invalid>"],
@@ -159,7 +172,7 @@ add_task(async function testHeaders() {
 
       // Start a new message, with a subject and recipients as contacts.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew({
         to: [{ id: contacts.sherlock, type: "contact" }],
         cc: [{ id: contacts.john, type: "contact" }],
@@ -173,7 +186,7 @@ add_task(async function testHeaders() {
 
       // Start a new message, with a subject and recipients as a mailing list.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew({
         to: [{ id: list, type: "mailingList" }],
         subject: "Did you miss me?",
@@ -185,7 +198,7 @@ add_task(async function testHeaders() {
 
       // Reply to a message.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginReply(messages[0].id);
       await checkHeaders({
         to: [messages[0].author.replace(/"/g, "")],
@@ -194,7 +207,7 @@ add_task(async function testHeaders() {
 
       // Forward a message.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginForward(
         messages[1].id,
         "forwardAsAttachment",
@@ -210,14 +223,7 @@ add_task(async function testHeaders() {
       await browser.addressBooks.delete(addressBook);
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
-    manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
-      permissions: ["accountsRead", "addressBooks", "messagesRead"],
-    },
+    manifest: { permissions: ["accountsRead", "addressBooks", "messagesRead"] },
   });
 
   extension.onMessage("checkHeaders", async expected => {
@@ -231,8 +237,18 @@ add_task(async function testHeaders() {
 });
 
 add_task(async function testBody() {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
+      function waitForEvent(eventName) {
+        return new Promise(resolve => {
+          let listener = window => {
+            browser.windows[eventName].removeListener(listener);
+            resolve(window);
+          };
+          browser.windows[eventName].addListener(listener);
+        });
+      }
+
       let emptyHTML = "<body>\n<p><br>\n</p>\n";
       let plainTextBodyTag =
         '<body style="font-family: -moz-fixed; white-space: pre-wrap; width: 72ch;">';
@@ -321,7 +337,7 @@ add_task(async function testBody() {
 
       for (let test of tests) {
         browser.test.log(JSON.stringify(test));
-        let createdWindowPromise = window.waitForEvent("windows.onCreated");
+        let createdWindowPromise = waitForEvent("onCreated");
         try {
           await browser.compose.beginNew(test.arguments);
           if (test.throws) {
@@ -338,25 +354,24 @@ add_task(async function testBody() {
           continue;
         }
 
-        let [createdWindow] = await createdWindowPromise;
+        let createdWindow = await createdWindowPromise;
         browser.test.assertEq("messageCompose", createdWindow.type);
         browser.test.sendMessage("checkBody", test.expected);
-        await window.waitForMessage();
-        let removedWindowPromise = window.waitForEvent("windows.onRemoved");
+        await new Promise(resolve => {
+          browser.test.onMessage.addListener(function listener() {
+            browser.test.onMessage.removeListener(listener);
+            resolve();
+          });
+        });
+        let removedWindowPromise = waitForEvent("onRemoved");
         browser.windows.remove(createdWindow.id);
         await removedWindowPromise;
       }
 
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
-    manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
-    },
   });
+
   extension.onMessage("checkBody", async expected => {
     let composeWindows = [...Services.wm.getEnumerator("msgcompose")];
     is(composeWindows.length, 1);
@@ -383,71 +398,5 @@ add_task(async function testBody() {
 
   await extension.startup();
   await extension.awaitFinish("finished");
-  await extension.unload();
-});
-
-add_task(async function testAttachments() {
-  let extension = ExtensionTestUtils.loadExtension({
-    background: async () => {
-      let [account] = await browser.accounts.list();
-      let folder = account.folders.find(f => f.name == "test");
-      let { messages } = await browser.messages.list(folder);
-
-      let newTab = await browser.compose.beginNew({
-        attachments: [
-          { file: new File(["one"], "attachment1.txt") },
-          { file: new File(["two"], "attachment2.txt") },
-        ],
-      });
-
-      let attachments = await browser.compose.listAttachments(newTab.id);
-      browser.test.assertEq(2, attachments.length);
-      browser.test.assertEq("attachment1.txt", attachments[0].name);
-      browser.test.assertEq("attachment2.txt", attachments[1].name);
-
-      let replyTab = await browser.compose.beginReply(messages[0].id, {
-        attachments: [
-          { file: new File(["three"], "attachment3.txt") },
-          { file: new File(["four"], "attachment4.txt") },
-        ],
-      });
-
-      attachments = await browser.compose.listAttachments(replyTab.id);
-      browser.test.assertEq(2, attachments.length);
-      browser.test.assertEq("attachment3.txt", attachments[0].name);
-      browser.test.assertEq("attachment4.txt", attachments[1].name);
-
-      let forwardTab = await browser.compose.beginForward(
-        messages[1].id,
-        "forwardAsAttachment",
-        {
-          attachments: [
-            { file: new File(["five"], "attachment5.txt") },
-            { file: new File(["six"], "attachment6.txt") },
-          ],
-        }
-      );
-
-      attachments = await browser.compose.listAttachments(forwardTab.id);
-      browser.test.assertEq(3, attachments.length);
-      browser.test.assertEq("attachment5.txt", attachments[0].name);
-      browser.test.assertEq("attachment6.txt", attachments[1].name);
-      // This is the forwarded email. It really should be the first attachment,
-      // but it isn't.
-      browser.test.assertEq(`${messages[1].subject}.eml`, attachments[2].name);
-
-      await browser.tabs.remove(newTab.id);
-      await browser.tabs.remove(replyTab.id);
-      await browser.tabs.remove(forwardTab.id);
-
-      browser.test.notifyPass();
-    },
-    manifest: {
-      permissions: ["accountsRead", "messagesRead"],
-    },
-  });
-
-  await extension.startup();
-  await extension.awaitFinish();
   await extension.unload();
 });

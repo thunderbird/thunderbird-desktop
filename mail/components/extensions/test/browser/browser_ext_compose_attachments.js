@@ -5,8 +5,8 @@
 addIdentity(createAccount());
 
 add_task(async function() {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
       let listener = {
         events: [],
         currentPromise: null,
@@ -63,7 +63,13 @@ add_task(async function() {
           browser.test.assertEq(expected[i].id, attachments[i].id);
         }
 
-        return window.sendMessage("checkUI", expected);
+        return new Promise(resolve => {
+          browser.test.onMessage.addListener(function listener() {
+            browser.test.onMessage.removeListener(listener);
+            resolve();
+          });
+          browser.test.sendMessage("checkUI", expected);
+        });
       };
 
       let file1 = new File(["File number one!"], "file1.txt");
@@ -184,14 +190,7 @@ add_task(async function() {
       browser.test.assertEq(0, listener.events.length);
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
-    manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
-      permissions: ["compose"],
-    },
+    manifest: { permissions: ["compose"] },
   });
 
   extension.onMessage("checkUI", expected => {

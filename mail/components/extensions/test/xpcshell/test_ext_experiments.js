@@ -7,17 +7,21 @@
 var { ExtensionTestUtils } = ChromeUtils.import(
   "resource://testing-common/ExtensionXPCShellUtils.jsm"
 );
+ExtensionTestUtils.init(this);
+
+async function run_test() {
+  let account = createAccount();
+  let rootFolder = account.incomingServer.rootFolder;
+  rootFolder.createSubfolder("test1", null);
+  let subFolders = [...rootFolder.subFolders];
+  createMessages(subFolders[2], 5); // test1
+
+  run_next_test();
+}
 
 add_task(async function test_managers() {
-  let account = createAccount();
-  let folder = await createSubfolder(
-    account.incomingServer.rootFolder,
-    "test1"
-  );
-  await createMessages(folder, 5);
-
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
       let [testAccount] = await browser.accounts.list();
       let testFolder = testAccount.folders.find(f => f.name == "test1");
       let {
@@ -54,7 +58,13 @@ add_task(async function test_managers() {
         testMessage.subject != messageList.messages[0].subject
       );
 
-      let [bookUID, contactUID, listUID] = await window.sendMessage("get UIDs");
+      let [bookUID, contactUID, listUID] = await new Promise(resolve => {
+        browser.test.onMessage.addListener(function listener(...args) {
+          browser.test.onMessage.removeListener(listener);
+          resolve(args);
+        });
+        browser.test.sendMessage("get UIDs");
+      });
       let [
         foundBook,
         foundContact,
@@ -70,10 +80,7 @@ add_task(async function test_managers() {
 
       browser.test.notifyPass("finished");
     },
-  };
-  let extension = ExtensionTestUtils.loadExtension({
     files: {
-      ...files,
       "schema.json": [
         {
           namespace: "testapi",
@@ -202,10 +209,8 @@ add_task(async function test_managers() {
           }
         };
       },
-      "utils.js": await getUtilsJS(),
     },
     manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
       permissions: ["accountsRead", "addressBooks", "messagesRead"],
       experiment_apis: {
         testapi: {

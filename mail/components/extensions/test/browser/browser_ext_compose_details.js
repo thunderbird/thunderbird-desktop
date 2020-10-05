@@ -7,8 +7,18 @@ let defaultIdentity = addIdentity(account);
 let nonDefaultIdentity = addIdentity(account);
 
 add_task(async function testHeaders() {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
+      function waitForEvent(eventName) {
+        return new Promise(resolve => {
+          let listener = window => {
+            browser.windows[eventName].removeListener(listener);
+            resolve(window);
+          };
+          browser.windows[eventName].addListener(listener);
+        });
+      }
+
       async function checkWindow(expected) {
         let state = await browser.compose.getComposeDetails(createdTab.id);
         for (let field of [
@@ -42,7 +52,13 @@ add_task(async function testHeaders() {
           browser.test.assertTrue(!state.subject, "subject is empty");
         }
 
-        await window.sendMessage("checkWindow", expected);
+        await new Promise(resolve => {
+          browser.test.onMessage.addListener(function listener() {
+            browser.test.onMessage.removeListener(listener);
+            resolve();
+          });
+          browser.test.sendMessage("checkWindow", expected);
+        });
       }
 
       let [account] = await browser.accounts.list();
@@ -75,9 +91,9 @@ add_task(async function testHeaders() {
 
       // Start a new message.
 
-      let createdWindowPromise = window.waitForEvent("windows.onCreated");
+      let createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew();
-      let [createdWindow] = await createdWindowPromise;
+      let createdWindow = await createdWindowPromise;
       let [createdTab] = await browser.tabs.query({
         windowId: createdWindow.id,
       });
@@ -259,7 +275,13 @@ add_task(async function testHeaders() {
       // Change the identity through the UI to check onIdentityChanged works.
 
       browser.test.log("Checking external identity change");
-      await window.sendMessage("changeIdentity", nonDefaultIdentity.id);
+      await new Promise(resolve => {
+        browser.test.onMessage.addListener(function listener() {
+          browser.test.onMessage.removeListener(listener);
+          resolve();
+        });
+        browser.test.sendMessage("changeIdentity", nonDefaultIdentity.id);
+      });
       browser.test.assertEq(
         nonDefaultIdentity.id,
         identityChanged,
@@ -268,19 +290,14 @@ add_task(async function testHeaders() {
 
       // Clean up.
 
-      let removedWindowPromise = window.waitForEvent("windows.onRemoved");
+      let removedWindowPromise = waitForEvent("onRemoved");
       browser.windows.remove(createdWindow.id);
       await removedWindowPromise;
 
       await browser.addressBooks.delete(addressBook);
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
     manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
       permissions: ["accountsRead", "addressBooks", "compose", "messagesRead"],
     },
   });

@@ -31,35 +31,48 @@ async function checkComposeBody(expected, waitForEvent) {
   }
 }
 
+// Functions for extensions to use, so that we avoid repeating ourselves.
+var utilityFunctions = () => {
+  this.sendMessageGetReply = function() {
+    return new Promise(resolve => {
+      browser.test.onMessage.addListener(function listener() {
+        browser.test.onMessage.removeListener(listener);
+        resolve();
+      });
+      browser.test.sendMessage();
+    });
+  };
+};
+
 /** Tests browser.tabs.insertCSS and browser.tabs.removeCSS. */
 add_task(async function testInsertRemoveCSS() {
   let extension = ExtensionTestUtils.loadExtension({
     files: {
       "background.js": async () => {
         let tab = await browser.compose.beginNew();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.insertCSS(tab.id, {
           code: "body { background-color: lime; }",
         });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.removeCSS(tab.id, {
           code: "body { background-color: lime; }",
         });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.insertCSS(tab.id, { file: "test.css" });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.removeCSS(tab.id, { file: "test.css" });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
       },
       "test.css": "body { background-color: green; }",
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },
@@ -114,13 +127,13 @@ add_task(async function testInsertRemoveCSSNoPermissions() {
           "insertCSS without permission should throw"
         );
 
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
       },
       "test.css": "body { background-color: red; }",
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },
@@ -147,15 +160,15 @@ add_task(async function testExecuteScript() {
     files: {
       "background.js": async () => {
         let tab = await browser.compose.beginNew();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.executeScript(tab.id, {
           code: `document.body.setAttribute("foo", "bar");`,
         });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.executeScript(tab.id, { file: "test.js" });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
@@ -163,7 +176,7 @@ add_task(async function testExecuteScript() {
       "test.js": () => {
         document.body.textContent = "Hey look, the script ran!";
       },
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },
@@ -213,7 +226,7 @@ add_task(async function testExecuteScriptNoPermissions() {
           "executeScript without permission should throw"
         );
 
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
@@ -221,7 +234,7 @@ add_task(async function testExecuteScriptNoPermissions() {
       "test.js": () => {
         document.body.textContent = "Hey look, the script ran!";
       },
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },
@@ -245,17 +258,17 @@ add_task(async function testExecuteScript() {
     files: {
       "background.js": async () => {
         let tab = await browser.compose.beginNew();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.executeScript(tab.id, {
           code: `document.body.textContent = messenger.runtime.getManifest().applications.gecko.id;`,
         });
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
       },
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       applications: { gecko: { id: "alias@mochitest" } },
@@ -296,10 +309,10 @@ add_task(async function testRegisterBeforeCompose() {
         });
 
         let tab = await browser.compose.beginNew();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await registeredScript.unregister();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
@@ -308,7 +321,7 @@ add_task(async function testRegisterBeforeCompose() {
       "test.js": () => {
         document.body.textContent = "Hey look, the script ran!";
       },
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },
@@ -353,7 +366,7 @@ add_task(async function testRegisterDuringCompose() {
     files: {
       "background.js": async () => {
         let tab = await browser.compose.beginNew();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         let registeredScript = await browser.composeScripts.register({
           css: [{ code: "body { color: white }" }, { file: "test.css" }],
@@ -363,10 +376,10 @@ add_task(async function testRegisterDuringCompose() {
           ],
         });
 
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await registeredScript.unregister();
-        await window.sendMessage();
+        await this.sendMessageGetReply();
 
         await browser.tabs.remove(tab.id);
         browser.test.notifyPass("finished");
@@ -375,7 +388,7 @@ add_task(async function testRegisterDuringCompose() {
       "test.js": () => {
         document.body.textContent = "Hey look, the script ran!";
       },
-      "utils.js": await getUtilsJS(),
+      "utils.js": utilityFunctions,
     },
     manifest: {
       background: { scripts: ["utils.js", "background.js"] },

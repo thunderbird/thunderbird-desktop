@@ -6,8 +6,8 @@ add_task(async () => {
   let account = createAccount();
   addIdentity(account);
 
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    background: async () => {
       async function checkProperty(property, expectedDefault, ...expected) {
         browser.test.log(
           `${property}: ${expectedDefault}, ${expected.join(", ")}`
@@ -24,7 +24,13 @@ add_task(async () => {
           );
         }
 
-        await window.sendMessage("checkProperty", property, expected);
+        await new Promise(resolve => {
+          browser.test.onMessage.addListener(function listener() {
+            browser.test.onMessage.removeListener(listener);
+            resolve();
+          });
+          browser.test.sendMessage("checkProperty", property, expected);
+        });
       }
 
       await browser.compose.beginNew();
@@ -81,17 +87,12 @@ add_task(async () => {
       await browser.tabs.remove(tabIDs[2]);
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
     manifest: {
       applications: {
         gecko: {
           id: "test1@mochi.test",
         },
       },
-      background: { scripts: ["utils.js", "background.js"] },
       compose_action: {
         default_title: "default",
       },

@@ -9,13 +9,23 @@ let { BrowserTestUtils } = ChromeUtils.import(
 );
 
 add_task(async () => {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    async background() {
+      function waitForEvent(eventName) {
+        return new Promise(resolve => {
+          let listener = arg1 => {
+            browser.windows[eventName].removeListener(listener);
+            resolve(arg1);
+          };
+          browser.windows[eventName].addListener(listener);
+        });
+      }
+
       // Address book window.
 
-      let createdWindowPromise = window.waitForEvent("windows.onCreated");
+      let createdWindowPromise = waitForEvent("onCreated");
       await browser.addressBooks.openUI();
-      let [createdWindow] = await createdWindowPromise;
+      let createdWindow = await createdWindowPromise;
       browser.test.assertEq("addressBook", createdWindow.type);
 
       let windowDetail = await browser.windows.get(createdWindow.id, {
@@ -28,15 +38,15 @@ add_task(async () => {
       browser.test.assertEq(undefined, windowDetail.tabs[0].title);
       browser.test.assertEq(undefined, windowDetail.tabs[0].url);
 
-      let removedWindowPromise = window.waitForEvent("windows.onRemoved");
+      let removedWindowPromise = waitForEvent("onRemoved");
       await browser.addressBooks.closeUI();
       await removedWindowPromise;
 
       // Message compose window.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       await browser.compose.beginNew();
-      [createdWindow] = await createdWindowPromise;
+      createdWindow = await createdWindowPromise;
       browser.test.assertEq("messageCompose", createdWindow.type);
 
       windowDetail = await browser.windows.get(createdWindow.id, {
@@ -49,15 +59,15 @@ add_task(async () => {
       browser.test.assertEq(undefined, windowDetail.tabs[0].title);
       browser.test.assertEq(undefined, windowDetail.tabs[0].url);
 
-      removedWindowPromise = window.waitForEvent("windows.onRemoved");
+      removedWindowPromise = waitForEvent("onRemoved");
       await browser.tabs.remove(windowDetail.tabs[0].id);
       await removedWindowPromise;
 
       // Message display window.
 
-      createdWindowPromise = window.waitForEvent("windows.onCreated");
+      createdWindowPromise = waitForEvent("onCreated");
       browser.test.sendMessage("openMessage");
-      [createdWindow] = await createdWindowPromise;
+      createdWindow = await createdWindowPromise;
       browser.test.assertEq("messageDisplay", createdWindow.type);
 
       windowDetail = await browser.windows.get(createdWindow.id, {
@@ -70,18 +80,13 @@ add_task(async () => {
       browser.test.assertEq(undefined, windowDetail.tabs[0].favIconUrl);
       browser.test.assertEq(undefined, windowDetail.tabs[0].title);
 
-      removedWindowPromise = window.waitForEvent("windows.onRemoved");
+      removedWindowPromise = waitForEvent("onRemoved");
       browser.test.sendMessage("closeMessage");
       await removedWindowPromise;
 
       browser.test.notifyPass();
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
     manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
       permissions: ["addressBooks", "tabs"],
     },
   });

@@ -152,19 +152,6 @@ async function openComposeWindow(relatedMessageId, type, details, extension) {
       }
       composeFields.body = details.plainTextBody;
     }
-
-    if (details.attachments !== null) {
-      for (let data of details.attachments) {
-        let attachment = Cc[
-          "@mozilla.org/messengercompose/attachment;1"
-        ].createInstance(Ci.nsIMsgAttachment);
-        attachment.name = data.name || data.file.name;
-        attachment.size = data.file.size;
-        attachment.url = await fileURLForFile(data.file);
-
-        composeFields.addAttachment(attachment);
-      }
-    }
   }
 
   params.composeFields = composeFields;
@@ -231,13 +218,7 @@ async function setComposeDetails(composeWindow, details, extension) {
   composeWindow.SetComposeDetails(details);
 }
 
-async function fileURLForFile(file) {
-  if (file.mozFullPath) {
-    let realFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-    realFile.initWithPath(file.mozFullPath);
-    return Services.io.newFileURI(realFile).spec;
-  }
-
+async function writeTempFile(file) {
   let tempDir = OS.Constants.Path.tmpDir;
   let destFile = OS.Path.join(tempDir, file.name);
 
@@ -287,6 +268,7 @@ var composeEventTracker = {
     let composeWindow = event.target;
 
     composeWindow.ToggleWindowLock(true);
+    let didSetDetails = false;
 
     for (let { handler, extension } of this.listeners) {
       let result = await handler(
@@ -302,12 +284,14 @@ var composeEventTracker = {
       }
       if (result.details) {
         await setComposeDetails(composeWindow, result.details, extension);
+        didSetDetails = true;
       }
     }
 
-    // Load the new details into gMsgCompose.compFields for sending.
-    composeWindow.GetComposeDetails();
-
+    if (didSetDetails) {
+      // Load the new details into gMsgCompose.compFields for sending.
+      composeWindow.GetComposeDetails();
+    }
     // Calling getComposeDetails collapses mailing lists. Expand them again.
     composeWindow.expandRecipients();
     composeWindow.ToggleWindowLock(false);
@@ -567,11 +551,11 @@ this.compose = class extends ExtensionAPI {
           ].createInstance(Ci.nsIMsgAttachment);
           attachment.name = data.name || data.file.name;
           attachment.size = data.file.size;
-          attachment.url = await fileURLForFile(data.file);
+          attachment.url = await writeTempFile(data.file);
 
           tab.nativeTab.AddAttachments([attachment]);
 
-          return composeAttachmentTracker.convert(attachment, tab.nativeTab);
+          return composeAttachmentTracker.convert(attachment);
         },
         async updateAttachment(tabId, attachmentId, data) {
           let tab = tabManager.get(tabId);
@@ -595,7 +579,7 @@ this.compose = class extends ExtensionAPI {
           }
           if (data.file) {
             attachment.size = data.file.size;
-            attachment.url = await fileURLForFile(data.file);
+            attachment.url = await writeTempFile(data.file);
           }
 
           window.AttachmentsChanged();

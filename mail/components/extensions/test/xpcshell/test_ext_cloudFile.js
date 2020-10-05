@@ -11,18 +11,32 @@ var { ExtensionTestUtils } = ChromeUtils.import(
   "resource://testing-common/ExtensionXPCShellUtils.jsm"
 );
 
+ExtensionTestUtils.init(this);
+
 add_task(async () => {
   async function background() {
     function createCloudfileAccount() {
-      let addListener = window.waitForEvent("cloudFile.onAccountAdded");
-      browser.test.sendMessage("createAccount");
-      return addListener;
+      return new Promise(resolve => {
+        function accountListener(account) {
+          browser.cloudFile.onAccountAdded.removeListener(accountListener);
+          resolve(account);
+        }
+
+        browser.cloudFile.onAccountAdded.addListener(accountListener);
+        browser.test.sendMessage("createAccount");
+      });
     }
 
     function removeCloudfileAccount(id) {
-      let deleteListener = window.waitForEvent("cloudFile.onAccountDeleted");
-      browser.test.sendMessage("removeAccount", id);
-      return deleteListener;
+      return new Promise(resolve => {
+        function accountListener(accountId) {
+          browser.cloudFile.onAccountDeleted.removeListener(accountListener);
+          resolve(accountId);
+        }
+
+        browser.cloudFile.onAccountDeleted.addListener(accountListener);
+        browser.test.sendMessage("removeAccount", id);
+      });
     }
 
     function assertAccountsMatch(b, a) {
@@ -38,7 +52,7 @@ add_task(async () => {
     async function test_account_creation_removal() {
       browser.test.log("test_account_creation_removal");
       // Account creation
-      let [createdAccount] = await createCloudfileAccount();
+      let createdAccount = await createCloudfileAccount();
       assertAccountsMatch(createdAccount, {
         id: "account1",
         name: "xpcshell",
@@ -68,7 +82,7 @@ add_task(async () => {
       });
 
       // Account removal
-      let [removedAccountId] = await removeCloudfileAccount(createdAccount.id);
+      let removedAccountId = await removeCloudfileAccount(createdAccount.id);
       browser.test.assertEq(createdAccount.id, removedAccountId);
     }
 
@@ -76,7 +90,7 @@ add_task(async () => {
       browser.test.log("test_getters_update");
       browser.test.sendMessage("createAccount", "ext-other-addon");
 
-      let [createdAccount] = await createCloudfileAccount();
+      let createdAccount = await createCloudfileAccount();
 
       // getAccount and getAllAccounts
       let retrievedAccount = await browser.cloudFile.getAccount(
@@ -121,7 +135,7 @@ add_task(async () => {
 
     async function test_upload_delete() {
       browser.test.log("test_upload_delete");
-      let [createdAccount] = await createCloudfileAccount();
+      let createdAccount = await createCloudfileAccount();
 
       let fileId = await new Promise(resolve => {
         function fileListener(account, { id, name, data }) {
@@ -198,17 +212,13 @@ add_task(async () => {
   }
 
   let extension = ExtensionTestUtils.loadExtension({
-    files: {
-      "background.js": background,
-      "utils.js": await getUtilsJS(),
-    },
+    background,
     manifest: {
       cloud_file: {
         name: "xpcshell",
         management_url: "/content/management.html",
       },
       applications: { gecko: { id: "cloudfile@xpcshell" } },
-      background: { scripts: ["utils.js", "background.js"] },
     },
   });
 

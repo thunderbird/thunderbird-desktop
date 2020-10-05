@@ -5,128 +5,85 @@
 /* globals gFolderDisplay, gFolderTreeView, MsgOpenNewWindowForMessage, MsgOpenSelectedMessages  */
 
 add_task(async () => {
-  let files = {
-    "background.js": async () => {
+  let extension = ExtensionTestUtils.loadExtension({
+    async background() {
+      function waitForEvent() {
+        return new Promise(resolve => {
+          let listener = (...args) => {
+            browser.messageDisplay.onMessageDisplayed.removeListener(listener);
+            resolve(args);
+          };
+          browser.messageDisplay.onMessageDisplayed.addListener(listener);
+        });
+      }
+
       let [{ id: firstTabId, displayedFolder }] = await browser.mailTabs.query({
         active: true,
         currentWindow: true,
       });
-
       let { messages } = await browser.messages.list(displayedFolder);
 
-      async function checkResults(action, expectedMessages, sameTab) {
-        let msgListener = window.waitForEvent(
-          "messageDisplay.onMessageDisplayed"
-        );
-        let msgsListener = window.waitForEvent(
-          "messageDisplay.onMessagesDisplayed"
-        );
-
-        if (typeof action == "string") {
-          browser.test.sendMessage(action);
-        } else {
-          action();
-        }
-
-        let tab;
-        let message;
-        if (expectedMessages.length == 1) {
-          [tab, message] = await msgListener;
-          let [msgsTab, msgs] = await msgsListener;
-          // Check listener results.
-          if (sameTab) {
-            browser.test.assertEq(firstTabId, tab.id);
-            browser.test.assertEq(firstTabId, msgsTab.id);
-          } else {
-            browser.test.assertTrue(firstTabId != tab.id);
-            browser.test.assertTrue(firstTabId != msgsTab.id);
-          }
-          browser.test.assertEq(
-            messages[expectedMessages[0]].subject,
-            message.subject
-          );
-          browser.test.assertEq(
-            messages[expectedMessages[0]].subject,
-            msgs[0].subject
-          );
-
-          // Check displayed message result.
-          message = await browser.messageDisplay.getDisplayedMessage(tab.id);
-          browser.test.assertEq(
-            messages[expectedMessages[0]].subject,
-            message.subject
-          );
-        } else {
-          // onMessageDisplayed doesn't fire for the multi-message case.
-          let msgs;
-          [tab, msgs] = await msgsListener;
-
-          for (let [i, expected] of expectedMessages.entries()) {
-            browser.test.assertEq(messages[expected].subject, msgs[i].subject);
-          }
-
-          // More than one selected, so getDisplayMessage returns null.
-          message = await browser.messageDisplay.getDisplayedMessage(tab.id);
-          browser.test.assertEq(null, message);
-        }
-
-        let displayMsgs = await browser.messageDisplay.getDisplayedMessages(
-          tab.id
-        );
-        browser.test.assertEq(expectedMessages.length, displayMsgs.length);
-        for (let [i, expected] of expectedMessages.entries()) {
-          browser.test.assertEq(
-            messages[expected].subject,
-            displayMsgs[i].subject
-          );
-        }
-        return tab;
-      }
-
       // Test that selecting a different message fires the event.
-      await checkResults("show message 1", [1], true);
+      let eventListener = waitForEvent();
+      browser.test.sendMessage("show message 1");
+      let [tab, message] = await eventListener;
+      browser.test.assertEq(firstTabId, tab.id);
+      browser.test.assertEq(messages[1].subject, message.subject);
+
+      message = await browser.messageDisplay.getDisplayedMessage(tab.id);
+      browser.test.assertEq(messages[1].subject, message.subject);
 
       // ... and again, for good measure.
-      await checkResults("show message 2", [2], true);
+      eventListener = waitForEvent();
+      browser.test.sendMessage("show message 2");
+      [tab, message] = await eventListener;
+      browser.test.assertEq(firstTabId, tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
+
+      message = await browser.messageDisplay.getDisplayedMessage(tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
 
       // Test that opening a message in a new tab fires the event.
-      let tab = await checkResults("open message tab", [2], false);
+      eventListener = waitForEvent();
+      browser.test.sendMessage("open message tab");
+      [tab, message] = await eventListener;
+      browser.test.assertTrue(firstTabId != tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
+
+      message = await browser.messageDisplay.getDisplayedMessage(tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
 
       // Test that the first tab is not displaying a message.
-      let message = await browser.messageDisplay.getDisplayedMessage(
-        firstTabId
-      );
+      message = await browser.messageDisplay.getDisplayedMessage(firstTabId);
       browser.test.assertEq(null, message);
-
-      // The first tab still saves the selected messages, even if it isn't
-      // showing the tab.
-      let displayMsgs = await browser.messageDisplay.getDisplayedMessages(
-        tab.id
-      );
-      browser.test.assertEq(1, displayMsgs.length);
-      browser.test.assertEq(messages[2].subject, displayMsgs[0].subject);
 
       // Closing the tab should return us to the first tab, and fires the
       // event. It doesn't have to be this way, it just is.
-      await checkResults(() => browser.tabs.remove(tab.id), [2], true);
+      eventListener = waitForEvent();
+      browser.tabs.remove(tab.id);
+      [tab, message] = await eventListener;
+      browser.test.assertEq(firstTabId, tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
+
+      message = await browser.messageDisplay.getDisplayedMessage(tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
 
       // Test that opening a message in a new window fires the event.
-      tab = await checkResults("open message window", [2], false);
+      eventListener = waitForEvent();
+      browser.test.sendMessage("open message window");
+      [tab, message] = await eventListener;
+      browser.test.assertTrue(firstTabId != tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
+
+      message = await browser.messageDisplay.getDisplayedMessage(tab.id);
+      browser.test.assertEq(messages[2].subject, message.subject);
 
       // Close the window.
       browser.tabs.remove(tab.id);
 
-      // Test that selecting a multiple messages fires the event.
-      await checkResults("show messages 1 and 2", [1, 2], true);
-
       browser.test.notifyPass("finished");
     },
-    "utils.js": await getUtilsJS(),
-  };
-  let extension = ExtensionTestUtils.loadExtension({
-    files,
     manifest: {
-      background: { scripts: ["utils.js", "background.js"] },
       permissions: ["accountsRead", "messagesRead"],
     },
   });
@@ -156,9 +113,6 @@ add_task(async () => {
 
   await extension.awaitMessage("open message window");
   MsgOpenNewWindowForMessage();
-
-  await extension.awaitMessage("show messages 1 and 2");
-  gFolderDisplay.selectMessages([...subFolders.test1.messages].slice(1, 3));
 
   await extension.awaitFinish("finished");
   await extension.unload();
