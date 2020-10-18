@@ -374,7 +374,6 @@ async function loadOpenPgpMessageSecurityInfo() {
   }
 
   let signatureLabel = document.getElementById("signatureLabel");
-  // eslint-disable-next-line mozilla/prefer-formatValues
   signatureLabel.textContent = await document.l10n.formatValue(sigInfoLabel);
 
   // Remove the second class to properly update the signature icon.
@@ -383,8 +382,7 @@ async function loadOpenPgpMessageSecurityInfo() {
 
   let signatureExplanation = document.getElementById("signatureExplanation");
   signatureExplanation.textContent = hasAnySig
-    ? // eslint-disable-next-line mozilla/prefer-formatValues
-      await document.l10n.formatValue(sigInfo)
+    ? await document.l10n.formatValue(sigInfo)
     : sBundle.getString(sigInfo);
 
   let encInfoLabel = null;
