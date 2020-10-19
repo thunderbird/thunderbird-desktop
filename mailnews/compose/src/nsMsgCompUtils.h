@@ -97,6 +97,8 @@ char* msg_make_filename_qtext(const char* srcText, bool stripCRLFs);
 void msg_pick_real_name(nsMsgAttachmentHandler* attachment,
                         const char16_t* proposedName, const char* charset);
 
+char* RFC2231ParmFolding(const char* parmName, const char* parmValue);
+
 //
 // Informational calls...
 //
