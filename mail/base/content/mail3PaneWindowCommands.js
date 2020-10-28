@@ -1115,12 +1115,6 @@ var DefaultController = {
       case "cmd_newVirtualFolder":
         gFolderTreeController.newVirtualFolder();
         break;
-      case "cmd_joinChat":
-        chatHandler.joinChat();
-        break;
-      case "cmd_addChatBuddy":
-        chatHandler.addBuddy();
-        break;
     }
   },
   /* eslint-enable complexity */
