@@ -3895,7 +3895,12 @@ function MsgSearchMessages(aFolder) {
     "chrome://messenger/content/SearchDialog.xhtml",
     "_blank",
     "chrome,resizable,status,centerscreen,dialog=no",
-    { folder: aFolder || gFolderDisplay.displayedFolder }
+    {
+      folder:
+        aFolder ||
+        gFolderDisplay.displayedFolder ||
+        gFolderTreeView.getSelectedFolders()[0],
+    }
   );
 }
 
