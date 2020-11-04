@@ -1004,10 +1004,7 @@ function OnUnloadMessenger() {
     MailPrefObserver
   );
   Services.prefs.removeObserver("mail.openpgp.enable", MailPrefObserver);
-  Services.prefs.removeObserver(
-    "extensions.activeThemeID",
-    ThemePrefObserver
-  );
+  Services.prefs.removeObserver("extensions.activeThemeID", ThemePrefObserver);
 
   if (gRightMouseButtonSavedSelection) {
     // Avoid possible cycle leaks.
