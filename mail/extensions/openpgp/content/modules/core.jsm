@@ -103,7 +103,7 @@ var EnigmailCore = {
     return gEnigmailService;
   },
 
-  startup(reason) {
+  async startup(reason) {
     let self = this;
 
     let env = getEnvironment();
@@ -114,8 +114,8 @@ var EnigmailCore = {
 
     logger.DEBUG("core.jsm: startup()\n");
 
-    getEnigmailSqlite().checkDatabaseStructure();
-    getPgpSqlite2().checkDatabaseStructure();
+    await getEnigmailSqlite().checkDatabaseStructure();
+    await getPgpSqlite2().checkDatabaseStructure();
     getEnigmailPrefs().startup(reason);
 
     this.factories = [];
@@ -170,8 +170,9 @@ var EnigmailCore = {
    * @win:                - nsIWindow: parent window (optional)
    * @startingPreferences - Boolean: true - called while switching to new preferences
    *                        (to avoid re-check for preferences)
+   * @returns {Promise<Enigmail|null>}
    */
-  getService(win, startingPreferences) {
+  async getService(win, startingPreferences) {
     // Lazy initialization of Enigmail JS component (for efficiency)
 
     if (gEnigmailService) {
@@ -421,7 +422,7 @@ Enigmail.prototype = {
     }
   },
 
-  getService(win, startingPreferences) {
+  async getService(win, startingPreferences) {
     if (!win) {
       win = getEnigmailWindows().getBestParentWin();
     }
@@ -441,8 +442,7 @@ Enigmail.prototype = {
         getEnigmailConfigure().configureEnigmail(win, startingPreferences);
       }
     }
-
-    EnigmailCore.startup(0);
+    await EnigmailCore.startup(0);
     getEnigmailPgpmimeHander().startup(0);
     return this.initialized ? this : null;
   },
