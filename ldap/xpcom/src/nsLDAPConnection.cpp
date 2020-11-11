@@ -468,7 +468,7 @@ void nsLDAPConnection::InvokeErrorCallback(int32_t opID, nsresult status,
   nsPrintfCString location("%s:%d", mDNSHost.get(), mPort);
   nsCOMPtr<nsITransportSecurityInfo> tsi = do_QueryInterface(secInfo);
   NS_DispatchToMainThread(NS_NewRunnableFunction(
-      "InvokeErrorCallback", [listener, status, tsi, location]() {
+      "InvokeErrorCallback", [=]() {
         listener->OnLDAPError(status, tsi, location);
       }));
 }
