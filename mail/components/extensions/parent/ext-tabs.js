@@ -391,28 +391,10 @@ this.tabs = class extends ExtensionAPI {
         onUpdated: new TabsUpdateFilterEventManager({ context }).api(),
 
         async create(createProperties) {
-          let window = await new Promise((resolve, reject) => {
-            let window =
-              createProperties.windowId === null
-                ? windowTracker.topNormalWindow
-                : windowTracker.getWindow(createProperties.windowId, context);
-            let { gMailInit } = window;
-            if (!gMailInit || !gMailInit.delayedStartupFinished) {
-              let obs = (finishedWindow, topic, data) => {
-                if (finishedWindow != window) {
-                  return;
-                }
-                Services.obs.removeObserver(
-                  obs,
-                  "mail-delayed-startup-finished"
-                );
-                resolve(window);
-              };
-              Services.obs.addObserver(obs, "mail-delayed-startup-finished");
-            } else {
-              resolve(window);
-            }
-          });
+          let window =
+            createProperties.windowId === null
+              ? windowTracker.topNormalWindow
+              : windowTracker.getWindow(createProperties.windowId, context);
           let tabmail = window.document.getElementById("tabmail");
 
           let url;
