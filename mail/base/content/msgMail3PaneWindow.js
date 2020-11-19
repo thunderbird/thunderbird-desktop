@@ -491,7 +491,7 @@ var ThemePrefObserver = {
       // the default, to allow the OS theme to properly handle the color scheme.
       if (
         AppConstants.platform != "linux" &&
-        Services.prefs.getCharPref("extensions.activeThemeID") ==
+        Services.prefs.getCharPref("extensions.activeThemeID", "") ==
           "default-theme@mozilla.org"
       ) {
         return;
