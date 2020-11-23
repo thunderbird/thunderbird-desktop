@@ -332,8 +332,15 @@ toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
   padding-inline-start: 3px !important;
 }
 
-toolbar[mode="full"] .toolbarbutton-1 {
+toolbar[mode="full"] .toolbarbutton-1:not([hideWebExtensionLabel="true"]) {
   min-width: 55px;
+}
+toolbar:not([mode="text"]) .toolbarbutton-1[hideWebExtensionLabel="true"] .toolbarbutton-text {
+  display: none;
+}
+
+#header-view-toolbar .toolbarbutton-1[hideWebExtensionLabel="true"] .toolbarbutton-text {
+  display: none;
 }
 
 .sidebar-header .toolbarbutton-text:not([value]) {

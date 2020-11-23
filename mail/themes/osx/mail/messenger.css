@@ -412,6 +412,14 @@ toolbar[mode="icons"] .toolbarbutton-1 > menupopup {
   margin-bottom: 3px;
 }
 
+toolbar:not([mode="text"]) .toolbarbutton-1[hideWebExtensionLabel="true"] .toolbarbutton-text {
+  display: none;
+}
+
+#header-view-toolbar .toolbarbutton-1[hideWebExtensionLabel="true"] .toolbarbutton-text {
+  display: none;
+}
+
 /* :::::: throbber :::::::::: */
 
 #throbber-box {
