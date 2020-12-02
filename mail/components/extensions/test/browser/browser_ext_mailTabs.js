@@ -44,7 +44,7 @@ add_task(async function test_update() {
       messagePaneVisible: null,
       displayedFolder: {
         accountId,
-        name: "Local Folders",
+        name: `${accountId}user on localhost`,
         path: "/",
       },
     };
