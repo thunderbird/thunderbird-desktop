@@ -363,8 +363,10 @@ function UpdateMailPaneConfig(aMsgWindowInitialized) {
     // re-insert the messagePaneBoxWrapper back into the document.  But the dtor
     // doesn't fire when the element is removed from the document.  Manually
     // call destroy here to avoid a nasty leak.
-    document.getElementById("messagepane").destroy();
+    let messagePane = document.getElementById("messagepane");
+    messagePane.destroy();
     document.getElementById("FindToolbar").destroy();
+
     let footerBox = desiredParent.lastElementChild;
     if (footerBox && footerBox.id == "messenger-notification-footer") {
       desiredParent.insertBefore(messagePaneSplitter, footerBox);
@@ -374,10 +376,12 @@ function UpdateMailPaneConfig(aMsgWindowInitialized) {
       desiredParent.appendChild(messagePaneBoxWrapper);
     }
 
-    ExtensionParent.apiManager.emit(
-      "extension-browser-inserted",
-      document.getElementById("messagepane")
-    );
+    if (messagePane._progressListenerAdded) {
+      ExtensionParent.apiManager.emit(
+        "extension-browser-inserted",
+        messagePane
+      );
+    }
 
     if (msgWindow) {
       // Reassigning statusFeedback adds a progress listener to the new docShell.
