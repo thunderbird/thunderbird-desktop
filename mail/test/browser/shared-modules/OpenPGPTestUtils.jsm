@@ -46,7 +46,6 @@ const OpenPGPTestUtils = {
   async initOpenPGP() {
     Assert.ok(await RNP.init(), "librnp did load");
     Assert.ok(await getEnigmailCore().getService({}), "EnigmailCore did load");
-    EnigmailKeyRing.init();
   },
 
   /**
