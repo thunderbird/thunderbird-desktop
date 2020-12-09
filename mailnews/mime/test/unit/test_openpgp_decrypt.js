@@ -13,6 +13,10 @@ const { PromiseUtils } = ChromeUtils.import(
 const { OpenPGPTestUtils } = ChromeUtils.import(
   "resource://testing-common/mozmill/OpenPGPTestUtils.jsm"
 );
+const { EnigmailLazy } = ChromeUtils.import(
+  "chrome://openpgp/content/modules/lazy.jsm"
+);
+const { RNP } = ChromeUtils.import("chrome://openpgp/content/modules/RNP.jsm");
 const { EnigmailSingletons } = ChromeUtils.import(
   "chrome://openpgp/content/modules/singletons.jsm"
 );
@@ -24,6 +28,10 @@ const { EnigmailConstants } = ChromeUtils.import(
 );
 const { EnigmailDecryption } = ChromeUtils.import(
   "chrome://openpgp/content/modules/decryption.jsm"
+);
+const getEnigmailCore = EnigmailLazy.loader(
+  "enigmail/core.jsm",
+  "EnigmailCore"
 );
 
 /* import-globals-from ../../../test/resources/asyncTestUtils.js */
@@ -269,7 +277,8 @@ const tests = [
  * we are going to test.
  */
 add_task(async function setUp() {
-  await OpenPGPTestUtils.initOpenPGP();
+  Assert.ok(await RNP.init(), "librnp did load");
+  Assert.ok(await getEnigmailCore().getService({}), "EnigmailCore did load");
 
   await OpenPGPTestUtils.importPrivateKey(
     null,

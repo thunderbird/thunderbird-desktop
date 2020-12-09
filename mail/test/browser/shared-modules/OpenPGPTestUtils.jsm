@@ -6,9 +6,6 @@
 
 const EXPORTED_SYMBOLS = ["OpenPGPTestUtils"];
 
-const { EnigmailLazy } = ChromeUtils.import(
-  "chrome://openpgp/content/modules/lazy.jsm"
-);
 const { EnigmailKeyRing } = ChromeUtils.import(
   "chrome://openpgp/content/modules/keyRing.jsm"
 );
@@ -21,14 +18,7 @@ const { PgpSqliteDb2 } = ChromeUtils.import(
 const { uidHelper } = ChromeUtils.import(
   "chrome://openpgp/content/modules/uidHelper.jsm"
 );
-const { RNP } = ChromeUtils.import("chrome://openpgp/content/modules/RNP.jsm");
 
-const { Assert } = ChromeUtils.import("resource://testing-common/Assert.jsm");
-
-const getEnigmailCore = EnigmailLazy.loader(
-  "enigmail/core.jsm",
-  "EnigmailCore"
-);
 const OpenPGPTestUtils = {
   ACCEPTANCE_PERSONAL: "personal",
   ACCEPTANCE_REJECTED: "rejected",
@@ -38,15 +28,6 @@ const OpenPGPTestUtils = {
   ALICE_KEY_ID: "F231550C4F47E38E",
   BOB_KEY_ID: "FBFCC82A015E7330",
   CAROL_KEY_ID: "3099FF1238852B9F",
-
-  /**
-   * For xpcshell-tests OpenPGP is not intialized automatically. This method
-   * should be called at the start of testing.
-   */
-  async initOpenPGP() {
-    Assert.ok(await RNP.init(), "librnp did load");
-    Assert.ok(await getEnigmailCore().getService({}), "EnigmailCore did load");
-  },
 
   /**
    * Tests whether the signed icon's "signed" attribute matches the provided
