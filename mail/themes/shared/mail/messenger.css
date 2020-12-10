@@ -403,7 +403,7 @@ tree:-moz-lwtheme:not(:focus)
 :root[lwt-tree] tree:not(:focus) treechildren::-moz-tree-image(selected),
 :root[lwt-tree] tree:not(:focus) treechildren::-moz-tree-twisty(selected),
 :root[lwt-tree] #threadTree:not(:focus) treechildren::-moz-tree-cell-text(untagged, selected),
-:root[lwt-tree] tree:not(#threadTree,:focus) treechildren::-moz-tree-cell-text(selected) {
+:root[lwt-tree] tree:not(#threadTree):not(:focus) treechildren::-moz-tree-cell-text(selected) {
   color: var(--sidebar-text-color);
 }
 
