@@ -3581,6 +3581,7 @@ function MarkMessageAsRead(msgHdr) {
   var headers = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
   headers.appendElement(msgHdr);
   msgHdr.folder.markMessagesRead(headers, true);
+  reportMsgRead({ isNewRead: true });
 }
 
 function ClearPendingReadTimer() {

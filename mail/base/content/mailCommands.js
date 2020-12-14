@@ -514,6 +514,9 @@ function MarkSelectedMessagesRead(markRead) {
       ? Ci.nsMsgViewCommandType.markMessagesRead
       : Ci.nsMsgViewCommandType.markMessagesUnread
   );
+  if (markRead) {
+    reportMsgRead({ isNewRead: true });
+  }
 }
 
 function MarkSelectedMessagesFlagged(markFlagged) {
