@@ -2926,6 +2926,8 @@ function GetNewMsgs(server, folder) {
 function TransportErrorUrlListener() {}
 
 TransportErrorUrlListener.prototype = {
+  OnStartRunningUrl(url) {},
+
   OnStopRunningUrl(url, exitCode) {
     let nssErrorsService = Cc["@mozilla.org/nss_errors_service;1"].getService(
       Ci.nsINSSErrorsService
