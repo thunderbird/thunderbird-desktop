@@ -1857,6 +1857,9 @@ nsresult nsMsgComposeAndSend::AddCompFieldLocalAttachments() {
             attachment->GetContentTypeParam(
                 getter_Copies(m_attachments[newLoc]->m_typeParam));
             mustSnarfAttachment = false;
+            if (m_attachments[newLoc]->m_type.EqualsLiteral("application/pgp-keys")) {
+              m_attachments[newLoc]->m_description = NS_LITERAL_CSTRING("OpenPGP public key");
+            }
           }
 
           // We need to snarf the file to figure out how to send it only if we
