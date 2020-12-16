@@ -1769,7 +1769,7 @@ CalStorageCalendar.prototype = {
       }
 
       let rec = item.recurrenceInfo;
-      let exc = await this.getEventFromRow(row, false);
+      let exc = await this.getEventFromRow(row);
       rec.modifyException(exc, true);
     });
 
@@ -1781,7 +1781,7 @@ CalStorageCalendar.prototype = {
       }
 
       let rec = item.recurrenceInfo;
-      let exc = await this.getTodoFromRow(row, false);
+      let exc = await this.getTodoFromRow(row);
       rec.modifyException(exc, true);
     });
 
