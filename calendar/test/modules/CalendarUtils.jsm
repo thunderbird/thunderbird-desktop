@@ -127,8 +127,6 @@ function setupModule() {
 
   // We are in calendarTests, so we make sure, calendar-tab with day-view is displayed.
   let controller = mozmill.getMail3PaneController();
-  let { eid } = helpersForController(controller);
-  controller.click(eid("calendar-tab-button"));
   switchToView(controller, "day");
 }
 setupModule();
@@ -204,9 +202,14 @@ function handleOccurrencePrompt(controller, element, mode, selectParent) {
 function switchToView(controller, view) {
   let { eid } = helpersForController(controller);
 
-  let button = `calendar-${view}-view-button`;
+  let tabButton = eid("calendar-tab-button");
+  controller.waitForElement(tabButton);
+  controller.click(tabButton);
 
-  controller.waitThenClick(eid(button));
+  let button = eid(`calendar-${view}-view-button`);
+  controller.waitForElement(button);
+  controller.click(button);
+
   ensureViewLoaded(controller);
 }
 

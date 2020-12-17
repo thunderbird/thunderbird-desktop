@@ -2340,8 +2340,9 @@ function makePrettyName(aUri) {
  */
 function uploadCloudAttachment(attachment, cloudFileAccount, listItem) {
   let file = attachment.uri.QueryInterface(Ci.nsIFileURL).file;
+  let image = listItem.querySelector("image");
   listItem.attachCloudFileAccount = cloudFileAccount;
-  listItem.setAttribute("image", "chrome://global/skin/icons/loading.png");
+  image.setAttribute("src", "chrome://global/skin/icons/loading.png");
   cloudFileAccount.uploadFile(file).then(
     upload => {
       delete gAttachMap[attachment.hashId];
@@ -2350,7 +2351,7 @@ function uploadCloudAttachment(attachment, cloudFileAccount, listItem) {
       attachment.setParameter("PROVIDER", cloudFileAccount.type);
       listItem.setAttribute("label", file.leafName);
       gAttachMap[attachment.hashId] = attachment;
-      listItem.setAttribute("image", cloudFileAccount.iconURL);
+      image.setAttribute("src", cloudFileAccount.iconURL);
       listItem.attachCloudFileUpload = upload;
       updateAttachment();
     },
