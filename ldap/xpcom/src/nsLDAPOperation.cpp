@@ -653,6 +653,9 @@ nsLDAPOperation::AbandonExt() {
     return NS_ERROR_NOT_INITIALIZED;
   }
 
+  MOZ_LOG(gLDAPLogModule, mozilla::LogLevel::Debug,
+          ("nsLDAPOperation::AbandonExt() called (msgid=%d)", mMsgID));
+
   // XXX handle controls here
   if (mServerControls || mClientControls) {
     return NS_ERROR_NOT_IMPLEMENTED;
