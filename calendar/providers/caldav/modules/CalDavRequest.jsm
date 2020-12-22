@@ -253,7 +253,7 @@ class CalDavResponseBase {
     });
     this.completed = new Promise((resolve, reject) => {
       this._oncompleted = resolve;
-      this._oncompleteerror = reject;
+      this._oncompletederror = reject;
     });
   }
 
