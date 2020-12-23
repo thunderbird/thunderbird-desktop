@@ -15,11 +15,7 @@
 }
 
 #calendar-task-details-container {
-    border-top: 1px solid ThreeDShadow;
-    border-left: 1px solid ThreeDShadow;
-    border-right: 0;
-    border-bottom: 0;
-    overflow: hidden;
+    padding-top: 0;
 }
 
 #other-actions-box {
@@ -59,11 +55,6 @@
 
 #calendar-nav-control {
     border-top-width: 0;
-}
-
-#calendar-task-details-container {
-    border-top-width: 0;
-    padding-top: 0;
 }
 
 @media (-moz-windows-default-theme) {
