@@ -22,7 +22,7 @@
 
 .searchBox,
 .themeableSearchBox {
-  appearance: none;
+  -moz-appearance: none;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   outline: none;
   height: 24px;
