@@ -464,6 +464,7 @@ this.theme = class extends ExtensionAPI {
             windowId,
             experiment: this.extension.manifest.theme_experiment,
           });
+          return Promise.resolve();
         },
         reset: windowId => {
           if (windowId) {
@@ -474,13 +475,14 @@ this.theme = class extends ExtensionAPI {
 
             let theme = windowOverrides.get(windowId) || defaultTheme;
             if (theme.extension !== extension) {
-              return;
+              return Promise.resolve();
             }
           } else if (defaultTheme.extension !== extension) {
-            return;
+            return Promise.resolve();
           }
 
           Theme.unload(windowId);
+          return Promise.resolve();
         },
         onUpdated: new EventManager({
           context,
