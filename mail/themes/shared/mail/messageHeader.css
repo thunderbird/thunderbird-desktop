@@ -406,6 +406,12 @@ mail-headerfield:focus {
   color: var(--sidebar-text-color);
 }
 
+:root[lwt-tree] #attachmentList .attachmentItem:hover {
+  background-color: hsla(0, 0%, 50%, .15);
+  border-color: hsla(0, 0%, 50%, .15);
+  color: inherit;
+}
+
 :root[lwt-tree] #attachmentList .attachmentItem[selected="true"] {
   background: var(--sidebar-highlight-background-color, hsla(0, 0%, 80%, .6));
   border-color: var(--sidebar-highlight-background-color, hsla(0, 0%, 80%, .6));

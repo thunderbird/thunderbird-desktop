@@ -344,9 +344,3 @@ mail-headerfield.headerValue:focus {
                 0 0 2px hsla(210, 54%, 20%, .1);
   }
 }
-
-:root[lwt-tree] #attachmentList .attachmentItem:hover {
-  background-color: hsla(0, 0%, 50%, .15);
-  border-color: hsla(0, 0%, 50%, .15);
-  color: inherit;
-}
