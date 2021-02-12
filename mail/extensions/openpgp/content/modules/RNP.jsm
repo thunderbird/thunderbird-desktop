@@ -1003,7 +1003,9 @@ var RNP = {
       false
     );
 
-    let max_out = encrypted.length * 10;
+    // Allow compressed encrypted messages, max factor 1200, up to 100 MiB.
+    const max_decrypted_message_size = 100 * 1024 * 1024;
+    let max_out = Math.min(encrypted.length * 1200, max_decrypted_message_size);
 
     let output_to_memory = new RNPLib.rnp_output_t();
     RNPLib.rnp_output_to_memory(output_to_memory.address(), max_out);
