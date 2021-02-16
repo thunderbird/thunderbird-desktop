@@ -15,6 +15,7 @@ BROWSER_CHROME_MANIFESTS += [
 ]
 
 TESTING_JS_MODULES.mozmill += [
+    'modules/CalendarTestUtils.jsm',
     'modules/CalendarUtils.jsm',
     'modules/ItemEditingHelpers.jsm',
 ]
