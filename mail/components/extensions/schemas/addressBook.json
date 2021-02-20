@@ -287,7 +287,8 @@
             "type": "string",
             "optional": true,
             "description": "The ID of the address book to search. If not specified, all address books are searched."
-          }, {
+          },
+          {
             "name": "searchString",
             "type": "string",
             "description": "One or more space-separated terms to search for."

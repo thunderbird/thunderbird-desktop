@@ -173,7 +173,7 @@
         "name": "setLabel",
         "type": "function",
         "description": "Sets the label of the toolbar action, defaults to its title. Can be set to an empty string to not display any label. If the containing toolbar is configured to display text only, the title will be used as fallback.",
-        "async": true,
+        "async": "callback",
         "parameters": [
           {
             "name": "details",
@@ -483,7 +483,7 @@
       {
         "name": "onClicked",
         "type": "function",
-        "description": "Fired when a toolbar action icon is clicked.  This event will not fire if the toolbar action has a popup.",
+        "description": "Fired when a toolbar action icon is clicked.  This event will not fire if the toolbar action has a popup. This is a user input event handler. For asynchronous listeners some `restrictions <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/User_actions>`__ apply.",
         "parameters": [
           {
             "name": "tab",

@@ -174,7 +174,7 @@
         "name": "setLabel",
         "type": "function",
         "description": "Sets the label of the toolbar action, defaults to its title. Can be set to an empty string to not display any label. If the containing toolbar is configured to display text only, the title will be used as fallback.",
-        "async": true,
+        "async": "callback",
         "parameters": [
           {
             "name": "details",
@@ -241,7 +241,7 @@
                   }
                 ],
                 "optional": true,
-"description": "Either an ImageData object or a dictionary ``{size -> ImageData}`` representing the icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals <code>scale</code>, then image with size <code>scale</code> * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that ``details.imageData = foo`` is equivalent to ``details.imageData = {'19': foo}``"
+                "description": "Either an ImageData object or a dictionary ``{size -> ImageData}`` representing the icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals <code>scale</code>, then image with size <code>scale</code> * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that ``details.imageData = foo`` is equivalent to ``details.imageData = {'19': foo}``"
               },
               "path": {
                 "choices": [
@@ -484,7 +484,7 @@
       {
         "name": "onClicked",
         "type": "function",
-        "description": "Fired when a toolbar action icon is clicked.  This event will not fire if the toolbar action has a popup.",
+        "description": "Fired when a toolbar action icon is clicked.  This event will not fire if the toolbar action has a popup. This is a user input event handler. For asynchronous listeners some `restrictions <https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/User_actions>`__ apply.",
         "parameters": [
           {
             "name": "tab",
