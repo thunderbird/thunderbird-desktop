@@ -10,10 +10,14 @@
 
 const EXPORTED_SYMBOLS = ["BondOpenPGP"];
 
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
-var { MailConstants } = ChromeUtils.import(
-  "resource:///modules/MailConstants.jsm"
+var { XPCOMUtils } = ChromeUtils.import(
+  "resource://gre/modules/XPCOMUtils.jsm"
 );
+
+XPCOMUtils.defineLazyModuleGetters(this, {
+  MailConstants: "resource:///modules/MailConstants.jsm",
+  Services: "resource://gre/modules/Services.jsm",
+});
 
 var { EnigmailLazy } = ChromeUtils.import(
   "chrome://openpgp/content/modules/lazy.jsm"

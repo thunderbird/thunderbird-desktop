@@ -12,6 +12,9 @@ const { EnigmailLazy } = ChromeUtils.import(
 const { EnigmailKeyRing } = ChromeUtils.import(
   "chrome://openpgp/content/modules/keyRing.jsm"
 );
+const { OpenPGPAlias } = ChromeUtils.import(
+  "chrome://openpgp/content/modules/OpenPGPAlias.jsm"
+);
 const { EnigmailFiles } = ChromeUtils.import(
   "chrome://openpgp/content/modules/files.jsm"
 );
@@ -46,6 +49,7 @@ const OpenPGPTestUtils = {
   async initOpenPGP() {
     Assert.ok(await RNP.init(), "librnp did load");
     Assert.ok(await getEnigmailCore().getService({}), "EnigmailCore did load");
+    await OpenPGPAlias.load();
   },
 
   /**
