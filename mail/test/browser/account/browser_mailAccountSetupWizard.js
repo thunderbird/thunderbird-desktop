@@ -39,6 +39,7 @@ var user = {
   incomingHost: "testin.example.com",
   outgoingHost: "testout.example.com",
 };
+var outgoingShortName = "Example Två";
 
 const PREF_NAME = "mailnews.auto_config_url";
 const PREF_VALUE = Services.prefs.getCharPref(PREF_NAME);
@@ -47,23 +48,19 @@ const PREF_VALUE = Services.prefs.getCharPref(PREF_NAME);
 function remove_account_internal(tab, account, outgoing) {
   let win = tab.browser.contentWindow;
 
-  try {
-    // Remove the account and incoming server
-    let serverId = account.incomingServer.serverURI;
-    MailServices.accounts.removeAccount(account);
-    account = null;
-    if (serverId in win.accountArray) {
-      delete win.accountArray[serverId];
-    }
-    win.selectServer(null, null);
-
-    // Remove the outgoing server
-    let smtpKey = outgoing.key;
-    MailServices.smtp.deleteServer(outgoing);
-    win.replaceWithDefaultSmtpServer(smtpKey);
-  } catch (ex) {
-    throw new Error("failure to remove account: " + ex + "\n");
+  // Remove the account and incoming server
+  let serverId = account.incomingServer.serverURI;
+  MailServices.accounts.removeAccount(account);
+  account = null;
+  if (serverId in win.accountArray) {
+    delete win.accountArray[serverId];
   }
+  win.selectServer(null, null);
+
+  // Remove the outgoing server
+  let smtpKey = outgoing.key;
+  MailServices.smtp.deleteServer(outgoing);
+  win.replaceWithDefaultSmtpServer(smtpKey);
 }
 
 add_task(function test_mail_account_setup() {
@@ -150,6 +147,10 @@ function subtest_verify_account(tab) {
     },
     "user real name": { actual: identity.fullName, expected: user.name },
     "user email address": { actual: identity.email, expected: user.email },
+    "outgoing description": {
+      actual: outgoing.description,
+      expected: outgoingShortName,
+    },
   };
 
   try {
