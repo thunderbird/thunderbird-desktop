@@ -2619,7 +2619,6 @@ Enigmail.msg = {
 
       try {
         this.modifyCompFields();
-        //bc.setAttribute("disabled", "true");
 
         const cApi = EnigmailCryptoAPI();
         let encryptResult = cApi.sync(this.prepareSendMsg(sendMsgType));
@@ -2629,9 +2628,11 @@ Enigmail.msg = {
           event.stopPropagation();
         }
       } catch (ex) {
-        console.debug(ex);
+        Cu.reportError("GenericSendMessage FAILED: " + ex);
+        this.resetUpdatedFields();
+        event.preventDefault();
+        event.stopPropagation();
       }
-      //bc.removeAttribute("disabled");
     } else {
       EnigmailLog.DEBUG(
         "enigmailMsgComposeOverlay.js: Enigmail.msg.sendMessageListener: sending in progress - autosave aborted\n"
