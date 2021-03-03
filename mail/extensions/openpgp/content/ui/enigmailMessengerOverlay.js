@@ -3293,6 +3293,9 @@ Enigmail.msg = {
   },
 
   commonProcessAttachedKey(keyData, isBinaryAutocrypt) {
+    if (!keyData) {
+      return;
+    }
     let errorMsgObj = {};
     let preview = EnigmailKey.getKeyListFromKeyBlock(
       keyData,
