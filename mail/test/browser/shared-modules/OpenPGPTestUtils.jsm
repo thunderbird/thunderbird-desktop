@@ -107,7 +107,10 @@ const OpenPGPTestUtils = {
     file,
     acceptance = OpenPGPTestUtils.ACCEPTANCE_VERIFIED
   ) {
-    let ids = await OpenPGPTestUtils.importKey(parent, file);
+    let ids = await OpenPGPTestUtils.importKey(parent, file, false);
+    if (!ids.length) {
+      throw new Error("importPublicKey filed");
+    }
     return OpenPGPTestUtils.updateKeyIdAcceptance(ids, acceptance);
   },
 
@@ -124,7 +127,10 @@ const OpenPGPTestUtils = {
     file,
     acceptance = OpenPGPTestUtils.ACCEPTANCE_PERSONAL
   ) {
-    let ids = await OpenPGPTestUtils.importKey(parent, file, true);
+    let ids = await OpenPGPTestUtils.importKey(parent, file, false, true);
+    if (!ids.length) {
+      throw new Error("importPrivateKey filed");
+    }
     return OpenPGPTestUtils.updateKeyIdAcceptance(ids, acceptance);
   },
 
@@ -133,11 +139,12 @@ const OpenPGPTestUtils = {
    *
    * @param {nsIWindow} parent - The parent window.
    * @param {nsIFile} file - A valid file containing an OpenPGP key.
+   * @param {boolean} [isBinary] - false for ASCII armored files
    * @param {boolean} [isSecret=false] - Flag indicating if the key is secret or
    *                                     not.
    * @returns {Promise<string[]>} - A list of ids for the key(s) imported.
    */
-  async importKey(parent, file, isSecret = false) {
+  async importKey(parent, file, isBinary, isSecret = false) {
     let txt = EnigmailFiles.readFile(file);
     let errorObj = {};
     let fingerPrintObj = {};
@@ -150,7 +157,7 @@ const OpenPGPTestUtils = {
       parent,
       false,
       txt,
-      false,
+      isBinary,
       null,
       errorObj,
       fingerPrintObj,
@@ -160,9 +167,10 @@ const OpenPGPTestUtils = {
     );
 
     if (result !== 0) {
-      throw new Error(
+      console.debug(
         `EnigmailKeyRing.importKey failed with result "${result}"!`
       );
+      return [];
     }
     return fingerPrintObj.value.slice();
   },
