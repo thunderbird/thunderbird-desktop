@@ -9,12 +9,6 @@ const { mailTestUtils } = ChromeUtils.import(
   "resource://testing-common/mailnews/MailTestUtils.jsm"
 );
 const { cal } = ChromeUtils.import("resource:///modules/calendar/calUtils.jsm");
-const { XPCOMUtils } = ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
-
-XPCOMUtils.defineLazyModuleGetters(this, {
-  CalRecurrenceInfo: "resource:///modules/CalRecurrenceInfo.jsm",
-  CalTodo: "resource:///modules/CalTodo.jsm",
-});
 
 let manager = cal.getCalendarManager();
 let _calendar = manager.createCalendar("memory", Services.io.newURI("moz-memory-calendar://"));
@@ -31,12 +25,12 @@ let calendar = cal.async.promisifyCalendar(_calendar);
  * and deletes one.
  */
 add_task(async function testTaskDeletion() {
-  let task1 = new CalTodo();
+  let task1 = cal.createTodo();
   task1.id = "1";
   task1.title = "Task 1";
   task1.entryDate = cal.createDateTime("20210126T000001Z");
 
-  let task2 = new CalTodo();
+  let task2 = cal.createTodo();
   task2.id = "2";
   task2.title = "Task 2";
   task2.entryDate = cal.createDateTime("20210127T000001Z");
@@ -81,16 +75,16 @@ add_task(async function testTaskDeletion() {
  * See bug 1688708.
  */
 add_task(async function testRecurringTaskDeletion() {
-  let repeatTask = new CalTodo();
+  let repeatTask = cal.createTodo();
   repeatTask.id = "1";
   repeatTask.title = "Repeating Task";
   repeatTask.entryDate = cal.createDateTime("20210125T000001Z");
-  repeatTask.recurrenceInfo = new CalRecurrenceInfo(repeatTask);
+  repeatTask.recurrenceInfo = cal.createRecurrenceInfo(repeatTask);
   repeatTask.recurrenceInfo.appendRecurrenceItem(
     cal.createRecurrenceRule("RRULE:FREQ=DAILY;COUNT=3")
   );
 
-  let nonRepeatTask = new CalTodo();
+  let nonRepeatTask = cal.createTodo();
   nonRepeatTask.id = "2";
   nonRepeatTask.title = "Non-Repeating Task";
   nonRepeatTask.entryDate = cal.createDateTime("20210126T000001Z");
