@@ -22,9 +22,6 @@ const { EnigmailFuncs } = ChromeUtils.import(
 const { EnigmailLog } = ChromeUtils.import(
   "chrome://openpgp/content/modules/log.jsm"
 );
-const { EnigmailFiles } = ChromeUtils.import(
-  "chrome://openpgp/content/modules/files.jsm"
-);
 const { EnigmailMime } = ChromeUtils.import(
   "chrome://openpgp/content/modules/mime.jsm"
 );
@@ -535,22 +532,13 @@ MimeVerify.prototype = {
       var windowManager = Services.wm;
       var win = windowManager.getMostRecentWindow(null);
 
-      // create temp file holding signature data
-      this.sigFile = EnigmailFiles.getTempDirObj();
-      this.sigFile.append("data.sig");
-      this.sigFile.createUnique(this.sigFile.NORMAL_FILE_TYPE, 0x180);
-      EnigmailFiles.writeFileContents(this.sigFile, this.sigData, 0x180);
-
       if (!EnigmailDecryption.isReady(win)) {
         return;
       }
 
-      let sigFileName = EnigmailFiles.getEscapedFilename(
-        EnigmailFiles.getFilePath(this.sigFile)
-      );
       let options = {
         fromAddr: EnigmailDecryption.getFromAddr(win),
-        mimeSignatureFile: sigFileName,
+        mimeSignatureData: this.sigData,
       };
       const cApi = EnigmailCryptoAPI();
 
@@ -575,10 +563,6 @@ MimeVerify.prototype = {
         }
 
         this.displayStatus();
-      }
-
-      if (this.sigFile) {
-        this.sigFile.remove(false);
       }
     }
   },
