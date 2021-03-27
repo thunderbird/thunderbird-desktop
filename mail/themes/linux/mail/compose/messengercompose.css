@@ -336,7 +336,7 @@ menu[command="cmd_convertCloud"] .menu-iconic-left {
 }
 
 #languageStatusButton {
-  height: 22px;
+  min-height: 22px;
 }
 
 /* Styles for the default system dark theme */

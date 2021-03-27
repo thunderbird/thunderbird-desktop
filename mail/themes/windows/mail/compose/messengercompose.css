@@ -404,7 +404,7 @@ menulist::part(dropmarker-icon) {
 }
 
 #languageStatusButton {
-  height: 22px;
+  min-height: 22px;
 }
 
 /* ::::: address book sidebar ::::: */
