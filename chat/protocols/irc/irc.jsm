@@ -2340,14 +2340,14 @@ ircProtocol.prototype = {
   get name() {
     return "IRC";
   },
+  get normalizedName() {
+    return "irc";
+  },
   get iconBaseURI() {
     return "chrome://prpl-irc/skin/";
   },
   get usernameEmptyText() {
     return _("irc.usernameHint");
-  },
-  get baseId() {
-    return "prpl-irc";
   },
 
   usernameSplits: [
