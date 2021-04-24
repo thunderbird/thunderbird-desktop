@@ -570,6 +570,24 @@ treechildren::-moz-tree-indentation {
   :root:not(:-moz-lwtheme) treechildren::-moz-tree-row(hover) {
     border-color: transparent !important;
   }
+
+  :root:not(:-moz-lwtheme) #threadTree > treechildren::-moz-tree-row(selected) {
+    background-color: -moz-CellHighlight;
+    border-color: -moz-CellHighlight;
+  }
+
+  :root:not(:-moz-lwtheme) #threadTree > treechildren::-moz-tree-cell-text(untagged, selected) {
+    color: -moz-CellHighlightText !important;
+  }
+
+  :root:not(:-moz-lwtheme) #threadTree > treechildren::-moz-tree-row(untagged, selected, focus) {
+    border-color: HighlightText;
+    background-color: Highlight;
+  }
+
+  :root:not(:-moz-lwtheme) #threadTree > treechildren::-moz-tree-cell-text(untagged, selected, focus) {
+    color: HighlightText !important;
+  }
 }
 
 :root[lwt-tree] treechildren::-moz-tree-row(current, focus) {
