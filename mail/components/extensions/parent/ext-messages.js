@@ -207,12 +207,16 @@ this.messages = class extends ExtensionAPI {
           );
         },
         async getFull(messageId) {
-          return new Promise(resolve => {
+          let mimeMsg = await new Promise(resolve => {
             let msgHdr = messageTracker.getMessage(messageId);
             MsgHdrToMimeMessage(msgHdr, null, (_msgHdr, mimeMsg) => {
-              resolve(convertMessagePart(mimeMsg));
+              resolve(mimeMsg);
             });
           });
+          if (!mimeMsg) {
+            throw new ExtensionError(`Error reading message ${messageId}`);
+          }
+          return convertMessagePart(mimeMsg);
         },
         async getRaw(messageId) {
           let messenger = Cc["@mozilla.org/messenger;1"].createInstance(
