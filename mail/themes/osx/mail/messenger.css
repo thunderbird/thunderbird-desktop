@@ -24,24 +24,16 @@
 
   --toolbarbutton-border-radius: 3px;
   --toolbarbutton-icon-fill-opacity: .85;
-  --toolbarbutton-hover-background: hsla(0, 0%, 100%, .1)
-                                    linear-gradient(hsla(0, 0%, 100%, .3),
-                                    hsla(0, 0%, 100%, .1)) no-repeat;
-  --toolbarbutton-hover-bordercolor: hsla(0, 0%, 0%, .2);
-  --toolbarbutton-header-bordercolor: hsla(0, 0%, 0%, .2);
-  --toolbarbutton-hover-boxshadow: 0 1px 0 hsla(0, 0%, 100%, .5),
-                                   0 1px 0 hsla(0, 0%, 100%, .5) inset;
+  --toolbarbutton-hover-background: rgba(0, 0, 0, .05);
+  --toolbarbutton-hover-bordercolor: rgba(0, 0, 0, .25);
+  --toolbarbutton-header-bordercolor: rgba(0, 0, 0, .25);
+  --toolbarbutton-hover-boxshadow: none;
 
-  --toolbarbutton-active-background: hsla(0, 0%, 0%, .02)
-                                     linear-gradient(hsla(0, 0%, 0%, .12),
-                                     transparent) border-box;
-  --toolbarbutton-active-bordercolor: hsla(0, 0%, 0%, .3);
-  --toolbarbutton-active-boxshadow: 0 1px 0 hsla(0, 0%, 100%, .5),
-                                    0 1px 0 hsla(0, 0%, 0%, .05) inset,
-                                    0 1px 1px hsla(0, 0%, 0%, .2) inset;
-  --toolbarbutton-inactive-bordercolor: rgba(0, 0, 0, 0.1);
-  --toolbarbutton-inactive-boxshadow: 0 1px 0 hsla(0, 0%, 0%, .05) inset;
-  --toolbarbutton-checkedhover-backgroundcolor: hsla(0, 0%, 0%, .09);
+  --toolbarbutton-active-background: rgba(0, 0, 0, .1);
+  --toolbarbutton-active-bordercolor: rgba(0, 0, 0, .3);
+  --toolbarbutton-active-boxshadow: 0 1px 1px rgba(0, 0, 0, .1) inset, 0 0 1px rgba(0, 0, 0, .3) inset;
+
+  --toolbarbutton-checkedhover-backgroundcolor: rgba(200, 200, 200, .5);
   --toolbarbutton-icon-fill-attention: var(--lwt-toolbarbutton-icon-fill-attention, #0a84ff);
 
   --lwt-header-image: none;
@@ -106,14 +98,50 @@ toolbar[brighttext] {
 :root[lwt-tree-brighttext] .crypto-button,
 :root[lwt-tree-brighttext] .calendar-list-create,
 :root[lwt-tree-brighttext] #folderPane-toolbar {
-  --toolbarbutton-hover-background: var(--lwt-toolbarbutton-hover-background, hsla(0, 0%, 100%, .1));
-  --toolbarbutton-hover-bordercolor: var(--lwt-toolbarbutton-hover-background, hsla(0, 0%, 0%, .2));
+  --toolbarbutton-hover-background: var(--lwt-toolbarbutton-hover-background,
+                                        rgba(0, 0, 0, .1));
+  --toolbarbutton-hover-bordercolor: var(--lwt-toolbarbutton-hover-background,
+                                         rgba(0, 0, 0, .1));
 
-  --toolbarbutton-active-background: var(--lwt-toolbarbutton-active-background, hsla(0, 0%, 0%, .02));
-  --toolbarbutton-active-bordercolor: var(--lwt-toolbarbutton-active-background, hsla(0, 0%, 0%, .3));
-  --toolbarbutton-active-boxshadow: 0 0 0 1px var(--lwt-toolbarbutton-active-background, hsla(0, 0%, 0%, .2)) inset;
+  --toolbarbutton-active-background: var(--lwt-toolbarbutton-active-background,
+                                         rgba(0, 0, 0, .15));
+  --toolbarbutton-active-bordercolor: var(--lwt-toolbarbutton-active-background,
+                                          rgba(0, 0, 0, .15));
+  --toolbarbutton-active-boxshadow: 0 0 0 1px var(--lwt-toolbarbutton-active-background,
+                                                  rgba(0, 0, 0, .15)) inset;
 
-  --toolbarbutton-checkedhover-backgroundcolor: var(--lwt-toolbarbutton-hover-background, hsla(0, 0%, 0%, .09));
+  --toolbarbutton-checkedhover-backgroundcolor: var(--lwt-toolbarbutton-hover-background,
+                                                    rgba(0, 0, 0, .15));
+}
+
+.toolbar[brighttext],
+.contentTabToolbox[brighttext],
+#header-view-toolbar[brighttext],
+#ab-toolbox > toolbar[brighttext],
+.mail-toolbox > toolbar[brighttext],
+#event-toolbox > toolbar[brighttext],
+#compose-toolbox > toolbar[brighttext],
+#headers-box > toolbar[brighttext],
+#FormatToolbox > toolbar[brighttext],
+:root[lwt-tree-brighttext] .otr-container,
+:root[lwt-tree-brighttext] .crypto-button,
+:root[lwt-tree-brighttext] .calendar-list-create,
+:root[lwt-tree-brighttext] #quick-filter-bar > hbox,
+:root[lwt-tree-brighttext] #searchTerms {
+  --toolbarbutton-hover-background: var(--lwt-toolbarbutton-hover-background,
+                                        rgba(255, 255, 255, .25));
+  --toolbarbutton-hover-bordercolor: var(--lwt-toolbarbutton-hover-background,
+                                         rgba(255, 255, 255, .5));
+  --toolbarbutton-header-bordercolor: var(--lwt-toolbarbutton-hover-background,
+                                          rgba(255, 255, 255, .25));
+
+  --toolbarbutton-active-background: var(--lwt-toolbarbutton-active-background,
+                                         rgba(255, 255, 255, .4));
+  --toolbarbutton-active-bordercolor: var(--lwt-toolbarbutton-active-background,
+                                          rgba(255, 255, 255, .7));
+  --toolbarbutton-active-boxshadow: none;
+
+  --toolbarbutton-checkedhover-backgroundcolor: rgba(0, 0, 0, .25);
 }
 
 :-moz-any(.chromeclass-toolbar, .chromeclass-menubar, #tabbar-toolbar)
@@ -230,7 +258,6 @@ toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
   border-radius: var(--toolbarbutton-border-radius);
   transition-property: background, border-color;
   transition-duration: 250ms;
-  background-clip: padding-box;
 }
 
 .findbar-button:not(:-moz-any([checked="true"],[disabled="true"])):hover,
@@ -240,7 +267,7 @@ toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
 .toolbarbutton-menubutton-dropmarker,
 .toolbarbutton-1:not([type="menu-button"]):not([disabled="true"]):not([checked="true"]):not([open="true"]):not(:active):hover {
   border-color: var(--toolbarbutton-hover-bordercolor);
-  background: var(--toolbarbutton-hover-background);
+  background-color: var(--toolbarbutton-hover-background);
   box-shadow: var(--toolbarbutton-hover-boxshadow);
 }
 
@@ -248,7 +275,7 @@ toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
 .toolbarbutton-1 > .toolbarbutton-menubutton-button:not([disabled="true"]):hover:active,
 .toolbarbutton-1[open="true"] > .toolbarbutton-menubutton-dropmarker:not([disabled="true"]),
 .toolbarbutton-1:not([type="menu-button"]):not([disabled="true"]):-moz-any([open="true"],[checked="true"],:hover:active) {
-  background: var(--toolbarbutton-active-background);
+  background-color: var(--toolbarbutton-active-background);
   border-color: var(--toolbarbutton-active-bordercolor);
   box-shadow: var(--toolbarbutton-active-boxshadow);
   transition-duration: 10ms;
@@ -314,16 +341,10 @@ toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
   -moz-box-orient: vertical;
 }
 
-toolbarbutton[type="menu-button"],
-toolbox[mode="text"] .toolbarbutton-1,
-toolbox[mode="text"] .toolbarbutton-menubutton-button,
-toolbox[mode="text"] .toolbarbutton-menubutton-dropmarker,
 toolbox[labelalign="end"] .toolbarbutton-1,
-toolbox[labelalign="end"] toolbarpaletteitem .toolbarbutton-1,
-toolbox[labelalign="end"] .toolbarbutton-1[type="menu-button"]
-  > .toolbarbutton-menubutton-button,
-toolbox[labelalign="end"] toolbarpaletteitem
-  .toolbarbutton-1[type="menu-button"] > .toolbarbutton-menubutton-button {
+toolbox[labelalign="end"] .toolbarbutton-menubutton-button,
+toolbox:not([mode="full"]) .toolbarbutton-1,
+toolbox:not([mode="full"]) .toolbarbutton-menubutton-button {
   -moz-box-orient: horizontal;
 }
 
@@ -359,7 +380,7 @@ toolbar:not([mode="icons"]) .toolbarbutton-1 > .toolbarbutton-menubutton-button 
   margin-inline-start: -5px;
   margin-inline-end: 4px;
   margin-bottom: 2px;
-  background: hsla(0, 0%, 0%, .3) padding-box;
+  background-color: hsla(0, 0%, 0%, .3);
   box-shadow: 0 0 0 1px hsla(0, 0%, 100%, .2);
 }
 
@@ -395,6 +416,32 @@ toolbar:not([mode="icons"]) .toolbarbutton-1 > .toolbarbutton-menubutton-button 
 .toolbarbutton-1 > .toolbarbutton-menubutton-dropmarker {
   width: 16px;
   padding: 2px 4px !important;
+}
+
+toolbox:not([labelalign="end"]) > toolbar[mode="full"]
+  .toolbarbutton-1:not(.button-appmenu)[type="menu"] {
+  padding-inline-end: 15px !important;
+  background-image: url("chrome://messenger/skin/icons/toolbarbutton-arrow.svg");
+  background-size: 9px 9px;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 4px) center;
+  -moz-context-properties: fill, fill-opacity, stroke-opacity;
+  stroke-opacity: 1;
+}
+
+toolbox:not([labelalign="end"]) > toolbar[mode="full"]
+  .toolbarbutton-1:not(.button-appmenu)[type="menu"][disabled="true"] {
+  stroke-opacity: 0.4;
+}
+
+toolbox:not([labelalign="end"]) > toolbar[mode="full"]
+  .toolbarbutton-1:not(.button-appmenu)[type="menu"]:-moz-locale-dir(rtl) {
+  background-position: 4px center;
+}
+
+toolbox:not([labelalign="end"]) > toolbar[mode="full"]
+  .toolbarbutton-1:not(.button-appmenu)[type="menu"] > .toolbarbutton-menu-dropmarker {
+  display: none;
 }
 
 toolbar:not([mode="icons"]) .toolbarbutton-1 > .toolbarbutton-menubutton-dropmarker {
