@@ -21,6 +21,7 @@ const { HttpServer } = ChromeUtils.import("resource://testing-common/httpd.js");
 
 var CardDAVServer = {
   cards: new Map(),
+  movedCards: new Map(),
   deletedCards: new Map(),
   changeCount: 0,
   server: null,
@@ -298,6 +299,9 @@ var CardDAVServer = {
     let output = `<multistatus xmlns="${PREFIX_BINDINGS.d}" ${NAMESPACE_STRING}>`;
     for (let href of input.querySelectorAll("href")) {
       href = href.textContent;
+      if (this.movedCards.has(href)) {
+        href = this.movedCards.get(href);
+      }
       let card = this.cards.get(href);
       if (card) {
         output += this._cardResponse(href, card, propNames);
@@ -526,6 +530,15 @@ var CardDAVServer = {
   putCardInternal(name, vCard) {
     if (!name.startsWith("/")) {
       name = this.path + name;
+    }
+    if (this.modifyCardOnPut && !this.cards.has(name)) {
+      vCard = vCard.replace(/UID:(\S+)/, (match, uid) => {
+        let newUID = [...uid].reverse().join("");
+        let newName = this.path + newUID + ".vcf";
+        this.movedCards.set(name, newName);
+        name = newName;
+        return "UID:" + newUID + "\r\nX-MODIFIED-BY-SERVER:1";
+      });
     }
     let etag = "" + vCard.length;
     this.cards.set(name, { etag, vCard, changed: ++this.changeCount });

@@ -114,9 +114,6 @@ class CardDAVDirectory extends AddrBookDirectory {
       // on the server, so this should succeed.
       await this._sendCardToServer(card);
     }
-
-    // Store in the database.
-    super.modifyCard(card);
   }
   deleteCards(cards) {
     super.deleteCards(cards);
@@ -128,7 +125,7 @@ class CardDAVDirectory extends AddrBookDirectory {
     // Ideally, we'd not add the card until it was on the server, but we have
     // to return newCard synchronously.
     let newCard = super.dropCard(card, needToCopyCard);
-    this._sendCardToServer(newCard).then(() => super.modifyCard(newCard));
+    this._sendCardToServer(newCard);
     return newCard;
   }
   addMailList() {
@@ -345,7 +342,7 @@ class CardDAVDirectory extends AddrBookDirectory {
   /**
    * Converts the card to a vCard and performs a PUT request to store it on the
    * server. Then immediately performs a GET request ensuring the local copy
-   * matches the server copy.
+   * matches the server copy. Stores the card in the database on success.
    *
    * @param {nsIAbCard} card
    * @returns {boolean} true if the PUT request succeeded without conflict,
@@ -397,9 +394,24 @@ class CardDAVDirectory extends AddrBookDirectory {
         properties.querySelector("address-data")?.textContent
       );
 
-      card.setProperty("_etag", etag);
-      card.setProperty("_href", href);
-      card.setProperty("_vCard", vCard);
+      if (conflictResponse) {
+        card.setProperty("_etag", etag);
+        card.setProperty("_href", href);
+        card.setProperty("_vCard", vCard);
+        return false;
+      }
+
+      let abCard = VCardUtils.vCardToAbCard(vCard);
+      abCard.setProperty("_etag", etag);
+      abCard.setProperty("_href", href);
+      abCard.setProperty("_vCard", vCard);
+
+      if (abCard.UID == card.UID) {
+        super.modifyCard(abCard);
+      } else {
+        super.dropCard(abCard, false);
+        super.deleteCards([card]);
+      }
     }
 
     return !conflictResponse;
