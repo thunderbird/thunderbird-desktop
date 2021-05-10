@@ -191,4 +191,8 @@ const OpenPGPTestUtils = {
     }
     return ids.slice();
   },
+
+  getProtectedKeysCount() {
+    return RNP.getProtectedKeysCount();
+  },
 };

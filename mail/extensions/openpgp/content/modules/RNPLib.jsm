@@ -393,8 +393,10 @@ function enableRNPLibJS() {
     },
 
     protectKeyWithSubKeys(handle, newPass) {
-      if (RNPLib.rnp_key_protect(handle, newPass, null, null, null, 0)) {
-        throw new Error("rnp_key_protect failed");
+      if (RNPLib.isSecretKeyMaterialAvailable(handle)) {
+        if (RNPLib.rnp_key_protect(handle, newPass, null, null, null, 0)) {
+          throw new Error("rnp_key_protect failed");
+        }
       }
 
       let sub_count = new ctypes.size_t();
@@ -407,8 +409,10 @@ function enableRNPLibJS() {
         if (RNPLib.rnp_key_get_subkey_at(handle, i, sub_handle.address())) {
           throw new Error("rnp_key_get_subkey_at failed");
         }
-        if (RNPLib.rnp_key_protect(sub_handle, newPass, null, null, null, 0)) {
-          throw new Error("rnp_key_protect failed");
+        if (RNPLib.isSecretKeyMaterialAvailable(sub_handle)) {
+          if (RNPLib.rnp_key_protect(sub_handle, newPass, null, null, null, 0)) {
+            throw new Error("rnp_key_protect failed");
+          }
         }
         RNPLib.rnp_key_handle_destroy(sub_handle);
       }
