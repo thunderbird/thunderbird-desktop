@@ -15,6 +15,9 @@ const { OpenPGPTestUtils } = ChromeUtils.import(
 const { EnigmailFuncs } = ChromeUtils.import(
   "chrome://openpgp/content/modules/funcs.jsm"
 );
+const uidHelper = ChromeUtils.import(
+  "chrome://openpgp/content/modules/uidHelper.jsm"
+).uidHelper;
 
 const tests = [
   {
@@ -130,4 +133,22 @@ add_task(async function testAlias() {
 
     Assert.equal(test.email, email);
   }
+});
+
+add_task(async function testUidHelper() {
+  let splitUid = {};
+  uidHelper.getPartsFromUidStr(
+    "First Last (comment1) (comment2) <email@example.com>",
+    splitUid
+  );
+  Assert.equal(
+    splitUid.email,
+    "email@example.com",
+    "uidHelper should be able to extract email"
+  );
+  Assert.equal(
+    splitUid.name,
+    "First Last (comment1) (comment2)",
+    "uidHelper should be able to extract name"
+  );
 });
