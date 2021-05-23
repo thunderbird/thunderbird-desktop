@@ -76,10 +76,21 @@
     font-weight: 400;
   }
 
+  :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-row(selected, focus) {
+    appearance: none;
+    background-color: Highlight;
+  }
+
+  :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-image(selected),
+  :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-twisty(selected),
+  :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-cell-text(selected) {
+    color: #282828;
+  }
+
   :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-image(selected, focus),
   :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-twisty(selected, focus),
   :root:not([lwt-tree]) #dirTree treechildren::-moz-tree-cell-text(selected, focus) {
-    color: #282828;
+    color: HighlightText;
   }
 }
 
