@@ -803,8 +803,9 @@
             class="pill-action-move"
             data-l10n-id="pill-action-move-bcc"
             oncommand="moveSelectedPillsOnCommand('addr_bcc')"/>
-  <menuseparator/>
+  <menuseparator id="expandListSeparator"/>
   <menuitem id="expandList"
+            class="pill-action-edit"
             data-l10n-id="pill-action-expand-list"
             hidden="true"
             oncommand="expandList(this.parentNode.triggerNode)"/>
@@ -2141,7 +2142,7 @@
                         flex="1" align="center">
                     <hbox id="addressingWidgetSwappableLabels">
                       <label id="addr_to" role="button"
-                             disableonsend="true"
+                               disableonsend="true"
                              class="mail-primary-label mail-label recipient-label"
                              onclick="showAddressRow(this, 'addressRowTo')"
                              ondrop="recipientLabelOnDrop(event);"
@@ -2150,7 +2151,7 @@
                              control="toAddrInput"
                              collapsed="true"/>
                       <label id="addr_cc" role="button"
-                             disableonsend="true"
+                               disableonsend="true"
                              class="mail-label recipient-label"
                              onclick="showAddressRow(this, 'addressRowCc')"
                              ondrop="recipientLabelOnDrop(event);"
@@ -2158,7 +2159,7 @@
                              onkeypress="showAddressRowKeyPress(event, 'addressRowCc')"
                              control="ccAddrInput"/>
                       <label id="addr_bcc" role="button"
-                             disableonsend="true"
+                               disableonsend="true"
                              class="mail-label recipient-label"
                              onclick="showAddressRow(this, 'addressRowBcc')"
                              ondrop="recipientLabelOnDrop(event);"
@@ -2167,7 +2168,7 @@
                              control="bccAddrInput"/>
                     </hbox>
                     <label id="extraRecipientsLabel" role="button"
-                           disableonsend="true"
+                               disableonsend="true"
                            class="extra-recipients-label recipient-label"
                            onclick="showExtraRecipients(event);"
                            tooltiptext="&extraRecipients.tooltip;"

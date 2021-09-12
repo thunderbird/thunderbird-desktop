@@ -54,7 +54,7 @@ function Recipients2CompFields(msgCompFields) {
 
   for (let pill of document.getElementsByTagName("mail-address-pill")) {
     let fieldValue = pill.fullAddress;
-    let headerParser = MailServices.headerParser;
+  let headerParser = MailServices.headerParser;
     let recipient = headerParser
       .makeFromDisplayAddress(fieldValue)
       .map(fullValue =>
@@ -91,7 +91,7 @@ function Recipients2CompFields(msgCompFields) {
         follow_Sep = ",";
         break;
     }
-  }
+}
 
   for (let otherHeaderRow of document.querySelectorAll(
     ".address-row[data-labeltype=addr_other]"
@@ -99,7 +99,7 @@ function Recipients2CompFields(msgCompFields) {
     let headerValue = otherHeaderRow.querySelector("input").value.trim();
     if (headerValue) {
       msgCompFields.setRawHeader(otherHeaderRow.dataset.labelid, headerValue);
-    }
+  }
   }
 
   msgCompFields.to = addrTo;
@@ -194,7 +194,7 @@ function CompFields2Recipients(msgCompFields) {
         showAddressRow(
           document.getElementById("addr_newsgroups"),
           "addressRowNewsgroups"
-        );
+      );
         input.value = msgCompFields.newsgroups;
         recipientAddPills(input, true);
       }
@@ -498,7 +498,7 @@ function DropRecipient(target, recipient) {
 
     if (!container) {
       return;
-    }
+  }
     input = container.querySelector(
       `.address-container > input[is="autocomplete-input"]`
     );
@@ -1103,10 +1103,10 @@ function expandList(element) {
  * Handle the disabling of context menu items according to the types and count
  * of selected pills.
  *
- * @param {Event} event
+ * @param {Event} event - The DOM Event.
  */
-function emailAddressPillOnPopupShown() {
-  let menu = document.getElementById("emailAddressPillPopup");
+function onPillPopupShowing(event) {
+  let menu = event.target;
   // Reset previously hidden menuitems.
   for (let menuitem of menu.querySelectorAll(
     ".pill-action-move, .pill-action-edit"
@@ -1115,10 +1115,24 @@ function emailAddressPillOnPopupShown() {
   }
 
   let recipientsContainer = document.getElementById("recipientsContainer");
+
+  // Check if the pill where the context menu was originated is not selected.
+  let pill = event.explicitOriginalTarget.closest("mail-address-pill");
+  if (!pill.hasAttribute("selected")) {
+    recipientsContainer.deselectAllPills();
+    pill.setAttribute("selected", "selected");
+  }
+
+  let allSelectedPills = recipientsContainer.getAllSelectedPills();
   // If more than one pill is selected, disable the editing item.
   if (recipientsContainer.getAllSelectedPills().length > 1) {
     menu.querySelector("#editAddressPill").hidden = true;
   }
+
+  // Hide the `expand list` item if not all selected pills are mailing lists.
+  let isNotMailingList = [...allSelectedPills].some(pill => !pill.isMailList);
+  menu.querySelector("#expandList").hidden = isNotMailingList;
+  menu.querySelector("#expandListSeparator").hidden = isNotMailingList;
 
   // If any Newsgroup or Followup pill is selected, disable all move actions.
   if (
@@ -1169,18 +1183,6 @@ function emailAddressPillOnPopupShown() {
 }
 
 /**
- * Toggles display of the relevant pill context menu items that are not
- * dependant on selection.
- *
- * @param {Event} event
- */
-function onPillPopupShowing(event) {
-  // Show the "Expand List" menu item if the node clicked on is a mail list.
-  let pill = event.explicitOriginalTarget.closest("mail-address-pill");
-  document.getElementById("expandList").hidden = !pill || !pill.isMailList;
-}
-
-/**
  * Handle the keypress event on the recipient labels for keyboard navigation and
  * to show the container row of a hidden recipient field (Cc, Bcc, etc.).
  *
@@ -1207,15 +1209,15 @@ function showAddressRowKeyPress(event, rowID) {
       // Bail out if there's only one item left, so nowhere to go with focus.
       if (lastIndex == 0) {
         break;
-      }
+  }
       // Move focus inside the panel focus ring.
       let index = focusable.indexOf(label);
       let newIndex;
       if (event.key == "ArrowDown" || event.key == "ArrowRight") {
         newIndex = index == lastIndex ? 0 : ++index;
-      } else {
+  } else {
         newIndex = index == 0 ? lastIndex : --index;
-      }
+    }
       focusable[newIndex].focus();
       // Prevent the keys from being handled again by our listeners on the panel.
       event.stopPropagation();
