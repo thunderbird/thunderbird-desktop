@@ -20,6 +20,7 @@ var { CalDavGenericRequest, CalDavPropfindRequest } = ChromeUtils.import(
  * @implements {calICalendarProvider}
  */
 var CalICSProvider = {
+  QueryInterface: ChromeUtils.generateQI(["calICalendarProvider"]),
   get type() {
     return "ics";
   },
