@@ -2,6 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@import url("chrome://messenger/skin/messenger.css");
+
+description {
+  margin-inline: 4px;
+}
+
+.awIdentityLabel {
+  width: 8em;
+  margin-inline-start: 5px;
+}
+
 #accountprotocol,
 #accountsummary {
   overflow: visible;
@@ -13,4 +24,12 @@
 
 #value-column {
   min-width: 15em;
+}
+
+.serverLabel {
+  width: 8em;
+}
+
+.serverDataBox {
+  margin-inline-start: 15px;
 }

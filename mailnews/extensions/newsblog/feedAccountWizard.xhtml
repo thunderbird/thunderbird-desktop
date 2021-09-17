@@ -5,6 +5,7 @@
 
 <?xml-stylesheet href="chrome://messenger/skin/accountWizard.css" type="text/css"?>
 <?xml-stylesheet type="text/css" href="chrome://messenger/skin/input-fields.css"?>
+<?xml-stylesheet href="chrome://messenger/skin/themeableDialog.css" type="text/css"?>
 
 <!DOCTYPE window [
   <!ENTITY %  accountDTD SYSTEM "chrome://messenger/locale/AccountWizard.dtd">
@@ -18,6 +19,7 @@
 <window id="FeedAccountWizard"
         title="&feedWindowTitle.label;"
         onload="FeedAccountWizard.onLoad();"
+        lightweightthemes="true"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
   <linkset>
     <html:link rel="localization" href="toolkit/global/wizard.ftl"/>
