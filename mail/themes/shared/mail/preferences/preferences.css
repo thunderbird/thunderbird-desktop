@@ -43,6 +43,11 @@ menulist {
   --in-content-button-horizontal-padding: 6px;
 }
 
+button[open="true"],
+menulist[open="true"] {
+  color: var(--in-content-button-text-color-hover);
+}
+
 html|input:is([type="email"],[type="number"],[type="text"],[type="password"],[type="url"]),
 html|textarea,
 search-textbox {
