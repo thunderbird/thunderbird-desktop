@@ -133,6 +133,7 @@ class nsMsgSendLater : public nsIMsgSendLater,
   char* mIdentityKey;
   char* mAccountKey;
 
+  bool mJsSendModule;
   bool mSendingMessages;
   bool mUserInitiated;
   nsCOMPtr<nsIMsgIdentity> mIdentity;

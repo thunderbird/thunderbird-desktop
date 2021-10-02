@@ -41,6 +41,7 @@ NS_IMPL_ISUPPORTS(nsMsgSendLater, nsIMsgSendLater, nsIFolderListener,
                   nsIUrlListener, nsIMsgShutdownTask)
 
 nsMsgSendLater::nsMsgSendLater() {
+  mJsSendModule = false;
   mSendingMessages = false;
   mTimerSet = false;
   mTotalSentSuccessfully = 0;
@@ -83,6 +84,8 @@ nsresult nsMsgSendLater::Init() {
   nsresult rv;
   nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  prefs->GetBoolPref("mailnews.send.jsmodule", &mJsSendModule);
 
   bool sendInBackground;
   rv = prefs->GetBoolPref("mailnews.sendInBackground", &sendInBackground);
@@ -852,6 +855,8 @@ nsresult nsMsgSendLater::BuildHeaders() {
       case 'b':
         if (!PL_strncasecmp("BCC", buf, end - buf)) {
           header = &m_bcc;
+          // MessageSend.jsm ensures bcc header is not sent.
+          prune_p = !mJsSendModule;
         }
         break;
       case 'C':

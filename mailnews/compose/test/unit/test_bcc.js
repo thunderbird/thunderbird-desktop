@@ -14,6 +14,17 @@ var { MailServices } = ChromeUtils.import(
 var gServer;
 var gSentFolder;
 
+function cleanUpSent() {
+  gSentFolder.deleteMessages(
+    [...gSentFolder.msgDatabase.EnumerateMessages()],
+    null,
+    true,
+    false,
+    null,
+    false
+  );
+}
+
 /**
  * Load local mail account and start fake SMTP server.
  */
@@ -159,6 +170,7 @@ add_task(async function testBccWithNonUtf8EmlAttachment() {
 
 add_task(async function testBccWithSendLater() {
   gServer.resetTest();
+  cleanUpSent();
   let identity = getSmtpIdentity(
     "from@tinderbox.invalid",
     getBasicSmtpServer(gServer.port)
@@ -171,7 +183,7 @@ add_task(async function testBccWithSendLater() {
     "@mozilla.org/messengercompose/composefields;1"
   ].createInstance(Ci.nsIMsgCompFields);
   fields.to = "Nobody <to@tinderbox.invalid>";
-  fields.subject = "Test bcc";
+  fields.subject = "Test bcc with send later";
   fields.bcc = "bcc@tinderbox.invalid";
   fields.body = "A\r\nBcc: \r\n mail body\r\n.";
 
@@ -213,7 +225,7 @@ add_task(async function testBccWithSendLater() {
       // Should not contain extra \r\n between head and body.
       let notExpectedBody = `\r\n\r\n\r\n${fields.body}`;
 
-      Assert.ok(gServer._daemon.post.includes("Subject: Test bcc"));
+      Assert.ok(gServer._daemon.post.includes(`Subject: ${fields.subject}`));
       // Check that bcc header doesn't exist in the sent mail.
       Assert.ok(!gServer._daemon.post.includes("Bcc: bcc@tinderbox.invalid"));
       Assert.ok(gServer._daemon.post.includes(expectedBody));
@@ -223,7 +235,7 @@ add_task(async function testBccWithSendLater() {
         gSentFolder,
         mailTestUtils.getMsgHdrN(gSentFolder, 0)
       );
-      Assert.ok(msgData.includes("Subject: Test bcc"));
+      Assert.ok(msgData.includes(`Subject: ${fields.subject}`));
       // Check that bcc header exists in the mail copy.
       Assert.ok(msgData.includes("Bcc: bcc@tinderbox.invalid"));
       Assert.ok(msgData.includes(fields.body));
