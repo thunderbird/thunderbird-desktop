@@ -92,12 +92,12 @@
       this.addEventListener(
         "mousedown",
         event => {
-          if (event.button != 0) {
-            return;
-          }
+        if (event.button != 0) {
+          return;
+        }
 
           if (this.mOverCloseButton) {
-            event.stopPropagation();
+        event.stopPropagation();
           }
         },
         true
@@ -157,14 +157,6 @@
           tabbedBrowser.removeCurrentTab();
         }
       });
-
-      this.addEventListener(
-        "contextmenu",
-        event => {
-          document.popupNode = this;
-        },
-        true
-      );
 
       this.addEventListener(
         "dblclick",
