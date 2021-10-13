@@ -1927,6 +1927,7 @@ AttachmentInfo.prototype = {
       );
       msgWindow.promptDialog.alert(null, prompt);
     } else {
+      // @see MsgComposeCommands.js which has simililar opening functionality
       if (this.contentType == "application/pdf") {
         let handlerInfo = gMIMEService.getFromTypeAndExtension(
           this.contentType,
