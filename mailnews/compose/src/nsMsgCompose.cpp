@@ -186,6 +186,11 @@ nsMsgCompose::nsMsgCompose() {
 }
 
 nsMsgCompose::~nsMsgCompose() {
+  if (!m_compFields) {
+    // Uhoh. We're in an uninitialized state. Maybe initialize() failed, or
+    // was never even called.
+    return;
+  }
   // Remove temporary attachment files, e.g. key.asc when attaching public key.
   nsTArray<RefPtr<nsIMsgAttachment>> attachments;
   m_compFields->GetAttachments(attachments);
