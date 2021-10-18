@@ -247,7 +247,7 @@ add_task(async function testBccWithSendLater() {
   // Actually send the message.
   msgSendLater.sendUnsentMessages(identity);
   gServer.performTest();
-  });
+});
 
 /**
  * Test that sending bcc only message from Outbox works. With a bcc only
