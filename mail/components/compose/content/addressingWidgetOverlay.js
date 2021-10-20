@@ -410,9 +410,10 @@ function awAddRecipients(msgCompFields, recipientType, recipientsList) {
  */
 function awAddRecipientsArray(aRecipientType, addressArray, select = false) {
   let label = document.getElementById(aRecipientType);
-  let addresses = addressArray.map(
-    addr => MailServices.headerParser.makeFromDisplayAddress(addr)[0]
-  );
+  let addresses = [];
+  for (let addr of addressArray) {
+    addresses.push(...MailServices.headerParser.makeFromDisplayAddress(addr));
+  }
   let element = document.getElementById(label.getAttribute("control"));
 
   if (label && element.closest(".address-row").classList.contains("hidden")) {
