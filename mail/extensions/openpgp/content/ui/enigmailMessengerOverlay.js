@@ -1008,7 +1008,7 @@ Enigmail.msg = {
         if (
           node.firstChild &&
           node.firstChild.nodeName.toUpperCase() == "LEGEND" &&
-          node.firstChild.className == "mimeAttachmentHeaderName"
+          node.firstChild.className == "moz-mime-attachment-header-name"
         ) {
           // we reached the area where inline attachments are displayed
           // --> don't try to decrypt displayed inline attachments
