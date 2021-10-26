@@ -303,10 +303,11 @@ var gCloudAttachmentLinkManager = {
       header.innerHTML = " ";
       root.appendChild(header);
 
-      let list = editor.createElementWithDefaults("div");
+      let list = editor.createElementWithDefaults("ul");
       list.id = "cloudAttachmentList";
       list.style.backgroundColor = "#FFFFFF";
       list.style.padding = "15px";
+      list.style.listStyleType = "none";
       list.display = "inline-block";
       list.innerHTML = " ";
       root.appendChild(list);
@@ -371,7 +372,7 @@ var gCloudAttachmentLinkManager = {
       list = aDocument.getElementById("cloudAttachmentList");
     }
 
-    let node = aDocument.createElement("div");
+    let node = aDocument.createElement("li");
     node.className = "cloudAttachmentItem";
     node.contentLocation = aAttachment.contentLocation;
 
@@ -387,8 +388,8 @@ var gCloudAttachmentLinkManager = {
       let paperclip = aDocument.createElement("img");
       paperclip.style.marginRight = "5px";
       paperclip.style.cssFloat = "left";
-      paperclip.style.width = "24px";
-      paperclip.style.height = "24px";
+      paperclip.width = "24";
+      paperclip.height = "24";
       paperclip.src =
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABVUlEQVR42mNgGChgbGzMqm9slqFnbHZLz8TsPwoGioHkQGrItgBsOLrBaFjfxCydbAvgLjc2zQNymZCkmPRMzfOhllwj3wKoK9EMB4PQ0FBmJHmgWtM1eqZmS8m1gEHXxGyLnon5WlzyyGyyLMBmwKgFoxYMPgv+gdjq1ta8YL6elRhU/i+1LDgAYuuamidC+Q1geVOzzVSxQN/EPAnKvwLM0cFA+hOYb2TmRIkFH0CaDExNDbS1HXgwim1o2QMKNvIsMDafCtW4DOwLMzM1YJl0ChxUxqaNQCFGsDqgRRB1ppdIssDQ3FwLqPE7ermvY2ysDK8zEEH3RdfYWIPkIlvX1DQaasAvfVPTGBQ5E3MvoPhXiAPMYympFxoQ4W7eA/IBKIhASRRiuOkUiutnoGuzYQYi4b/AOCmjWiMAGFz2QEO3gwwGunoXiE+T1oa5uTkfKeoBW+cLhPF1+Q8AAAAASUVORK5CYII=";
       node.appendChild(paperclip);
@@ -403,8 +404,7 @@ var gCloudAttachmentLinkManager = {
 
       let size = aDocument.createElement("span");
       size.textContent =
-        "(" + gMessenger.formatFileSize(aAttachment.size) + ")";
-      size.style.marginLeft = "5px";
+        " (" + gMessenger.formatFileSize(aAttachment.size) + ") ";
       size.style.fontSize = "small";
       size.style.color = "grey";
       node.appendChild(size);
@@ -415,8 +415,8 @@ var gCloudAttachmentLinkManager = {
       if (provider.iconURL) {
         let providerIcon = aDocument.createElement("img");
         providerIcon.style.marginRight = "5px";
-        providerIcon.style.maxWidth = "24px";
-        providerIcon.style.maxHeight = "24px";
+        providerIcon.width = "24";
+        providerIcon.height = "24";
         providerIcon.style.verticalAlign = "middle";
         providerIdentity.appendChild(providerIcon);
 
@@ -437,7 +437,7 @@ var gCloudAttachmentLinkManager = {
       if (provider.serviceURL) {
         let providerLink = this._generateLink(
           aDocument,
-          provider.displayName,
+          cloudFileAccounts.getDisplayName(aAccount),
           provider.serviceURL
         );
         providerLink.style.verticalAlign = "middle";
@@ -448,8 +448,10 @@ var gCloudAttachmentLinkManager = {
         providerName.style.verticalAlign = "middle";
         providerIdentity.appendChild(providerName);
       }
-
       node.appendChild(providerIdentity);
+
+      let linebreak = aDocument.createElement("br");
+      node.appendChild(linebreak);
 
       let downloadUrl = this._generateLink(
         aDocument,
@@ -458,7 +460,6 @@ var gCloudAttachmentLinkManager = {
       );
       downloadUrl.style.fontSize = "small";
       downloadUrl.style.display = "block";
-
       node.appendChild(downloadUrl);
     } else {
       node.textContent = getComposeBundle().getFormattedString(
@@ -466,7 +467,7 @@ var gCloudAttachmentLinkManager = {
         [
           aAttachment.name,
           gMessenger.formatFileSize(aAttachment.size),
-          provider.displayName,
+          cloudFileAccounts.getDisplayName(aAccount),
           aAttachment.contentLocation,
         ]
       );
