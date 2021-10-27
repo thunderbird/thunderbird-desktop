@@ -1113,8 +1113,8 @@
         const colBox = col.column.findChunkForOccurrence(item);
         const headerBox = col.header.findBoxForItem(item);
 
-        if (colBox && colBox.eventbox) {
-          setFlashingAttribute(colBox.eventbox);
+        if (colBox) {
+          setFlashingAttribute(colBox);
         }
         if (headerBox) {
           setFlashingAttribute(headerBox);
