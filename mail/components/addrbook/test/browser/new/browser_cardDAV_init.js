@@ -312,7 +312,7 @@ add_task(async function testDNS() {
     await attemptInit(dialogWindow, {
       username: "carol@dnstest.invalid",
       password: "carol",
-      expectedStatus: null,
+      expectedStatus: "",
       expectedBooks: [
         {
           label: "You found me!",
@@ -622,7 +622,7 @@ add_task(async function testNoName() {
     await attemptInit(dialogWindow, {
       url: CardDAVServer.origin,
       password: "alice",
-      expectedStatus: null,
+      expectedStatus: "",
       expectedBooks: [{ label: "noname", url: "/addressbooks/me/noname/" }],
     });
 
