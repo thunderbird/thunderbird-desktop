@@ -382,7 +382,7 @@ NS_IMETHODIMP nsImapService::DisplayMessage(const char* aMessageURI,
                                             nsISupports* aDisplayConsumer,
                                             nsIMsgWindow* aMsgWindow,
                                             nsIUrlListener* aUrlListener,
-                                            const char* aCharsetOverride,
+                                            bool aOverrideCharset,
                                             nsIURI** aURL) {
   nsresult rv;
 
@@ -458,7 +458,7 @@ NS_IMETHODIMP nsImapService::DisplayMessage(const char* aMessageURI,
 
       nsCOMPtr<nsIMsgMailNewsUrl> msgurl(do_QueryInterface(imapUrl));
       nsCOMPtr<nsIMsgI18NUrl> i18nurl(do_QueryInterface(imapUrl));
-      i18nurl->SetCharsetOverRide(aCharsetOverride);
+      i18nurl->SetOverRideCharset(aOverrideCharset);
 
       uint32_t messageSize;
       bool useMimePartsOnDemand = gMIMEOnDemand;
@@ -658,7 +658,7 @@ NS_IMETHODIMP nsImapService::DisplayMessageForPrinting(
     nsIMsgWindow* aMsgWindow, nsIUrlListener* aUrlListener, nsIURI** aURL) {
   mPrintingOperation = true;
   nsresult rv = DisplayMessage(aMessageURI, aDisplayConsumer, aMsgWindow,
-                               aUrlListener, nullptr, aURL);
+                               aUrlListener, false, aURL);
   mPrintingOperation = false;
   return rv;
 }

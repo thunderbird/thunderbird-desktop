@@ -1102,13 +1102,12 @@ nsBrowserAccess.prototype = {
 };
 
 function MailSetCharacterSet() {
-  msgWindow.mailCharacterSet = "_autodetect_all";
   msgWindow.charsetOverride = true;
   gMessageDisplay.keyForCharsetOverride =
     "messageKey" in gMessageDisplay.displayedMessage
       ? gMessageDisplay.displayedMessage.messageKey
       : null;
-  messenger.setDocumentCharset(msgWindow.mailCharacterSet);
+  messenger.forceDetectDocumentCharset();
 }
 
 /**
