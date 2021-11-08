@@ -1924,9 +1924,9 @@ NS_IMETHODIMP nsMsgCompose::GetOriginalMsgURI(char** originalMsgURI) {
 QuotingOutputStreamListener::~QuotingOutputStreamListener() {}
 
 QuotingOutputStreamListener::QuotingOutputStreamListener(
-    const char* originalMsgURI, nsIMsgDBHdr* originalMsgHdr, bool quoteHeaders,
-    bool headersOnly, nsIMsgIdentity* identity, nsIMsgQuote* msgQuote,
-    bool charsetFixed, bool quoteOriginal, const nsACString& htmlToQuote) {
+    nsIMsgDBHdr* originalMsgHdr, bool quoteHeaders, bool headersOnly,
+    nsIMsgIdentity* identity, nsIMsgQuote* msgQuote, bool charsetFixed,
+    bool quoteOriginal, const nsACString& htmlToQuote) {
   nsresult rv;
   mQuoteHeaders = quoteHeaders;
   mHeadersOnly = headersOnly;
@@ -2638,33 +2638,33 @@ MOZ_CAN_RUN_SCRIPT nsresult QuotingOutputStreamListener::InsertToCompose(
 
   if (aEditor) {
     if (aEditor) {
-      RefPtr<Selection> selection;
-      nsCOMPtr<nsINode> parent;
-      int32_t offset;
-      nsresult rv;
+  RefPtr<Selection> selection;
+  nsCOMPtr<nsINode> parent;
+  int32_t offset;
+  nsresult rv;
 
-      // get parent and offset of mailcite
-      rv = GetNodeLocation(nodeInserted, address_of(parent), &offset);
-      NS_ENSURE_SUCCESS(rv, rv);
+  // get parent and offset of mailcite
+  rv = GetNodeLocation(nodeInserted, address_of(parent), &offset);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-      // get selection
-      aEditor->GetSelection(getter_AddRefs(selection));
-      if (selection) {
-        // place selection after mailcite
-        selection->CollapseInLimiter(parent, offset + 1);
-        // insert a break at current selection
-        aEditor->InsertLineBreak();
-        selection->CollapseInLimiter(parent, offset + 1);
-      }
-      nsCOMPtr<nsISelectionController> selCon;
-      aEditor->GetSelectionController(getter_AddRefs(selCon));
+  // get selection
+  aEditor->GetSelection(getter_AddRefs(selection));
+  if (selection) {
+    // place selection after mailcite
+    selection->CollapseInLimiter(parent, offset + 1);
+    // insert a break at current selection
+    aEditor->InsertLineBreak();
+    selection->CollapseInLimiter(parent, offset + 1);
+  }
+  nsCOMPtr<nsISelectionController> selCon;
+  aEditor->GetSelectionController(getter_AddRefs(selCon));
 
-      if (selCon)
-        // After ScrollSelectionIntoView(), the pending notifications might be
-        // flushed and PresShell/PresContext/Frames may be dead. See bug 418470.
-        selCon->ScrollSelectionIntoView(
-            nsISelectionController::SELECTION_NORMAL,
-            nsISelectionController::SELECTION_ANCHOR_REGION, true);
+  if (selCon)
+    // After ScrollSelectionIntoView(), the pending notifications might be
+    // flushed and PresShell/PresContext/Frames may be dead. See bug 418470.
+    selCon->ScrollSelectionIntoView(
+        nsISelectionController::SELECTION_NORMAL,
+        nsISelectionController::SELECTION_ANCHOR_REGION, true);
     }
   }
 
@@ -2723,9 +2723,7 @@ NS_IMETHODIMP nsMsgCompose::GetType(MSG_ComposeType* aType) {
 }
 
 NS_IMETHODIMP
-nsMsgCompose::QuoteMessage(const char* msgURI) {
-  NS_ENSURE_ARG_POINTER(msgURI);
-
+nsMsgCompose::QuoteMessage(const nsACString& msgURI) {
   nsresult rv;
   mQuotingToFollow = false;
 
@@ -2734,12 +2732,13 @@ nsMsgCompose::QuoteMessage(const char* msgURI) {
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMsgDBHdr> msgHdr;
-  rv = GetMsgDBHdrFromURI(msgURI, getter_AddRefs(msgHdr));
+  rv = GetMsgDBHdrFromURI(PromiseFlatCString(msgURI).get(),
+                          getter_AddRefs(msgHdr));
 
   // Create the consumer output stream.. this will receive all the HTML from
   // libmime
   mQuoteStreamListener = new QuotingOutputStreamListener(
-      msgURI, msgHdr, false, !mHtmlToQuote.IsEmpty(), m_identity, mQuote,
+      msgHdr, false, !mHtmlToQuote.IsEmpty(), m_identity, mQuote,
       mCharsetOverride || mAnswerDefaultCharset, false, mHtmlToQuote);
 
   mQuoteStreamListener->SetComposeObj(this);
@@ -2778,15 +2777,15 @@ nsresult nsMsgCompose::QuoteOriginalMessage()  // New template
   // Create the consumer output stream.. this will receive all the HTML from
   // libmime
   mQuoteStreamListener = new QuotingOutputStreamListener(
-      mOriginalMsgURI.get(), originalMsgHdr, mWhatHolder != 1,
-      !bAutoQuote || !mHtmlToQuote.IsEmpty(), m_identity, mQuote,
-      mCharsetOverride || mAnswerDefaultCharset, true, mHtmlToQuote);
+      originalMsgHdr, mWhatHolder != 1, !bAutoQuote || !mHtmlToQuote.IsEmpty(),
+      m_identity, mQuote, mCharsetOverride || mAnswerDefaultCharset, true,
+      mHtmlToQuote);
 
   mQuoteStreamListener->SetComposeObj(this);
 
-  rv = mQuote->QuoteMessage(
-      mOriginalMsgURI.get(), mWhatHolder != 1, mQuoteStreamListener,
-      mCharsetOverride, !bAutoQuote, originalMsgHdr);
+  rv = mQuote->QuoteMessage(mOriginalMsgURI, mWhatHolder != 1,
+                            mQuoteStreamListener, mCharsetOverride, !bAutoQuote,
+                            originalMsgHdr);
   return rv;
 }
 
