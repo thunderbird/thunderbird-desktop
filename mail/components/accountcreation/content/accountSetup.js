@@ -1395,9 +1395,10 @@ var gAccountSetup = {
       "outgoingUsername"
     ).value;
 
-    let smtpValue = document.getElementById("outgoingHostname").value;
+    let smtpHostname = document.getElementById("outgoingHostname").value;
+    let smtpPort = document.getElementById("outgoingPort").value;
     let foundServer = MailServices.smtp.servers.find(
-      s => s.hostname == smtpValue
+      s => s.hostname == smtpHostname && s.port == smtpPort
     );
     // If the user is using a preconfigured SMTP server.
     if (foundServer) {
