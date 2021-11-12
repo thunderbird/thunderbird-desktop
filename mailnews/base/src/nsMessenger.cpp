@@ -460,7 +460,7 @@ nsresult nsMessenger::CompleteOpenURL() {
   if (NS_SUCCEEDED(rv) && messageService) {
     nsCOMPtr<nsIURI> dummyNull;
     messageService->DisplayMessage(PromiseFlatCString(mURLToLoad).get(),
-                                   mDocShell, mMsgWindow, nullptr, false,
+                                   mDocShell, mMsgWindow, nullptr, nullptr,
                                    getter_AddRefs(dummyNull));
     AddMsgUrlToNavigateHistory(mURLToLoad);
     mLastDisplayURI = mURLToLoad;  // remember the last uri we displayed....
@@ -750,7 +750,7 @@ nsresult nsMessenger::SaveAttachment(nsIFile* aFile, const nsACString& aURL,
       else
         rv = messageService->DisplayMessage(
             fullMessageUri.get(), convertedListener, mMsgWindow, nullptr,
-            false, getter_AddRefs(dummyNull));
+            nullptr, getter_AddRefs(dummyNull));
     }  // if we got a message service
   }    // if we created a url
 
@@ -1134,7 +1134,7 @@ nsMessenger::SaveAs(const nsACString& aURI, bool aAsFile,
 
       nsCOMPtr<nsIURI> dummyNull;
       rv = messageService->DisplayMessage(urlString.get(), convertedListener,
-                                          mMsgWindow, nullptr, false,
+                                          mMsgWindow, nullptr, nullptr,
                                           getter_AddRefs(dummyNull));
     }
   } else {
@@ -1537,9 +1537,9 @@ nsMessenger::GetTransactionManager(nsITransactionManager** aTxnMgr) {
   return NS_OK;
 }
 
-NS_IMETHODIMP nsMessenger::ForceDetectDocumentCharset() {
+NS_IMETHODIMP nsMessenger::SetDocumentCharset(const nsACString& aCharacterSet) {
   // We want to redisplay the currently selected message (if any) but forcing
-  // the redisplay with an autodetected charset
+  // the redisplay to use characterSet
   if (!mLastDisplayURI.IsEmpty()) {
     SetDisplayCharset("UTF-8"_ns);
 
@@ -1551,7 +1551,7 @@ NS_IMETHODIMP nsMessenger::ForceDetectDocumentCharset() {
       nsCOMPtr<nsIURI> dummyNull;
       messageService->DisplayMessage(
           mLastDisplayURI.get(), mDocShell, mMsgWindow, nullptr,
-          true, getter_AddRefs(dummyNull));
+          PromiseFlatCString(aCharacterSet).get(), getter_AddRefs(dummyNull));
     }
   }
 

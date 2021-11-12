@@ -1636,12 +1636,26 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
   char* uriList = PL_strdup(originalMsgURI);
   if (!uriList) return NS_ERROR_OUT_OF_MEMORY;
 
+  // Resulting charset for this message.
+  nsCString charset;
+
   // Check for the charset of the last displayed message, it
   // will be used for quoting and as override.
   nsCString windowCharset;
   mCharsetOverride = false;
   mAnswerDefaultCharset = false;
   GetTopmostMsgWindowCharacterSet(windowCharset, &mCharsetOverride);
+  if (!windowCharset.IsEmpty()) {
+    // Although the charset in which to send the message might change,
+    // the original message will be parsed for quoting using the charset it is
+    // now displayed with.
+    mQuoteCharset = windowCharset;
+
+    if (mCharsetOverride) {
+      // Use override charset.
+      charset = windowCharset;
+    }
+  }
 
   // Note the following:
   // LoadDraftOrTemplate() is run in nsMsgComposeService::OpenComposeWindow()
@@ -2745,7 +2759,7 @@ nsMsgCompose::QuoteMessage(const char* msgURI) {
   mQuoteStreamListener->SetComposeObj(this);
 
   rv = mQuote->QuoteMessage(msgURI, false, mQuoteStreamListener,
-                            mCharsetOverride, false, msgHdr);
+                            mCharsetOverride ? "UTF-8" : "", false, msgHdr);
   return rv;
 }
 
@@ -2786,7 +2800,7 @@ nsresult nsMsgCompose::QuoteOriginalMessage()  // New template
 
   rv = mQuote->QuoteMessage(
       mOriginalMsgURI.get(), mWhatHolder != 1, mQuoteStreamListener,
-      mCharsetOverride, !bAutoQuote, originalMsgHdr);
+      mCharsetOverride ? mQuoteCharset.get() : "", !bAutoQuote, originalMsgHdr);
   return rv;
 }
 

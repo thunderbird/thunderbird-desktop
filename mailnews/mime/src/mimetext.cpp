@@ -75,12 +75,7 @@ static int MimeInlineText_initializeCharset(MimeObject* obj) {
   // Figure out an appropriate charset for this object.
   if (!text->charset && obj->headers) {
     if (obj->options && obj->options->override_charset) {
-      if (obj->options->default_charset) {
-        text->charset = strdup(obj->options->default_charset);
-      } else {
-        text->inputAutodetect = true;
-        text->charset = strdup("");
-      }
+      text->charset = strdup(obj->options->default_charset);
     } else {
       char* ct =
           MimeHeaders_get(obj->headers, HEADER_CONTENT_TYPE, false, false);

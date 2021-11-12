@@ -46,7 +46,7 @@ class nsNntpUrl : public nsINntpUrl,
                               // display messages, etc.
 
   nsCString mURI;              // the RDF URI associated with this url.
-  bool mOverrideCharset;  // used by nsIMsgI18NUrl...
+  nsCString mCharsetOverride;  // used by nsIMsgI18NUrl...
 
   nsCString mOriginalSpec;
   nsCOMPtr<nsIFile> m_filePath;
