@@ -16,7 +16,7 @@
   margin-right: 0.5em;
 }
 
-@media not all and (prefers-color-scheme: dark) {
+@media not all and (-moz-toolbar-prefers-color-scheme: dark) {
   .toolbarbutton-1.msgHeaderView-button {
     color: -moz-DialogText !important;
   }

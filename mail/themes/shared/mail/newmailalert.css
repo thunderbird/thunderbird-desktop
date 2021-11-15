@@ -17,7 +17,7 @@
   color: -moz-DialogText;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   #newMailAlertNotification {
     background-color: #2a2a2e;
     color: #f9f9fa;
@@ -61,7 +61,7 @@
   margin-block: 0.4em;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   #alertSeparator {
     border-top-color: #f9f9fa;
   }

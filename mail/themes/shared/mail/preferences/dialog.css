@@ -10,7 +10,7 @@
 }
 
 @media not (prefers-contrast) {
-  @media not (prefers-color-scheme: dark) {
+  @media not (-moz-toolbar-prefers-color-scheme: dark) {
     :root > * {
       --in-content-button-background: var(--grey-90-a10);
       --in-content-button-background-hover: var(--grey-90-a20);
@@ -18,7 +18,7 @@
     }
   }
 
-  @media (prefers-color-scheme: dark) {
+  @media (-moz-toolbar-prefers-color-scheme: dark) {
     :root > * {
       --in-content-page-background: #2a2a2e;
       --in-content-button-background: rgba(249, 249, 250, 0.1);

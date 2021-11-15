@@ -44,7 +44,7 @@
   --message-bar-icon-url: var(--warn-icon-url);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   :host([type=warning]) {
     --message-bar-background-color: #ffe900;
   }
@@ -207,7 +207,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   :host([type="info"]) .container.infobar {
     --message-bar-background-color: var(--in-content-box-info-background);
   }
@@ -368,7 +368,7 @@ strong {
   color: #0090ed;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   :host {
     --in-content-button-color: #f9f9fa;
     --in-content-button-border: #828283;

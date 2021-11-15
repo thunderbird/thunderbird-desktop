@@ -6,7 +6,7 @@
   --in-content-categories-background: #ebebef;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   :root {
     --in-content-categories-background: rgba(249, 249, 250, 0.1);
     --in-content-primary-button-background: #45a1ff !important;

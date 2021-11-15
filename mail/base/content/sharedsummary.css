@@ -17,7 +17,7 @@
   height: unset; /* needed to allow elements to react to events */
 }
 
-@media (prefers-color-scheme: dark) {
+@media (-moz-toolbar-prefers-color-scheme: dark) {
   :root {
     --body-background-color: #2a2a2e;
     --body-text-color: rgb(249, 249, 250);
