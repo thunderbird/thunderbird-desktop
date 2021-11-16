@@ -563,18 +563,18 @@ class AbTreeListbox extends customElements.get("tree-listbox") {
     this.focus();
     if (this.selectedIndex === 0) {
       return;
-    }
+      }
 
     let synchronizeItem = document.getElementById("bookContextSynchronize");
-    synchronizeItem.hidden = !row.classList.contains("carddav");
+      synchronizeItem.hidden = !row.classList.contains("carddav");
 
     let deleteItem = document.getElementById("bookContextDelete");
-    deleteItem.disabled = row.classList.contains("noDelete");
-    deleteItem.hidden = row.classList.contains("carddav");
+      deleteItem.disabled = row.classList.contains("noDelete");
+      deleteItem.hidden = row.classList.contains("carddav");
 
     let removeItem = document.getElementById("bookContextRemove");
-    removeItem.disabled = row.classList.contains("noDelete");
-    removeItem.hidden = !row.classList.contains("carddav");
+      removeItem.disabled = row.classList.contains("noDelete");
+      removeItem.hidden = !row.classList.contains("carddav");
 
     let popup = document.getElementById("bookContext");
     popup.openPopupAtScreen(event.screenX, event.screenY, true);
@@ -1064,14 +1064,14 @@ var cardsPane = {
   },
 
   _onCommand() {
-    this.cardsList.view = new ABView(
-      this.cardsList.view.directory,
-      this.getQuery(),
-      this.searchInput.value,
-      undefined,
-      this.cardsList.view.sortColumn,
-      this.cardsList.view.sortDirection
-    );
+      this.cardsList.view = new ABView(
+        this.cardsList.view.directory,
+        this.getQuery(),
+        this.searchInput.value,
+        undefined,
+        this.cardsList.view.sortColumn,
+        this.cardsList.view.sortDirection
+      );
   },
 
   _onClick(event) {
@@ -1235,6 +1235,7 @@ var detailsPane = {
     "WorkState",
     "WorkZipCode",
     "WorkCountry",
+    "WebPage1",
     "Custom1",
     "Custom2",
     "Custom3",
@@ -1435,7 +1436,7 @@ var detailsPane = {
     } else {
       book.modifyCard(card);
     }
-    this.displayContact(card);
+      this.displayContact(card);
   },
 
   _onDragOver(event) {
