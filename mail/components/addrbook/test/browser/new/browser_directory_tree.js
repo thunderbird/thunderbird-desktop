@@ -493,21 +493,16 @@ add_task(async function test_context_menu() {
   Assert.ok(!removeMenuItem.disabled);
   let promptPromise = BrowserTestUtils.promiseAlertDialog("accept");
   let selectPromise = BrowserTestUtils.waitForEvent(booksList, "select");
-  hiddenPromise = BrowserTestUtils.waitForEvent(menu, "popuphidden");
   menu.activateItem(removeMenuItem);
   await promptPromise;
   await selectPromise;
-  await hiddenPromise;
   Assert.equal(abDocument.activeElement, booksList);
 
   Assert.equal(booksList.rowCount, 5);
-  Assert.equal(booksList.selectedIndex, 0);
-  Assert.equal(menu.state, "closed");
 
   // Test and delete list at index 3, then directory at index 2.
 
   for (let index of [3, 2]) {
-    await new Promise(r => abWindow.setTimeout(r, 250));
     await rightClickOnIndex(index);
     Assert.equal(booksList.selectedIndex, index);
     Assert.ok(BrowserTestUtils.is_visible(propertiesMenuItem));
@@ -518,22 +513,14 @@ add_task(async function test_context_menu() {
     Assert.ok(!BrowserTestUtils.is_visible(removeMenuItem));
     promptPromise = BrowserTestUtils.promiseAlertDialog("accept");
     selectPromise = BrowserTestUtils.waitForEvent(booksList, "select");
-    hiddenPromise = BrowserTestUtils.waitForEvent(menu, "popuphidden");
     menu.activateItem(deleteMenuItem);
     await promptPromise;
     await selectPromise;
-    await hiddenPromise;
     Assert.equal(abDocument.activeElement, booksList);
-
-    if (index == 3) {
-      Assert.equal(booksList.rowCount, 4);
-      Assert.equal(booksList.selectedIndex, 2);
-    } else {
-      Assert.equal(booksList.rowCount, 3);
-      Assert.equal(booksList.selectedIndex, 0);
-    }
-    Assert.equal(menu.state, "closed");
   }
+
+  Assert.equal(booksList.rowCount, 3);
+  Assert.equal(booksList.selectedIndex, 0);
 
   // Test that the menu does not show beyond the last book.
 
