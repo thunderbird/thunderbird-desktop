@@ -2183,7 +2183,6 @@ async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
   let displayName = cloudFileAccounts.getDisplayName(cloudFileAccount);
   let attachmentItem = gAttachmentBucket.findItemForAttachment(attachment);
   if (attachmentItem) {
-    gAttachmentBucket.setAttachmentLoaded(attachmentItem, false);
     // FIXME: The UI logic should be handled by the attachment list or item
     // itself.
     attachmentItem.setAttribute(
@@ -2194,6 +2193,7 @@ async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
     );
     attachmentItem.uploading = true;
     attachmentItem.cloudFileAccount = cloudFileAccount;
+    gAttachmentBucket.refreshAttachmentIcon(attachmentItem);
   }
 
   let upload;
@@ -2223,11 +2223,7 @@ async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
         ])
       );
       attachmentItem.uploading = false;
-      gAttachmentBucket.setAttachmentLoaded(
-        attachmentItem,
-        true,
-        cloudFileAccount.iconURL || null
-      );
+      gAttachmentBucket.setCloudIcon(attachmentItem, upload.serviceIcon);
 
       attachmentItem.dispatchEvent(
         new CustomEvent("attachment-uploaded", {
@@ -2390,7 +2386,7 @@ function attachToCloudRepeat(upload, account) {
       ...upload,
       repeat: true,
     };
-    gAttachmentBucket.setAttachmentLoaded(item, true, account.iconURL || null);
+    gAttachmentBucket.setCloudIcon(item, upload.serviceIcon);
     item.dispatchEvent(
       new CustomEvent("attachment-uploaded", {
         bubbles: true,
@@ -2551,6 +2547,8 @@ function convertListItemsToRegularAttachment(aItems) {
     item.attachment.url = item.originalUrl;
     item.setAttribute("tooltiptext", item.attachment.url);
     item.attachment.sendViaCloud = false;
+
+    gAttachmentBucket.setCloudIcon(item, null);
 
     delete item.cloudFileAccount;
     delete item.originalUrl;

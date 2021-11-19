@@ -333,3 +333,8 @@ add_task(async function saveToDiskPromptLocation() {
   MockFilePicker.reset();
   Services.prefs.setBoolPref("browser.download.useDownloadDir", true);
 });
+
+registerCleanupFunction(() => {
+  // Remove created folders.
+  folder.deleteSelf(null);
+});
