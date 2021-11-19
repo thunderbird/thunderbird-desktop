@@ -1239,7 +1239,8 @@ NS_IMETHODIMP nsMsgNewsFolder::MoveFolder(nsIMsgFolder* aNewsgroupToMove,
 }
 
 nsresult nsMsgNewsFolder::CreateBaseMessageURI(const nsACString& aURI) {
-  return nsCreateNewsBaseMessageURI(nsCString(aURI).get(), mBaseMessageURI);
+  return nsCreateNewsBaseMessageURI(PromiseFlatCString(aURI).get(),
+                                    mBaseMessageURI);
 }
 
 NS_IMETHODIMP nsMsgNewsFolder::GetCharset(nsACString& charset) {
@@ -1276,7 +1277,7 @@ nsMsgNewsFolder::GetNewsrcLine(nsACString& newsrcLine) {
 
 NS_IMETHODIMP nsMsgNewsFolder::SetReadSetFromStr(const nsACString& newsrcLine) {
   delete mReadSet;
-  mReadSet = nsMsgKeySet::Create(nsCString(newsrcLine).get());
+  mReadSet = nsMsgKeySet::Create(PromiseFlatCString(newsrcLine).get());
   NS_ENSURE_TRUE(mReadSet, NS_ERROR_OUT_OF_MEMORY);
 
   // Now that mReadSet is recreated, make sure it's stored in the db as well.
