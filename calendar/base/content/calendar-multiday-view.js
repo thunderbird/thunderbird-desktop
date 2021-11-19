@@ -328,22 +328,6 @@
       return this.mParentColumn;
     }
 
-    get startMinute() {
-      if (!this.mOccurrence) {
-        return 0;
-      }
-      let startDate = this.mOccurrence.startDate || this.mOccurrence.entryDate;
-      return startDate.hour * 60 + startDate.minute;
-    }
-
-    get endMinute() {
-      if (!this.mOccurrence) {
-        return 0;
-      }
-      let endDate = this.mOccurrence.endDate || this.mOccurrence.dueDate;
-      return endDate.hour * 60 + endDate.minute;
-    }
-
     getOptimalMinSize() {
       let label = this.querySelector(".event-name-label");
       if (this.getAttribute("orient") == "vertical") {
@@ -1110,7 +1094,7 @@
       // Make sure the flashing attribute is set or reset on all visible boxes.
       const columns = this.findColumnsForItem(item);
       for (const col of columns) {
-        const colBox = col.column.findChunkForOccurrence(item);
+        const colBox = col.column.findElementForEventItem(item);
         const headerBox = col.header.findBoxForItem(item);
 
         if (colBox) {
@@ -1237,7 +1221,7 @@
             const cols = this.findColumnsForItem(occ);
             for (const col of cols) {
               col.header.unselectOccurrence(occ);
-              col.column.unselectOccurrence(occ);
+              col.column.selectEvent(occ, false);
             }
           }
         }
@@ -1255,7 +1239,7 @@
             if (start.isDate) {
               col.header.selectOccurrence(occ);
             } else {
-              col.column.selectOccurrence(occ);
+              col.column.selectEvent(occ, true);
             }
           }
         }
@@ -1535,7 +1519,7 @@
         if (counter < dayboxkids.length) {
           dayEventsBox = dayboxkids[counter];
           dayEventsBox.removeAttribute("relation");
-          dayEventsBox.mEventInfos = [];
+          dayEventsBox.clear();
         } else {
           dayEventsBox = document.createXULElement("calendar-event-column");
           dayEventsBox.setAttribute("flex", "1");
@@ -1918,7 +1902,7 @@
         // Get all-day events in column header and events within the column.
         const colEvents = col.header.mItemBoxes
           .map(box => box.occurrence)
-          .concat(col.column.mEventInfos.map(info => info.event));
+          .concat(col.column.getAllEventItems());
 
         for (const event of colEvents) {
           if (event.calendar.id == calendar.id) {

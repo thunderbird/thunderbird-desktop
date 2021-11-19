@@ -47,6 +47,8 @@
           <calendar-event-box hidden="true"/>
         `)
       );
+      this.bgbox = this.querySelector(".multiday-column-bg-box");
+      this.topbox = this.querySelector(".multiday-column-top-box");
 
       this.addEventListener("dblclick", event => {
         if (event.button != 0) {
@@ -140,17 +142,19 @@
 
       this.mDayEndMin = 17 * 60;
 
-      // An array of objects that contain information about the events that are to be
-      // displayed. The contained fields are:
-      // - event:        The event that is to be displayed in a 'calendar-event-box'
-      // - layoutStart:  The 'start'-datetime object of the event in the timezone of the view
-      // - layoutEnd:    The 'end'-datetime object of the event in the timezone of the view.
-      // The 'layoutEnd' may be different from the real 'end' time of the
-      // event because it considers a certain minimum duration of the event
-      // that is basically dependent of the font-size of the event-box label.
-      this.mEventInfos = [];
-
-      this.mEventMap = null;
+      /**
+       * An internal collection of data for events.
+       * @typedef {Object} EventData
+       * @property {calItemBase} eventItem - The event item.
+       * @property {Element} element - The displayed event in this column.
+       * @property {boolean} selected - Whether the event is selected.
+       */
+      /**
+       * Event data for all the events displayed in this column.
+       * @type {Map<string, EventData} - A map from an event item's hashId to
+       *   its data.
+       */
+      this.eventDataMap = new Map();
 
       this.mCalendarView = null;
 
@@ -173,8 +177,6 @@
 
       this.mEventToEdit = null;
 
-      this.mSelectedItemIds = null;
-
       this.mSelected = false;
 
       this.mFgboxes = null;
@@ -183,12 +185,7 @@
 
       this.mDayOff = false;
 
-      // mEventInfos.
-      this.mSelectedChunks = [];
-
-      this.mEventInfos = [];
       this.mTimezone = cal.dtz.UTC;
-      this.mSelectedItemIds = {};
       this.initializeAttributeInheritance();
     }
 
@@ -231,9 +228,7 @@
 
       if (!cal.data.compareObjects(val.timezone, this.mTimezone)) {
         this.mTimezone = val.timezone;
-        if (!this.mLayoutBatchCount) {
-          this.recalculateStartEndMinutes();
-        }
+        this.relayout();
       }
     }
 
@@ -247,14 +242,6 @@
 
     get calendarView() {
       return this.mCalendarView;
-    }
-
-    get topbox() {
-      return this.querySelector(".multiday-column-top-box");
-    }
-
-    get bgbox() {
-      return this.querySelector(".multiday-column-bg-box");
     }
 
     get fgboxes() {
@@ -286,39 +273,46 @@
       return this.mDayOff;
     }
 
-    selectOccurrence(occurrence) {
-      if (occurrence) {
-        this.mSelectedItemIds[occurrence.hashId] = true;
-        let chunk = this.findChunkForOccurrence(occurrence);
-        if (!chunk) {
-          return;
-        }
-        chunk.selected = true;
-        this.mSelectedChunks.push(chunk);
+    /**
+     * Set whether the calendar-event-box element for the given event item
+     * should be displayed as selected or unselected.
+     *
+     * @param {calItemBase} eventItem - The event item.
+     * @param {boolean} select - Whether to show the corresponding event element
+     *   as selected.
+     */
+    selectEvent(eventItem, select) {
+      let data = this.eventDataMap.get(eventItem.hashId);
+      if (!data) {
+        return;
+      }
+      data.selected = select;
+      if (data.element) {
+        // There is a small window between an event item being added and it
+        // actually having an element. If it doesn't have an element yet, it
+        // will be selected on its creation instead.
+        data.element.selected = select;
       }
     }
 
-    unselectOccurrence(occurrence) {
-      if (occurrence) {
-        delete this.mSelectedItemIds[occurrence.hashId];
-        let chunk = this.findChunkForOccurrence(occurrence);
-        if (!chunk) {
-          return;
-        }
-        chunk.selected = false;
-        let index = this.mSelectedChunks.indexOf(chunk);
-        this.mSelectedChunks.splice(index, 1);
-      }
+    /**
+     * Return the displayed calendar-event-box element for the given event item.
+     *
+     * @param {calItemBase} eventItem - The event item.
+     *
+     * @return {Element} - The corresponding element, or undefined if none.
+     */
+    findElementForEventItem(eventItem) {
+      return this.eventDataMap.get(eventItem.hashId)?.element;
     }
 
-    findChunkForOccurrence(occurrence) {
-      for (let chunk of this.mEventBoxes) {
-        if (chunk.occurrence.hashId == occurrence.hashId) {
-          return chunk;
-        }
-      }
-
-      return null;
+    /**
+     * Return all the event items that are displayed in this columns.
+     *
+     * @return {calItemBase[]} - An array of all the displayed event items.
+     */
+    getAllEventItems() {
+      return Array.from(this.eventDataMap.values(), data => data.eventItem);
     }
 
     startLayoutBatchChange() {
@@ -343,37 +337,6 @@
       return ret;
     }
 
-    internalDeleteEvent(occurrence) {
-      let itemIndex = -1;
-      let occ;
-      for (let i in this.mEventInfos) {
-        occ = this.mEventInfos[i].event;
-        if (occ.hashId == occurrence.hashId) {
-          itemIndex = i;
-          break;
-        }
-      }
-
-      if (itemIndex == -1) {
-        return false;
-      }
-      delete this.mSelectedItemIds[occ.hashId];
-      this.mSelectedChunks = this.mSelectedChunks.filter(item => {
-        return !item.occurrence || item.occurrence.hashId != occurrence.hashId;
-      });
-      this.mEventInfos.splice(itemIndex, 1);
-      return true;
-    }
-
-    recalculateStartEndMinutes() {
-      for (let chunk of this.mEventInfos) {
-        let mins = this.getStartEndMinutesForOccurrence(chunk.event);
-        chunk.startMinute = mins.start;
-        chunk.endMinute = mins.end;
-      }
-
-      this.relayout();
-    }
     /**
      * This function returns the start and end minutes of the occurrence
      * part in the day of this column, moreover, the real start and end
@@ -430,54 +393,73 @@
       };
     }
 
-    createChunk(occurrence) {
-      let mins = this.getStartEndMinutesForOccurrence(occurrence);
+    /**
+     * Create or update a displayed calendar-event-box element for the given
+     * event item.
+     *
+     * @param {calItemBase} eventItem - The event item to create or update an
+     *   element for.
+     */
+    addEvent(eventItem) {
+      let eventData = this.eventDataMap.get(eventItem.hashId);
+      if (!eventData) {
+        // New event with no pre-existing data.
+        eventData = { selected: false };
+        this.eventDataMap.set(eventItem.hashId, eventData);
+      }
 
-      let chunk = {
-        startMinute: mins.start,
-        endMinute: mins.end,
-        event: occurrence,
-      };
-      return chunk;
-    }
+      // We set the eventItem property here, the rest will be updated in
+      // relayout().
+      // NOTE: If we already have an event with the given hashId, then the
+      // eventData.element will still refer to the previous display of the event
+      // until we call relayout().
+      eventData.eventItem = eventItem;
 
-    addEvent(occurrence) {
-      this.internalDeleteEvent(occurrence);
-
-      let chunk = this.createChunk(occurrence);
-      this.mEventInfos.push(chunk);
       if (this.mEventMapTimeout) {
         clearTimeout(this.mEventMapTimeout);
       }
 
       if (this.mCreatedNewEvent) {
-        this.mEventToEdit = occurrence;
+        this.mEventToEdit = eventItem;
       }
 
       this.mEventMapTimeout = setTimeout(() => this.relayout(), 5);
     }
 
-    deleteEvent(occurrence) {
-      if (this.internalDeleteEvent(occurrence)) {
+    /**
+     * Remove the displayed calendar-event-box element for the given event item
+     * from this column
+     *
+     * @param {calItemBase} eventItem - The event item to remove the element of.
+     */
+    deleteEvent(eventItem) {
+      if (this.eventDataMap.delete(eventItem.hashId)) {
         this.relayout();
       }
     }
 
-    clear() {
-      while (this.bgbox && this.bgbox.hasChildNodes()) {
+    _clearElements() {
+      while (this.bgbox.hasChildNodes()) {
         this.bgbox.lastChild.remove();
       }
-      while (this.topbox && this.topbox.hasChildNodes()) {
+      while (this.topbox.hasChildNodes()) {
         this.topbox.lastChild.remove();
       }
-      this.mSelectedChunks = [];
+    }
+
+    /**
+     * Clear the column of all events.
+     */
+    clear() {
+      this._clearElements();
+      this.eventDataMap.clear();
     }
 
     relayout() {
       if (this.mLayoutBatchCount > 0) {
         return;
       }
-      this.clear();
+      this._clearElements();
 
       let orient = this.getAttribute("orient");
       this.bgbox.setAttribute("orient", orient);
@@ -542,10 +524,9 @@
       // overlapping event areas).
       this.topbox.setAttribute("orient", otherOrient);
 
-      this.mEventMap = this.computeEventMap();
-      this.mEventBoxes = [];
+      let eventMap = this.computeEventMap();
 
-      if (!this.mEventMap.length) {
+      if (!eventMap) {
         return;
       }
 
@@ -560,8 +541,8 @@
       let columnCount = 1;
       let spanTotal = 0;
 
-      for (let layer of this.mEventMap) {
-        // The event-map (this.mEventMap) contains an array of layers.
+      for (let layer of eventMap) {
+        // The eventMap contains an array of layers.
         // For each layer we create a box below the stack just created above.
         // So each different layer lives in a box that's contained in the stack.
         let xulColumn = document.createXULElement("box");
@@ -639,12 +620,20 @@
               chunkBox.calendarView = this.calendarView;
               chunkBox.occurrence = chunk.event;
               chunkBox.parentColumn = this;
-              if (chunk.event.hashId in this.mSelectedItemIds) {
-                chunkBox.selected = true;
-                this.mSelectedChunks.push(chunkBox);
-              }
-
-              this.mEventBoxes.push(chunkBox);
+              let eventData = this.eventDataMap.get(chunk.event.hashId);
+              // An event item can technically be 'selected' between a call to
+              // addEvent and this method (because of the setTimeout). E.g.
+              // clicking the event in the unifinder tree will select the item
+              // through selectEvent. If the element wasn't yet created in that
+              // method, we set the selected status here as well.
+              //
+              // Similarly, if an event has the same hashId, we maintain its
+              // selection.
+              // NOTE: In this latter case we are relying on the fact that
+              // eventData.element.selected is never out of sync with
+              // eventData.selected.
+              chunkBox.selected = eventData.selected;
+              eventData.element = chunkBox;
 
               if (this.mEventToEdit && chunkBox.occurrence.hashId == this.mEventToEdit.hashId) {
                 boxToEdit = chunkBox;
@@ -708,6 +697,10 @@
       let blobs = [];
       let currentBlob = [];
 
+      if (!this.eventDataMap.size) {
+        return null;
+      }
+
       function sortByStart(aEventInfo, bEventInfo) {
         // If you pass in tasks without both entry and due dates, I will
         // kill you.
@@ -719,23 +712,30 @@
         }
         return startComparison;
       }
-      this.mEventInfos.forEach(aEventInfo => {
-        let item = aEventInfo.event.clone();
+
+      // An ordered list of data for each event we want to show. The contained
+      // fields are:
+      // - event:       The event that is to be displayed.
+      // - layoutStart: The displayed 'start'-datetime object of the event.
+      // - layoutEnd:   The displayed 'end'-datetime object of the event.
+      let eventList = Array.from(this.eventDataMap.values(), eventData => {
+        let item = eventData.eventItem;
         let start = item.startDate || item.entryDate || item.dueDate;
+        // Make sure the displayed start time is relative to the view's
+        // timezone.
         start = start.getInTimezone(this.mTimezone);
-        aEventInfo.layoutStart = start;
         let end = item.endDate || item.dueDate || item.entryDate;
         end = end.getInTimezone(this.mTimezone);
-        let secEnd = start.clone();
-        secEnd.addDuration(this.mMinDuration);
-        if (secEnd.nativeTime > end.nativeTime) {
-          aEventInfo.layoutEnd = secEnd;
-        } else {
-          aEventInfo.layoutEnd = end;
+        // Make sure the event has a minimum *displayed* end time to ensure the
+        // event has enough duration to be visible.
+        let minEnd = start.clone();
+        minEnd.addDuration(this.mMinDuration);
+        if (minEnd.nativeTime > end.nativeTime) {
+          end = minEnd;
         }
-        return aEventInfo;
+        return { event: item, layoutStart: start, layoutEnd: end };
       });
-      this.mEventInfos.sort(sortByStart);
+      eventList.sort(sortByStart);
 
       // The end time of the last ending event in the entire blob.
       let latestItemEnd;
@@ -752,12 +752,7 @@
       //         width to make room for the item.
       // Step 3: Give up and create a new column for the item.
       // (The steps are explained in more detail as we come to them).
-      for (let i in this.mEventInfos) {
-        let curItemInfo = {
-          event: this.mEventInfos[i].event,
-          layoutStart: this.mEventInfos[i].layoutStart,
-          layoutEnd: this.mEventInfos[i].layoutEnd,
-        };
+      for (let curItemInfo of eventList) {
         if (!latestItemEnd) {
           latestItemEnd = curItemInfo.layoutEnd;
         }
