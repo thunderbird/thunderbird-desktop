@@ -9388,6 +9388,7 @@ function InitEditor() {
     domWindowUtils.AGENT_SHEET
   );
 
+  window.content.browsingContext.allowJavascript = false;
   gMsgCompose.initEditor(editor, window.content);
 
   // Then, we enable related UI entries.
