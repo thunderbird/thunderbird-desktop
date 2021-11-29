@@ -1186,7 +1186,11 @@ var attachmentBucketController = {
 
     cmd_renameAttachment: {
       isEnabled() {
-        return gAttachmentBucket.selectedCount == 1;
+        return (
+          gAttachmentBucket.selectedCount == 1 &&
+          !gAttachmentBucket.selectedItem.uploading &&
+          !gAttachmentBucket.selectedItem.attachment?.sendViaCloud
+        );
       },
       doCommand() {
         RenameSelectedAttachment();
@@ -2207,7 +2211,7 @@ async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
   try {
     upload = await cloudFileAccount.uploadFile(window, file, attachment.name);
   } catch (ex) {
-    statusCode = ex;
+    statusCode = ex.result;
   }
 
   if (Components.isSuccessCode(statusCode)) {
