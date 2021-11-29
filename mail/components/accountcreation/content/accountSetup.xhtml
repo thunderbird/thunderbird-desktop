@@ -278,9 +278,9 @@
                  autocomplete="off"
                  class="input-field"
                  oninput="gAccountSetup.onInputPassword();" />
-          <img id="passwordInfo"
-               src="chrome://messenger/skin/icons/hidden.svg"
-               class="form-icon"
+            <img id="passwordInfo"
+                 src="chrome://messenger/skin/icons/hidden.svg"
+                 class="form-icon"
                data-l10n-id="account-setup-password-toggle"
                alt=""
                onclick="gAccountSetup.passwordToggle();" />
@@ -457,11 +457,11 @@
             </label>
             <div class="input-control">
               <input id="incomingHostname"
-                    type="text"
-                    placeholder="mail.example.com"
-                    onblur="gAccountSetup.onBlurHostname();"
-                    oninput="gAccountSetup.manualConfigChanged();"
-                    class="host uri-element input-field" />
+                     type="text"
+                     placeholder="mail.example.com"
+                     onchange="gAccountSetup.onChangeHostname();"
+                     oninput="gAccountSetup.manualConfigChanged();"
+                     class="host uri-element input-field" />
             </div>
           </aside>
 
@@ -475,7 +475,7 @@
               <input id="incomingPort"
                      type="number"
                      min="1" max="65535"
-                     onblur="gAccountSetup.onChangedPortIncoming();"
+                     onchange="gAccountSetup.onChangedPortIncoming();"
                      oninput="gAccountSetup.manualConfigChanged();"
                      class="input-field" />
             </aside>
@@ -491,7 +491,7 @@
               <select id="incomingSsl"
                       class="security"
                       onchange="gAccountSetup.onChangedSSLIncoming();">
-                <!-- Values defined in nsMsgSocketType. -->
+                <!-- Values defined in AccountConfig.jsm#94. -->
                 <option data-l10n-id="ssl-autodetect-option" value="0"></option>
                 <option data-l10n-id="ssl-noencryption-option" value="1"></option>
                 <option value="3">STARTTLS</option>
@@ -552,7 +552,7 @@
               <input id="outgoingHostname"
                      type="text"
                      placeholder="mail.example.com"
-                     onblur="gAccountSetup.onBlurHostname();"
+                     onchange="gAccountSetup.onChangeHostname();"
                      oninput="gAccountSetup.manualConfigChanged();"
                      class="input-field" />
             </div>
@@ -568,7 +568,7 @@
               <input id="outgoingPort"
                      type="number"
                      min="1" max="65535"
-                     onblur="gAccountSetup.onChangedPortOutgoing();"
+                     onchange="gAccountSetup.onChangedPortOutgoing();"
                      oninput="gAccountSetup.manualConfigChanged();"
                      class="input-field" />
             </aside>
