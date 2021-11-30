@@ -939,7 +939,7 @@ nsMsgCompose::Initialize(nsIMsgComposeParams* aParams,
     rv = composeService->RegisterComposeDocShell(aDocShell, this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  return CreateMessage(originalMsgURI.get(), type, composeFields);
+  return CreateMessage(originalMsgURI, type, composeFields);
 }
 
 NS_IMETHODIMP
@@ -1459,7 +1459,7 @@ nsresult nsMsgCompose::GetWrapLength(int32_t* aWrapLength) {
   return prefBranch->GetIntPref("mailnews.wraplength", aWrapLength);
 }
 
-nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
+nsresult nsMsgCompose::CreateMessage(const nsACString& originalMsgURI,
                                      MSG_ComposeType type,
                                      nsIMsgCompFields* compFields) {
   nsresult rv = NS_OK;
@@ -1487,7 +1487,6 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
       // content type to message/rfc822 in the forwarded message.
       msgUri.AppendLiteral("&realtype=message/rfc822");
     }
-    originalMsgURI = msgUri.get();
   }
 
   if (compFields) {
@@ -1581,12 +1580,12 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
   }
 
   // If we don't have an original message URI, nothing else to do...
-  if (!originalMsgURI || *originalMsgURI == 0) return NS_OK;
+  if (msgUri.IsEmpty()) return NS_OK;
 
   // store the original message URI so we can extract it after we send the
   // message to properly mark any disposition flags like replied or forwarded on
   // the message.
-  if (mOriginalMsgURI.IsEmpty()) mOriginalMsgURI = originalMsgURI;
+  if (mOriginalMsgURI.IsEmpty()) mOriginalMsgURI = msgUri;
 
   nsCOMPtr<nsIPrefBranch> prefs(do_GetService(NS_PREFSERVICE_CONTRACTID, &rv));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1597,8 +1596,7 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
       type == nsIMsgCompType::ReplyWithTemplate) {
     // We want to treat this message as a reference too
     nsCOMPtr<nsIMsgDBHdr> msgHdr;
-    rv = GetMsgDBHdrFromURI(nsDependentCString(originalMsgURI),
-                            getter_AddRefs(msgHdr));
+    rv = GetMsgDBHdrFromURI(msgUri, getter_AddRefs(msgHdr));
     if (NS_SUCCEEDED(rv)) {
       nsAutoCString messageId;
       msgHdr->GetMessageId(getter_Copies(messageId));
@@ -1633,8 +1631,6 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
   }
 
   // All other processing.
-  char* uriList = PL_strdup(originalMsgURI);
-  if (!uriList) return NS_ERROR_OUT_OF_MEMORY;
 
   // Check for the charset of the last displayed message, it
   // will be used for quoting and as override.
@@ -1651,6 +1647,7 @@ nsresult nsMsgCompose::CreateMessage(const char* originalMsgURI,
   // unless the default charset should be used.
 
   bool isFirstPass = true;
+  char* uriList = ToNewCString(msgUri);
   char* uri = uriList;
   char* nextUri;
   do {

@@ -554,7 +554,7 @@ nsresult nsMsgAttachmentHandler::SnarfMsgAttachment(
         mimeConverter->SetMimeOutputType(nsMimeOutput::nsMimeMessageDecrypt);
         mimeConverter->SetForwardInline(false);
         mimeConverter->SetIdentity(nullptr);
-        mimeConverter->SetOriginalMsgURI(nullptr);
+        mimeConverter->SetOriginalMsgURI(EmptyCString());
       }
 
       nsCOMPtr<nsIURI> aURL;
