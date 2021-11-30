@@ -38,7 +38,7 @@ class nsMailboxService : public nsIMailboxService,
   bool mPrintingOperation;
 
   // helper functions used by the service
-  nsresult PrepareMessageUrl(const char* aSrcMsgMailboxURI,
+  nsresult PrepareMessageUrl(const nsACString& aSrcMsgMailboxURI,
                              nsIUrlListener* aUrlListener,
                              nsMailboxAction aMailboxAction,
                              nsIMailboxUrl** aMailboxUrl,
@@ -48,13 +48,13 @@ class nsMailboxService : public nsIMailboxService,
                          nsISupports* aDisplayConsumer = nullptr);
 
   nsresult FetchMessage(
-      const char* aMessageURI, nsISupports* aDisplayConsumer,
+      const nsACString& aMessageURI, nsISupports* aDisplayConsumer,
       nsIMsgWindow* aMsgWindow, nsIUrlListener* aUrlListener,
       const char* aFileName, /* only used by open attachment */
       nsMailboxAction mailboxAction, bool aOverrideCharset, nsIURI** aURL);
 
-  nsresult DecomposeMailboxURI(const char* aMessageURI, nsIMsgFolder** aFolder,
-                               nsMsgKey* aMsgKey);
+  nsresult DecomposeMailboxURI(const nsACString& aMessageURI,
+                               nsIMsgFolder** aFolder, nsMsgKey* aMsgKey);
 };
 
 #endif /* nsMailboxService_h___ */

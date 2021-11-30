@@ -29,7 +29,7 @@ static nsresult GetMessage(nsIURI* aURL, nsIMsgDBHdr** message) {
   // get the uri.  first try and use the original message spec
   // if that fails, use the spec of nsIURI that we're called with
   nsCString uri;
-  rv = uriURL->GetOriginalSpec(getter_Copies(uri));
+  rv = uriURL->GetOriginalSpec(uri);
   if (NS_FAILED(rv) || uri.IsEmpty()) {
     rv = uriURL->GetUri(uri);
     NS_ENSURE_SUCCESS(rv, rv);

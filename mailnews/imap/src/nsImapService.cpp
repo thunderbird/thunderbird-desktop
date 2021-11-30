@@ -222,7 +222,7 @@ NS_IMETHODIMP nsImapService::GetUrlForUri(const nsACString& aMessageURI,
   nsAutoCString messageURI(aMessageURI);
 
   if (messageURI.Find("&type=application/x-message-display"_ns) != kNotFound)
-    return NS_NewURI(aURL, PromiseFlatCString(aMessageURI).get());
+    return NS_NewURI(aURL, aMessageURI);
 
   nsCOMPtr<nsIMsgFolder> folder;
   nsAutoCString msgKey;
@@ -302,8 +302,7 @@ NS_IMETHODIMP nsImapService::OpenAttachment(
 
   nsresult rv = DecomposeImapURI(uri, getter_AddRefs(folder), msgKey);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = nsParseImapMessageURI(uri.get(), folderURI, &key,
-                             getter_Copies(uriMimePart));
+  rv = nsParseImapMessageURI(uri, folderURI, &key, getter_Copies(uriMimePart));
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIImapMessageSink> imapMessageSink(
         do_QueryInterface(folder, &rv));
@@ -344,7 +343,7 @@ NS_IMETHODIMP nsImapService::OpenAttachment(
 }
 
 NS_IMETHODIMP nsImapService::FetchMimePart(
-    nsIURI* aURI, const char* aMessageURI, nsISupports* aDisplayConsumer,
+    nsIURI* aURI, const nsACString& aMessageURI, nsISupports* aDisplayConsumer,
     nsIMsgWindow* aMsgWindow, nsIUrlListener* aUrlListener, nsIURI** aURL) {
   nsCOMPtr<nsIMsgFolder> folder;
   nsAutoCString messageURI(aMessageURI);
@@ -431,8 +430,8 @@ NS_IMETHODIMP nsImapService::DisplayMessage(const nsACString& aMessageURI,
   NS_ENSURE_SUCCESS(rv, rv);
   if (msgKey.IsEmpty()) return NS_MSG_MESSAGE_NOT_FOUND;
 
-  rv = nsParseImapMessageURI(PromiseFlatCString(aMessageURI).get(), folderURI,
-                             &key, getter_Copies(mimePart));
+  rv = nsParseImapMessageURI(aMessageURI, folderURI, &key,
+                             getter_Copies(mimePart));
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIImapMessageSink> imapMessageSink(
         do_QueryInterface(folder, &rv));
@@ -654,23 +653,21 @@ nsresult nsImapService::FetchMimePart(
 // to support print rendering.
 //
 NS_IMETHODIMP nsImapService::DisplayMessageForPrinting(
-    const char* aMessageURI, nsISupports* aDisplayConsumer,
+    const nsACString& aMessageURI, nsISupports* aDisplayConsumer,
     nsIMsgWindow* aMsgWindow, nsIUrlListener* aUrlListener, nsIURI** aURL) {
   mPrintingOperation = true;
-  nsresult rv =
-      DisplayMessage(nsDependentCString(aMessageURI), aDisplayConsumer,
-                     aMsgWindow, aUrlListener, false, aURL);
+  nsresult rv = DisplayMessage(aMessageURI, aDisplayConsumer, aMsgWindow,
+                               aUrlListener, false, aURL);
   mPrintingOperation = false;
   return rv;
 }
 
-NS_IMETHODIMP nsImapService::CopyMessage(const char* aSrcMailboxURI,
+NS_IMETHODIMP nsImapService::CopyMessage(const nsACString& aSrcMailboxURI,
                                          nsIStreamListener* aMailboxCopy,
                                          bool moveMessage,
                                          nsIUrlListener* aUrlListener,
                                          nsIMsgWindow* aMsgWindow,
                                          nsIURI** aURL) {
-  NS_ENSURE_ARG_POINTER(aSrcMailboxURI);
   NS_ENSURE_ARG_POINTER(aMailboxCopy);
 
   nsresult rv;
@@ -680,8 +677,7 @@ NS_IMETHODIMP nsImapService::CopyMessage(const char* aSrcMailboxURI,
 
   nsCOMPtr<nsIMsgFolder> folder;
   nsAutoCString msgKey;
-  rv = DecomposeImapURI(nsDependentCString(aSrcMailboxURI),
-                        getter_AddRefs(folder), msgKey);
+  rv = DecomposeImapURI(aSrcMailboxURI, getter_AddRefs(folder), msgKey);
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIImapMessageSink> imapMessageSink(
         do_QueryInterface(folder, &rv));
@@ -692,9 +688,8 @@ NS_IMETHODIMP nsImapService::CopyMessage(const char* aSrcMailboxURI,
       bool hasMsgOffline = false;
       nsMsgKey key = strtoul(msgKey.get(), nullptr, 10);
 
-      rv = CreateStartOfImapUrl(nsDependentCString(aSrcMailboxURI),
-                                getter_AddRefs(imapUrl), folder, aUrlListener,
-                                urlSpec, hierarchyDelimiter);
+      rv = CreateStartOfImapUrl(aSrcMailboxURI, getter_AddRefs(imapUrl), folder,
+                                aUrlListener, urlSpec, hierarchyDelimiter);
       if (folder) {
         nsCOMPtr<nsIMsgMailNewsUrl> msgurl(do_QueryInterface(imapUrl));
         folder->HasMsgOffline(key, &hasMsgOffline);
@@ -837,8 +832,7 @@ nsresult nsImapService::DecomposeImapURI(const nsACString& aMessageURI,
   NS_ENSURE_ARG_POINTER(aMsgKey);
 
   nsAutoCString folderURI;
-  nsresult rv = nsParseImapMessageURI(PromiseFlatCString(aMessageURI).get(),
-                                      folderURI, aMsgKey, nullptr);
+  nsresult rv = nsParseImapMessageURI(aMessageURI, folderURI, aMsgKey, nullptr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMsgFolder> folder;
@@ -849,15 +843,14 @@ nsresult nsImapService::DecomposeImapURI(const nsACString& aMessageURI,
 }
 
 NS_IMETHODIMP nsImapService::SaveMessageToDisk(
-    const char* aMessageURI, nsIFile* aFile, bool aAddDummyEnvelope,
+    const nsACString& aMessageURI, nsIFile* aFile, bool aAddDummyEnvelope,
     nsIUrlListener* aUrlListener, nsIURI** aURL, bool canonicalLineEnding,
     nsIMsgWindow* aMsgWindow) {
   nsCOMPtr<nsIMsgFolder> folder;
   nsCOMPtr<nsIImapUrl> imapUrl;
   nsAutoCString msgKey;
 
-  nsresult rv = DecomposeImapURI(nsDependentCString(aMessageURI),
-                                 getter_AddRefs(folder), msgKey);
+  nsresult rv = DecomposeImapURI(aMessageURI, getter_AddRefs(folder), msgKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
   bool hasMsgOffline = false;
@@ -867,9 +860,8 @@ NS_IMETHODIMP nsImapService::SaveMessageToDisk(
 
   nsAutoCString urlSpec;
   char hierarchyDelimiter = GetHierarchyDelimiter(folder);
-  rv = CreateStartOfImapUrl(nsDependentCString(aMessageURI),
-                            getter_AddRefs(imapUrl), folder, aUrlListener,
-                            urlSpec, hierarchyDelimiter);
+  rv = CreateStartOfImapUrl(aMessageURI, getter_AddRefs(imapUrl), folder,
+                            aUrlListener, urlSpec, hierarchyDelimiter);
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIImapMessageSink> imapMessageSink(
         do_QueryInterface(folder, &rv));
@@ -1083,8 +1075,8 @@ NS_IMETHODIMP nsImapService::StreamMessage(
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (msgKey.IsEmpty()) return NS_MSG_MESSAGE_NOT_FOUND;
-  rv = nsParseImapMessageURI(PromiseFlatCString(aMessageURI).get(), folderURI,
-                             &key, getter_Copies(mimePart));
+  rv = nsParseImapMessageURI(aMessageURI, folderURI, &key,
+                             getter_Copies(mimePart));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIImapMessageSink> imapMessageSink(do_QueryInterface(folder, &rv));
@@ -1148,11 +1140,10 @@ NS_IMETHODIMP nsImapService::StreamMessage(
 }
 
 // this method streams a message's headers to the passed in consumer.
-NS_IMETHODIMP nsImapService::StreamHeaders(const char* aMessageURI,
+NS_IMETHODIMP nsImapService::StreamHeaders(const nsACString& aMessageURI,
                                            nsIStreamListener* aConsumer,
                                            nsIUrlListener* aUrlListener,
                                            bool aLocalOnly, nsIURI** aURL) {
-  NS_ENSURE_ARG_POINTER(aMessageURI);
   NS_ENSURE_ARG_POINTER(aConsumer);
   nsCOMPtr<nsIMsgFolder> folder;
   nsAutoCString msgKey;
@@ -1160,8 +1151,7 @@ NS_IMETHODIMP nsImapService::StreamHeaders(const char* aMessageURI,
   nsCString mimePart;
   nsMsgKey key;
 
-  nsresult rv = DecomposeImapURI(nsDependentCString(aMessageURI),
-                                 getter_AddRefs(folder), msgKey);
+  nsresult rv = DecomposeImapURI(aMessageURI, getter_AddRefs(folder), msgKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (msgKey.IsEmpty()) return NS_MSG_MESSAGE_NOT_FOUND;
@@ -1275,7 +1265,7 @@ nsresult nsImapService::CreateStartOfImapUrl(const nsACString& aImapURI,
       mailnewsUrl->RegisterListener(aUrlListener);
     nsCOMPtr<nsIMsgMessageUrl> msgurl(do_QueryInterface(*imapUrl));
     (*imapUrl)->SetExternalLinkUrl(false);
-    msgurl->SetUri(PromiseFlatCString(aImapURI));
+    msgurl->SetUri(aImapURI);
 
     urlSpec = "imap://";
     urlSpec.Append(escapedUsername);

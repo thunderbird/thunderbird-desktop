@@ -1144,7 +1144,7 @@ nsresult nsNNTPProtocol::ParseURL(nsIURI* aURL, nsCString& aGroup,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString spec;
-  rv = msgUrl->GetOriginalSpec(getter_Copies(spec));
+  rv = msgUrl->GetOriginalSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // if the original spec is non empty, use it to determine m_newsFolder and
@@ -1153,8 +1153,7 @@ nsresult nsNNTPProtocol::ParseURL(nsIURI* aURL, nsCString& aGroup,
     MOZ_LOG(NNTP, LogLevel::Info,
             ("(%p) original message spec = %s", this, spec.get()));
 
-    rv = nntpService->DecomposeNewsURI(spec.get(), getter_AddRefs(folder),
-                                       &m_key);
+    rv = nntpService->DecomposeNewsURI(spec, getter_AddRefs(folder), &m_key);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // since we are reading a message in this folder, we can set m_newsFolder
