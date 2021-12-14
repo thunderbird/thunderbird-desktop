@@ -3,7 +3,7 @@ at https://github.com/matrix-org/matrix-js-sdk/. Current version is v11.1.0.
 
 The following npm dependencies are included:
 
-* @matrix-org/olm: https://gitlab.matrix.org/matrix-org/olm/-/packages/10 v3.2.3
+* @matrix-org/olm: https://gitlab.matrix.org/matrix-org/olm/-/packages/10 v3.2.8
 * another-json: https://www.npmjs.com/package/another-json/ v0.2.0
 * base-x: https://www.npmjs.com/package/base-x v3.0.8
 * bs58: https://www.npmjs.com/package/bs58 v4.0.1
