@@ -2172,7 +2172,13 @@ function addConvertCloudMenuItems(aParentMenu, aAfterNodeId, aRadioGroup) {
     aParentMenu.appendChild(item);
   }
 }
-
+/**
+ * Initiate uploading a file to the cloud and handle errors.
+ *
+ * @param {nsIMsgAttachment} attachment - The cloud attachment.
+ * @param {nsIFile} file - The local file to be uploaded.
+ * @param {CloudFileAccount} cloudFileAccount - The account used for upload.
+ */
 async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
   // Notify the UI that we're starting the upload process: disable send commands
   // and show a "connecting" icon for the attachment.
@@ -2320,12 +2326,20 @@ async function uploadCloudAttachment(attachment, file, cloudFileAccount) {
       // Remove the loading throbber.
       attachmentItem.setAttribute("tooltiptext", attachmentItem.attachment.url);
       attachmentItem.uploading = false;
+      gAttachmentBucket.refreshAttachmentIcon(attachmentItem);
+
       attachmentItem.attachment.sendViaCloud = false;
       delete attachmentItem.cloudFileAccount;
 
       let event = document.createEvent("CustomEvent");
       event.initEvent("attachment-upload-failed", true, true, statusCode);
       attachmentItem.dispatchEvent(event);
+
+      // The attachment must be removed after dispatching the "attachment-upload-failed"
+      // event, otherwise the browser_notifications.js test will fail.
+      if (attachmentItem.removeOnUploadError) {
+        RemoveAttachments([attachmentItem]);
+      }
     }
   }
 
@@ -2429,6 +2443,7 @@ function attachToCloudNew(aAccount) {
 
     let i = 0;
     AddAttachments(attachments, function(aItem) {
+      aItem.removeOnUploadError = true;
       uploadCloudAttachment(attachments[i], files[i], aAccount);
       i++;
     });
@@ -6742,9 +6757,6 @@ function RemoveAttachments(items) {
 
   for (let i = items.length - 1; i >= 0; i--) {
     let item = items[i];
-    if (item.attachment.size != -1) {
-      gAttachmentsSize -= item.attachment.size;
-    }
 
     if (
       item.attachment.sendViaCloud &&
@@ -6757,7 +6769,12 @@ function RemoveAttachments(items) {
       }
       if (item.uploading) {
         let file = fileHandler.getFileFromURLSpec(originalUrl);
+        // Set the removeOnUploadError flag and let the cancelled upload handle
+        // the attachment removal, after all UI related to pending cloudFile
+        // uploads has been taken care of.
+        item.removeOnUploadError = true;
         item.cloudFileAccount.cancelFileUpload(window, file);
+        continue;
       } else {
         deleteCloudAttachment(
           item.attachment,
@@ -6765,6 +6782,10 @@ function RemoveAttachments(items) {
           item.cloudFileAccount
         );
       }
+    }
+
+    if (item.attachment.size != -1) {
+      gAttachmentsSize -= item.attachment.size;
     }
 
     removedAttachments.push(item.attachment);
