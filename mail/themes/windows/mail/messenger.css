@@ -478,20 +478,14 @@ treechildren::-moz-tree-indentation {
     border-inline-start-width: 0;
   }
 
-  :root:not(:-moz-lwtheme) treechildren::-moz-tree-row(hover) {
+  :root:not([lwt-tree]) treechildren::-moz-tree-row(hover) {
     border-color: transparent;
     background-color: transparent;
   }
 
-  :root:not(:-moz-lwtheme) treechildren::-moz-tree-row(selected) {
+  :root:not([lwt-tree]) treechildren::-moz-tree-row(selected) {
     border-color: transparent;
     background-color: -moz-cellhighlight;
-  }
-
-  :root:not(:-moz-lwtheme) tree:not(#threadTree) > treechildren::-moz-tree-row(selected, focus),
-  :root:not(:-moz-lwtheme) #threadTree > treechildren::-moz-tree-row(untagged, selected, focus) {
-    border-color: HighlightText;
-    background-color: Highlight;
   }
 }
 
