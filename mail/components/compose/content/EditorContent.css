@@ -74,3 +74,9 @@ img {
     color: #009fff;
   }
 }
+
+@media not (-moz-toolbar-prefers-color-scheme: dark) {
+  body {
+    background-color: Field;
+  }
+}
