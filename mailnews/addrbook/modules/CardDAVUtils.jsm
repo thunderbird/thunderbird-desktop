@@ -181,7 +181,7 @@ var CardDAVUtils = {
                 exceptionAdded: false,
                 securityInfo: secInfo,
                 prefetchCert: true,
-                location: finalChannel.originalURI.displayHost,
+                location: finalChannel.originalURI.displayHostPort,
               };
               Services.wm
                 .getMostRecentWindow("")
