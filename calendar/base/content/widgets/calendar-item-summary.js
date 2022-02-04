@@ -690,6 +690,11 @@
       link.href = "chrome://messenger/content/messengercompose/EditorContent.css";
       itemDescription.contentDocument.head.appendChild(link);
 
+      let editorLink = itemDescription.contentDocument.createElement("link");
+      editorLink.rel = "stylesheet";
+      editorLink.href = "chrome://messenger/content/messengercompose/calendar-event-editor.css";
+      itemDescription.contentDocument.head.appendChild(editorLink);
+
       // Layout the dialog,...
       requestAnimationFrame(() => {
         // ... then resize the iframe to fit its content. I don't know why, but the scroll height

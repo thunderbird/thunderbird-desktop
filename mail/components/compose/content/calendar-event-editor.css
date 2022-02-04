@@ -1,0 +1,13 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/*
+Styles to alter look calendar event Editor content window.
+*/
+
+@media not (-moz-toolbar-prefers-color-scheme: dark) {
+  body {
+    background-color: Field;
+  }
+}

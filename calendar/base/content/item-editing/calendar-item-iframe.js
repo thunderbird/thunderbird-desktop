@@ -630,6 +630,11 @@ function loadDialog(aItem) {
   link.href = "chrome://messenger/content/messengercompose/EditorContent.css";
   editorElement.contentDocument.head.appendChild(link);
 
+  let editorLink = editorElement.contentDocument.createElement("link");
+  editorLink.rel = "stylesheet";
+  editorLink.href = "chrome://messenger/content/messengercompose/calendar-event-editor.css";
+  editorElement.contentDocument.head.appendChild(editorLink);
+
   try {
     let checker = editor.getInlineSpellChecker(true);
     checker.enableRealTimeSpell = Services.prefs.getBoolPref("mail.spellcheck.inline", true);
