@@ -318,6 +318,10 @@ add_task(async function saveToDiskAlwaysAskPromptLocation() {
 
   let expectedFile = pathToNsFile(tmpD);
   expectedFile.append(`attachment${messageIndex}.test${messageIndex}`);
+  MockFilePicker.showCallback = function(instance) {
+    Assert.equal(instance.defaultString, expectedFile.leafName);
+    Assert.equal(instance.defaultExtension, `test${messageIndex}`);
+  };
   MockFilePicker.setFiles([expectedFile]);
   MockFilePicker.returnValue = Ci.nsIFilePicker.returnOK;
 
@@ -399,6 +403,10 @@ add_task(async function saveToDiskPromptLocation() {
 
   let expectedFile = pathToNsFile(tmpD);
   expectedFile.append(`attachment${messageIndex}.test${messageIndex}`);
+  MockFilePicker.showCallback = function(instance) {
+    Assert.equal(instance.defaultString, expectedFile.leafName);
+    Assert.equal(instance.defaultExtension, `test${messageIndex}`);
+  };
   MockFilePicker.setFiles([expectedFile]);
   MockFilePicker.returnValue = Ci.nsIFilePicker.returnOK;
 
