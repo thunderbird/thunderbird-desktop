@@ -13,6 +13,27 @@ const { ExtensionParent } = ChromeUtils.import(
 const { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 var MailE10SUtils = {
+  /**
+   * Loads about:blank in `browser` without switching remoteness. about:blank
+   * can load in a local browser or a remote browser, and `loadURI` will make
+   * it load in a remote browser even if you don't want it to.
+   *
+   * @param {nsIBrowser} browser
+   */
+  loadAboutBlank(browser) {
+    browser.loadURI("about:blank", {
+      triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+    });
+  },
+
+  /**
+   * Loads `uri` in `browser`, changing to a remote/local browser if necessary.
+   * @see `nsIWebNavigation.loadURI`
+   *
+   * @param {nsIBrowser} browser
+   * @param {string} uri
+   * @param {object} params
+   */
   loadURI(browser, uri, params = {}) {
     let multiProcess = browser.ownerGlobal.docShell.QueryInterface(
       Ci.nsILoadContext
