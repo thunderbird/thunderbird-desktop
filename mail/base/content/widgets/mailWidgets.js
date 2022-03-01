@@ -64,8 +64,8 @@
    * @param {string} headerVal - The text value of the header.
    */
   function setHeaderAriaLabel(headerEl, headerVal) {
-    let headerName =
-      headerEl.closest("tr")?.querySelector(".headerName")?.value;
+    let headerName = headerEl.closest("tr")?.querySelector(".headerName")
+      ?.value;
     if (!headerName) {
       throw new Error("Missing label for header");
     }
