@@ -20,44 +20,64 @@ const handlerService = Cc[
 const { MockFilePicker } = SpecialPowers;
 MockFilePicker.init(window);
 
-let tempDir = FileUtils.getDir("TmpD", [], false);
-let saveDestination = FileUtils.getFile("TmpD", ["saveDestination"]);
-saveDestination.createUnique(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
+let tmpD;
+let savePath;
 
-Services.prefs.setStringPref("browser.download.dir", saveDestination.path);
-Services.prefs.setIntPref("browser.download.folderList", 2);
-Services.prefs.setBoolPref("browser.download.useDownloadDir", true);
-Services.prefs.setIntPref("security.dialog_enable_delay", 0);
+let folder;
 
-let folder = create_folder("OpenAttachment");
-be_in_folder(folder);
-
-let mockedExecutable = FileUtils.getFile("TmpD", ["mockedExecutable"]);
-if (!mockedExecutable.exists()) {
-  mockedExecutable.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0o755);
-}
-
-let mockedHandlerApp = Cc[
-  "@mozilla.org/uriloader/local-handler-app;1"
-].createInstance(Ci.nsILocalHandlerApp);
-mockedHandlerApp.executable = mockedExecutable;
-mockedHandlerApp.detailedDescription = "Mocked handler app";
-
+let mockedHandlerApp;
 let mockedHandlers = new Set();
 
-registerCleanupFunction(function() {
+function pathToNsFile(path) {
+  let file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+  file.initWithPath(path);
+  return file;
+}
+
+add_task(async function setupModule(module) {
+  folder = await create_folder("OpenAttachment");
+  be_in_folder(folder);
+
+  // @see logic for tmpD in msgHdrView.js
+  tmpD = PathUtils.join(
+    Services.dirsvc.get("TmpD", Ci.nsIFile).path,
+    "pid-" + Services.appinfo.processID
+  );
+
+  savePath = PathUtils.join(tmpD, "saveDestination");
+  await IOUtils.makeDirectory(savePath);
+  Services.prefs.setStringPref("browser.download.dir", savePath);
+
+  Services.prefs.setIntPref("browser.download.folderList", 2);
+  Services.prefs.setBoolPref("browser.download.useDownloadDir", true);
+  Services.prefs.setIntPref("security.dialog_enable_delay", 0);
+
+  let mockedExecutable = FileUtils.getFile("TmpD", ["mockedExecutable"]);
+  if (!mockedExecutable.exists()) {
+    mockedExecutable.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0o755);
+  }
+
+  mockedHandlerApp = Cc[
+    "@mozilla.org/uriloader/local-handler-app;1"
+  ].createInstance(Ci.nsILocalHandlerApp);
+  mockedHandlerApp.executable = mockedExecutable;
+  mockedHandlerApp.detailedDescription = "Mocked handler app";
+  registerCleanupFunction(() => {
+    if (mockedExecutable.exists()) {
+      mockedExecutable.remove(true);
+    }
+  });
+});
+
+registerCleanupFunction(async function() {
   MockFilePicker.cleanup();
 
-  saveDestination.remove(true);
+  await IOUtils.remove(savePath, { recursive: true });
 
   Services.prefs.clearUserPref("browser.download.dir");
   Services.prefs.clearUserPref("browser.download.folderList");
   Services.prefs.clearUserPref("browser.download.useDownloadDir");
   Services.prefs.clearUserPref("security.dialog.dialog_enable_delay");
-
-  if (mockedExecutable.exists()) {
-    mockedExecutable.remove(true);
-  }
 
   for (let type of mockedHandlers) {
     let handlerInfo = mimeService.getFromTypeAndExtension(type, null);
@@ -65,6 +85,9 @@ registerCleanupFunction(function() {
       handlerService.remove(handlerInfo);
     }
   }
+
+  // Remove created folders.
+  folder.deleteSelf(null);
 });
 
 function createMockedHandler(type, preferredAction, alwaysAskBeforeHandling) {
@@ -168,8 +191,8 @@ async function clickWithoutDialog() {
   );
 }
 
-async function checkFileSaved(parent = saveDestination, leafName) {
-  let expectedFile = parent.clone();
+async function checkFileSaved(parentPath = savePath, leafName) {
+  let expectedFile = pathToNsFile(parentPath);
   if (leafName) {
     expectedFile.append(leafName);
   } else {
@@ -177,13 +200,13 @@ async function checkFileSaved(parent = saveDestination, leafName) {
   }
   await TestUtils.waitForCondition(
     () => expectedFile.exists(),
-    `attachment was saved to ${expectedFile.path}`
+    `attachment was not saved to ${expectedFile.path}`
   );
   Assert.ok(expectedFile.exists(), `${expectedFile.path} exists`);
   // Wait a moment in case the file is still locked for writing.
   // eslint-disable-next-line mozilla/no-arbitrary-setTimeout
   await new Promise(resolve => setTimeout(resolve, 250));
-  expectedFile.remove(false);
+  return expectedFile;
 }
 
 function checkHandler(type, preferredAction, alwaysAskBeforeHandling) {
@@ -220,7 +243,7 @@ function promiseFileOpened() {
 add_task(async function sanityCheck() {
   Assert.equal(
     await Downloads.getPreferredDownloadsDirectory(),
-    saveDestination.path,
+    savePath,
     "sanity check: correct downloads directory"
   );
 });
@@ -233,7 +256,8 @@ add_task(async function sanityCheck() {
 add_task(async function noHandler() {
   createAndLoadMessage("test/foo");
   await clickWithDialog({ rememberExpected: false, remember: true }, "accept");
-  await checkFileSaved();
+  let file = await checkFileSaved();
+  file.remove(false);
   checkHandler("test/foo", Ci.nsIHandlerInfo.saveToDisk, false);
 });
 
@@ -244,7 +268,8 @@ add_task(async function noHandler() {
 add_task(async function noHandlerNoSave() {
   createAndLoadMessage("test/bar");
   await clickWithDialog({ rememberExpected: false, remember: false }, "accept");
-  await checkFileSaved();
+  let file = await checkFileSaved();
+  file.remove(false);
   checkHandler("test/bar", Ci.nsIHandlerInfo.saveToDisk, true);
 });
 
@@ -291,13 +316,14 @@ add_task(async function saveToDiskAlwaysAskPromptLocation() {
   );
   createAndLoadMessage("test/saveToDisk-true");
 
-  let expectedFile = tempDir.clone();
+  let expectedFile = pathToNsFile(tmpD);
   expectedFile.append(`attachment${messageIndex}.test${messageIndex}`);
   MockFilePicker.setFiles([expectedFile]);
   MockFilePicker.returnValue = Ci.nsIFilePicker.returnOK;
 
   await clickWithDialog({ rememberExpected: false }, "accept");
-  await checkFileSaved(tempDir);
+  let file = await checkFileSaved(tmpD);
+  file.remove(false);
   Assert.ok(MockFilePicker.shown, "file picker was shown");
 
   MockFilePicker.reset();
@@ -353,7 +379,8 @@ add_task(async function saveToDisk() {
   createMockedHandler("test/saveToDisk-false", saveToDisk, false);
   createAndLoadMessage("test/saveToDisk-false");
   await clickWithoutDialog();
-  await checkFileSaved();
+  let file = await checkFileSaved();
+  file.remove(false);
 });
 
 /**
@@ -370,20 +397,17 @@ add_task(async function saveToDiskPromptLocation() {
   );
   createAndLoadMessage("test/saveToDisk-false");
 
-  let expectedFile = tempDir.clone();
+  let expectedFile = pathToNsFile(tmpD);
   expectedFile.append(`attachment${messageIndex}.test${messageIndex}`);
   MockFilePicker.setFiles([expectedFile]);
   MockFilePicker.returnValue = Ci.nsIFilePicker.returnOK;
 
   await clickWithoutDialog();
-  await checkFileSaved(tempDir);
+  let file = await checkFileSaved(tmpD);
+  file.remove(false);
   Assert.ok(MockFilePicker.shown, "file picker was shown");
 
   MockFilePicker.reset();
   Services.prefs.setBoolPref("browser.download.useDownloadDir", true);
 });
 
-registerCleanupFunction(() => {
-  // Remove created folders.
-  folder.deleteSelf(null);
-});
