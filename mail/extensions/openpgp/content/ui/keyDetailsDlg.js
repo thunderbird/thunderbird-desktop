@@ -540,7 +540,7 @@ SigListView.prototype = {
   },
 };
 
-function createSubkeyItem(subkey) {
+function createSubkeyItem(mainKeyIsSecret, subkey) {
   // Get expiry state of this subkey
   let expire;
   if (subkey.keyTrust === "r") {
@@ -552,7 +552,8 @@ function createSubkeyItem(subkey) {
   }
 
   let subkeyType = "";
-  if (subkey.secretAvailable && !subkey.secretMaterial) {
+
+  if (mainKeyIsSecret && (!subkey.secretAvailable || !subkey.secretMaterial)) {
     subkeyType = "(!) ";
   }
   if (subkey.type === "pub") {
@@ -617,10 +618,12 @@ function createSubkeyItem(subkey) {
 function SubkeyListView(keyObj) {
   this.subkeys = [];
   this.rowCount = keyObj.subKeys.length + 1;
-  this.subkeys.push(createSubkeyItem(keyObj));
+  this.subkeys.push(createSubkeyItem(keyObj.secretAvailable, keyObj));
 
   for (let i = 0; i < keyObj.subKeys.length; i++) {
-    this.subkeys.push(createSubkeyItem(keyObj.subKeys[i]));
+    this.subkeys.push(
+      createSubkeyItem(keyObj.secretAvailable, keyObj.subKeys[i])
+    );
   }
 }
 
