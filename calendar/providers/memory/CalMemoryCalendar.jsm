@@ -61,7 +61,7 @@ CalMemoryCalendar.prototype = {
   },
 
   get shortName() {
-    return this.displayName();
+    return this.displayName;
   },
 
   createCalendar() {
