@@ -41,3 +41,13 @@
 .additional-key-identity > richlistitem {
   padding: 2px 4px;
 }
+
+.tail-with-learn-more {
+  margin-inline-end: 10px;
+  font-weight: bold;
+}
+
+#key-detail-has-insecure {
+  max-width: 50em;
+  margin-inline: 2em;
+}

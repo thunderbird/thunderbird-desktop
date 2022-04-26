@@ -279,6 +279,10 @@ async function reloadData(firstLoad) {
     document.l10n.setAttributes(acceptanceIntro2, acceptanceIntro2Text);
   }
 
+  document.getElementById(
+    "key-detail-has-insecure"
+  ).hidden = !keyObj.hasIgnoredAttributes;
+
   // Resize the dialog only if the data was changed since the first load.
   if (!firstLoad) {
     resizeDialog();

@@ -139,6 +139,7 @@ class EnigmailKeyObj {
       "secretMaterial",
       "photoAvailable",
       "userId",
+      "hasIgnoredAttributes",
     ];
     for (let i of ATTRS) {
       if (i in keyData) {
@@ -159,7 +160,7 @@ class EnigmailKeyObj {
   get signatures() {
     if (this._sigList === null) {
       const cApi = EnigmailCryptoAPI();
-      this._sigList = cApi.sync(cApi.getKeySignatures(this.keyId));
+      this._sigList = cApi.sync(cApi.getKeyObjSignatures(this));
     }
 
     return this._sigList;
