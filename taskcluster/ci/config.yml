@@ -253,10 +253,10 @@ workers:
             os: windows
             worker-type: '{alias}'
         win10-(32|64)-2004:
-             provisioner: comm-t
-             implementation: generic-worker
-             os: windows
-             worker-type: '{alias}'
+            provisioner: comm-t
+            implementation: generic-worker
+            os: windows
+            worker-type: '{alias}'
         succeed:
             provisioner: built-in
             implementation: succeed
