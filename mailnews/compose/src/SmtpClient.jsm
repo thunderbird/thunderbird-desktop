@@ -913,7 +913,7 @@ class SmtpClient {
 
     if (
       command.data.match(/\bCLIENTID\b/) &&
-      (this._secureTransport ||
+      (this._secureMode ||
         // For test purpose.
         ["localhost", "127.0.0.1", "::1"].includes(this._server.hostname)) &&
       this._server.clientidEnabled &&
