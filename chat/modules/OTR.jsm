@@ -1382,8 +1382,6 @@ var OTR = {
     let newMessage = new ctypes.char.ptr();
     let tlvs = new OTRLib.OtrlTLV.ptr();
 
-    this.log("pre receiving: " + im.displayMessage);
-
     let err = OTRLib.otrl_message_receiving(
       this.userstate,
       this.uiOps.address(),
@@ -1424,8 +1422,6 @@ var OTR = {
     if (err) {
       this.log("error (" + err + ") ignoring: " + im.displayMessage);
       im.cancelled = true; // ignore
-    } else {
-      this.log("post receiving: " + im.displayMessage);
     }
 
     OTRLib.otrl_tlv_free(tlvs);
