@@ -229,6 +229,7 @@ add_task(async function testEncryptAndOrSignResults() {
       noOutput: false,
       uiFlags: EnigmailConstants.UI_PGP_MIME,
       verifyOnly: false,
+      msgDate: null,
     };
 
     let { exitCode, decryptedData } = await RNP.decrypt(
@@ -260,6 +261,7 @@ add_task(async function testDecryptAttachment() {
     let encrypted = EnigmailFiles.readFile(do_get_file(filename));
     let options = {};
     options.fromAddr = "";
+    options.msgDate = null;
     let result = await RNP.decrypt(encrypted, options);
 
     Assert.ok(!result.exitCode, `${filename}: RNP.decrypt() exited ok`);

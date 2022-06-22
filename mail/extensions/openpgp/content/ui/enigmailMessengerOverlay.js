@@ -1236,6 +1236,7 @@ Enigmail.msg = {
 
     await Enigmail.msg.messageParseCallback(
       msgText,
+      EnigmailDecryption.getMsgDate(window),
       contentEncoding,
       charset,
       interactive,
@@ -1306,6 +1307,7 @@ Enigmail.msg = {
 
   async messageParseCallback(
     msgText,
+    msgDate,
     contentEncoding,
     charset,
     interactive,
@@ -1394,6 +1396,7 @@ Enigmail.msg = {
       window,
       uiFlags,
       msgText,
+      msgDate,
       signatureObj,
       exitCodeObj,
       statusFlagsObj,
@@ -1482,6 +1485,7 @@ Enigmail.msg = {
         msgText = EnigmailData.convertFromUnicode(msgText, "UTF-8");
         await Enigmail.msg.messageParseCallback(
           msgText,
+          msgDate,
           contentEncoding,
           charset,
           interactive,
@@ -1510,6 +1514,7 @@ Enigmail.msg = {
           head,
           tail,
           msgUriSpec,
+          msgDate,
           Enigmail.msg.messageParseCallback,
           isAuto
         );
@@ -1518,6 +1523,7 @@ Enigmail.msg = {
         msgText = EnigmailData.convertFromUnicode(msgText, "UTF-8");
         await Enigmail.msg.messageParseCallback(
           msgText,
+          msgDate,
           contentEncoding,
           charset,
           interactive,
@@ -2193,6 +2199,7 @@ Enigmail.msg = {
     head,
     tail,
     msgUriSpec,
+    msgDate,
     callbackFunction,
     isAuto
   ) {
@@ -2279,6 +2286,7 @@ Enigmail.msg = {
           Enigmail.msg
             .messageParseCallback(
               data,
+              msgDate,
               contentEncoding,
               charset,
               interactive,

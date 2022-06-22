@@ -1278,6 +1278,7 @@ var RNP = {
         await this.getVerifyDetails(
           RNPLib.ffi,
           options.fromAddr,
+          options.msgDate,
           verify_op,
           result
         );
@@ -1314,7 +1315,7 @@ var RNP = {
     return result;
   },
 
-  async getVerifyDetails(ffi, fromAddr, verify_op, result) {
+  async getVerifyDetails(ffi, fromAddr, msgDate, verify_op, result) {
     if (!fromAddr) {
       // We cannot correctly verify without knowing the fromAddr.
       // This scenario is reached when quoting an encrypted MIME part.
@@ -1358,7 +1359,6 @@ var RNP = {
       result.exitCode = -1;
     }
 
-    let query_times = true;
     let query_signer = true;
 
     switch (sig_status) {
@@ -1378,12 +1378,11 @@ var RNP = {
         break;
       default:
         result.statusFlags |= EnigmailConstants.BAD_SIGNATURE;
-        query_times = false;
         query_signer = false;
         break;
     }
 
-    if (query_times) {
+    if (msgDate && result.statusFlags & EnigmailConstants.GOOD_SIGNATURE) {
       let created = new ctypes.uint32_t();
       let expires = new ctypes.uint32_t(); //relative
 
@@ -1395,6 +1394,20 @@ var RNP = {
         )
       ) {
         throw new Error("rnp_op_verify_signature_get_times failed");
+      }
+
+      let sigCreatedDate = new Date(created.value * 1000);
+
+      let timeDelta;
+      if (sigCreatedDate > msgDate) {
+        timeDelta = sigCreatedDate - msgDate;
+      } else {
+        timeDelta = msgDate - sigCreatedDate;
+      }
+
+      if (timeDelta > 1000 * 60 * 60 * 1) {
+        result.statusFlags &= ~EnigmailConstants.GOOD_SIGNATURE;
+        result.statusFlags |= EnigmailConstants.MSG_SIG_INVALID;
       }
     }
 
@@ -1570,6 +1583,7 @@ var RNP = {
     let haveSignature = await this.getVerifyDetails(
       RNPLib.ffi,
       options.fromAddr,
+      options.msgDate,
       verify_op,
       result
     );
