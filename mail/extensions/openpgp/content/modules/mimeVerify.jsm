@@ -600,7 +600,9 @@ MimeVerify.prototype = {
       let options = {
         fromAddr: EnigmailDecryption.getFromAddr(win),
         mimeSignatureData: this.sigData,
+        msgDate: EnigmailDecryption.getMsgDate(win),
       };
+
       const cApi = EnigmailCryptoAPI();
 
       // ensure all lines end with CRLF as specified in RFC 3156, section 5

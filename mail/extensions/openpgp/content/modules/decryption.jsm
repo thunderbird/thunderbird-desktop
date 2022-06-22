@@ -92,8 +92,7 @@ var EnigmailDecryption = {
       win.gFolderDisplay &&
       win.gFolderDisplay.selectedMessage
     ) {
-      fromAddr =
-        win && win.gFolderDisplay && win.gFolderDisplay.selectedMessage.author;
+      fromAddr = win.gFolderDisplay.selectedMessage.author;
     }
     if (fromAddr) {
       try {
@@ -107,6 +106,30 @@ var EnigmailDecryption = {
     }
 
     return fromAddr;
+  },
+
+  getMsgDate(win) {
+    // Sometimes the "dateInSeconds" attribute is missing.
+    // "date" appears to be available more reliably, and it appears
+    // to be in microseconds (1/1000000 second). Convert
+    // to milliseconds (1/1000 of a second) for conversion to Date.
+    if (
+      win &&
+      win.gFolderDisplay &&
+      win.gFolderDisplay.messageDisplay &&
+      win.gFolderDisplay.messageDisplay.displayedMessage
+    ) {
+      return new Date(
+        win.gFolderDisplay.messageDisplay.displayedMessage.date / 1000
+      );
+    } else if (
+      win &&
+      win.gFolderDisplay &&
+      win.gFolderDisplay.selectedMessage
+    ) {
+      return new Date(win.gFolderDisplay.selectedMessage.date / 1000);
+    }
+    return null;
   },
 
   /**
@@ -132,6 +155,7 @@ var EnigmailDecryption = {
     parent,
     uiFlags,
     cipherText,
+    msgDate,
     signatureObj,
     exitCodeObj,
     statusFlagsObj,
@@ -305,6 +329,7 @@ var EnigmailDecryption = {
       noOutput: false,
       maxOutputLength: maxOutput,
       uiFlags,
+      msgDate,
     };
     const cApi = EnigmailCryptoAPI();
     let result = cApi.sync(cApi.decrypt(pgpBlock, options));
@@ -446,6 +471,7 @@ var EnigmailDecryption = {
           parent,
           uiFlagsDeep,
           pgpBlock,
+          null, // date
           signatureObj,
           exitCodeObj,
           statusFlagsObj,
@@ -479,6 +505,7 @@ var EnigmailDecryption = {
         parent,
         uiFlags,
         text,
+        null, // date
         status.signature,
         status.exitCode,
         status.statusFlags,
