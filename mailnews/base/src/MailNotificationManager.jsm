@@ -358,8 +358,6 @@ class MailNotificationManager {
     // The use_system_alert pref is false or showAlert somehow failed, use the
     // customized alert window.
     this._showCustomizedAlert(folder);
-
-    this._folderBiffTime.set(folder, Date.now());
   }
 
   /**
@@ -404,6 +402,7 @@ class MailNotificationManager {
       args
     );
     this._customizedAlertShown = true;
+    this._folderBiffTime.set(folder, Date.now());
   }
 
   /**
