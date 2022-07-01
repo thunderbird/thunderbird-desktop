@@ -2397,7 +2397,7 @@ var RNP = {
     await this.saveKeyRings();
   },
 
-  _getKeyHandleByKeyIdOrFingerprint(ffi, id, findPrimary) {
+  getKeyHandleByKeyIdOrFingerprint(ffi, id) {
     if (!id.startsWith("0x")) {
       throw new Error("unexpected identifier " + id);
     } else {
@@ -2419,32 +2419,12 @@ var RNP = {
       throw new Error("rnp_locate_key failed, " + type + ", " + id);
     }
 
-    if (!key.isNull() && findPrimary) {
-      let is_subkey = new lazy.ctypes.bool();
-      if (RNPLib.rnp_key_is_sub(key, is_subkey.address())) {
-        throw new Error("rnp_key_is_sub failed");
-      }
-      if (is_subkey.value) {
-        let primaryKey = this.getPrimaryKeyHandleFromSub(ffi, key);
-        RNPLib.rnp_key_handle_destroy(key);
-        key = primaryKey;
-      }
-    }
-
     if (!key.isNull() && this.isBadKey(key)) {
       RNPLib.rnp_key_handle_destroy(key);
       key = new RNPLib.rnp_key_handle_t();
     }
 
     return key;
-  },
-
-  getPrimaryKeyHandleByKeyIdOrFingerprint(ffi, id) {
-    return this._getKeyHandleByKeyIdOrFingerprint(ffi, id, true);
-  },
-
-  getKeyHandleByKeyIdOrFingerprint(ffi, id) {
-    return this._getKeyHandleByKeyIdOrFingerprint(ffi, id, false);
   },
 
   async getKeyHandleByIdentifier(ffi, id) {
@@ -3102,13 +3082,12 @@ var RNP = {
    * modified. The result key will be streamed to the given output.
    *
    * @param {rnp_key_handle_t} expKey - RNP key handle
+   * @param {string} id - key ID or fingerprint
    * @param {boolean} keepUserIDs - if true keep users IDs
    * @param {rnp_output_t} out_binary - output stream handle
    *
    */
-  export_pubkey_strip_sigs_uids(expKey, keepUserIDs, out_binary) {
-    let expKeyId = this.getKeyIDFromHandle(expKey);
-
+  export_pubkey_strip_sigs_uids(expKey, id, keepUserIDs, out_binary) {
     let tempFFI = new RNPLib.rnp_ffi_t();
     if (RNPLib.rnp_ffi_create(tempFFI.address(), "GPG", "GPG")) {
       throw new Error("Couldn't initialize librnp.");
@@ -3157,10 +3136,7 @@ var RNP = {
       throw new Error("rnp_import_keys failed");
     }
 
-    let tempKey = this.getKeyHandleByKeyIdOrFingerprint(
-      tempFFI,
-      "0x" + expKeyId
-    );
+    let tempKey = this.getKeyHandleByKeyIdOrFingerprint(tempFFI, id);
 
     // Strip
 
@@ -3256,12 +3232,12 @@ var RNP = {
 
     if (idArrayReduced) {
       for (let id of idArrayReduced) {
-        let key = this.getPrimaryKeyHandleByKeyIdOrFingerprint(RNPLib.ffi, id);
+        let key = this.getKeyHandleByKeyIdOrFingerprint(RNPLib.ffi, id);
         if (key.isNull()) {
           continue;
         }
 
-        this.export_pubkey_strip_sigs_uids(key, true, out_binary);
+        this.export_pubkey_strip_sigs_uids(key, id, true, out_binary);
 
         RNPLib.rnp_key_handle_destroy(key);
       }
@@ -3269,12 +3245,12 @@ var RNP = {
 
     if (idArrayMinimal) {
       for (let id of idArrayMinimal) {
-        let key = this.getPrimaryKeyHandleByKeyIdOrFingerprint(RNPLib.ffi, id);
+        let key = this.getKeyHandleByKeyIdOrFingerprint(RNPLib.ffi, id);
         if (key.isNull()) {
           continue;
         }
 
-        this.export_pubkey_strip_sigs_uids(key, false, out_binary);
+        this.export_pubkey_strip_sigs_uids(key, id, false, out_binary);
 
         RNPLib.rnp_key_handle_destroy(key);
       }
