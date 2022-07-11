@@ -377,6 +377,7 @@ var mailContextMenu = {
         topChromeWindow.saveURL(
           this.context.imageInfo.currentSrc,
           null,
+          null,
           "SaveImageTitle",
           false,
           null,
