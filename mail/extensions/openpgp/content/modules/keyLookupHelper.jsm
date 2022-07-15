@@ -95,7 +95,8 @@ var KeyLookupHelper = {
             foundUnchanged = true;
           }
         } else {
-          if (mode == "interactive-import") {
+          keyList = keyList.filter(k => k.userIds.length > 1);
+          if (keyList.length && mode == "interactive-import") {
             keyImported = await EnigmailKeyRing.importKeyDataWithConfirmation(
               window,
               keyList,
@@ -245,7 +246,7 @@ var KeyLookupHelper = {
             } else {
               wkdFoundUnchanged = true;
             }
-          } else {
+          } else if (wkdKey.userIds.length > 0) {
             newKeys.push(wkdKey);
           }
         }
