@@ -1,7 +1,7 @@
 ---
 GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
 GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/releases/mozilla-esr102
-GECKO_HEAD_REF:  FIREFOX_ESR_102_0_X_RELBRANCH
+GECKO_HEAD_REF: FIREFOX_ESR_102_0_X_RELBRANCH
 GECKO_HEAD_REV: 0faf039283ce419e48c558b422bd6d9c1c882c75
 
 ### For comm-central
