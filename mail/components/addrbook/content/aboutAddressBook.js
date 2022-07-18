@@ -1262,6 +1262,8 @@ class AbTableCardListrow extends customElements.get("tree-view-listrow") {
 
     super.connectedCallback();
 
+    this.setAttribute("draggable", "true");
+
     for (let [column] of AbTableCardListrow.COLUMNS) {
       this.appendChild(document.createElement("div")).classList.add(
         `${column.toLowerCase()}-column`
