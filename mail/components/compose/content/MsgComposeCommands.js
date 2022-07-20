@@ -178,10 +178,8 @@ var gSelectedTechnologyIsPGP = false;
 // us know what value we should use for restoring.
 
 var gSendSigned = false;
-var gSendSignedInitial = false;
 
 var gAttachMyPublicPGPKey = false;
-var gAttachMyPublicPGPKeyInitial = false;
 
 var gSendEncrypted = false;
 var gSendEncryptedInitial = false;
@@ -905,6 +903,26 @@ var defaultController = {
       doCommand() {
         AttachPage();
       },
+    },
+
+    cmd_attachVCard: {
+      isEnabled() {
+        let cmd = document.getElementById("cmd_attachVCard");
+        cmd.setAttribute("checked", gCurrentIdentity?.attachVCard);
+        return (
+          !!gCurrentIdentity?.attachVCard && !!gCurrentIdentity?.escapedVCard
+        );
+      },
+      doCommand() {},
+    },
+
+    cmd_attachPublicKey: {
+      isEnabled() {
+        let cmd = document.getElementById("cmd_attachPublicKey");
+        cmd.setAttribute("checked", gAttachMyPublicPGPKey);
+        return isPgpConfigured();
+      },
+      doCommand() {},
     },
 
     cmd_toggleAttachmentPane: {
@@ -1675,16 +1693,16 @@ function toggleGlobalSignMessage() {
   gSendSigned = !gSendSigned;
   gUserTouchedSendSigned = true;
 
-  updateAttachedKeyAfterSigningChange();
+  updateAttachMyPubKey();
   showSendEncryptedAndSigned();
 }
 
-function updateAttachedKeyAfterSigningChange() {
+function updateAttachMyPubKey() {
   if (!gUserTouchedAttachMyPubKey) {
     if (gSendSigned) {
       gAttachMyPublicPGPKey = gCurrentIdentity.attachPgpKey;
     } else {
-      gAttachMyPublicPGPKey = gAttachMyPublicPGPKeyInitial;
+      gAttachMyPublicPGPKey = false;
     }
   }
 }
@@ -1695,7 +1713,7 @@ function toggleEncryptMessage() {
 
   gSendEncrypted = !gSendEncrypted;
 
-  updateE2eeOptions(gSendEncrypted, true);
+  updateE2eeOptions(gSendEncrypted);
   gOptionalEncryption = gSendEncrypted;
 
   if (oldSendEnc != gSendEncrypted || oldOptEnc != gOptionalEncryption) {
@@ -1708,7 +1726,7 @@ function toggleEncryptMessage() {
 }
 
 function toggleAttachMyPublicKey(target) {
-  gAttachMyPublicPGPKey = !gAttachMyPublicPGPKey;
+  gAttachMyPublicPGPKey = target.getAttribute("checked") != "true";
   target.setAttribute("checked", gAttachMyPublicPGPKey);
   gUserTouchedAttachMyPubKey = true;
 }
@@ -2015,7 +2033,7 @@ function updateOptionItems() {
   goUpdateCommand("cmd_toggleReturnReceipt");
 }
 
-function updateAttachmentItems(context = null) {
+function updateAttachmentItems() {
   goUpdateCommand("cmd_toggleAttachmentPane");
   goUpdateCommand("cmd_attachCloud");
   goUpdateCommand("cmd_convertCloud");
@@ -2027,12 +2045,8 @@ function updateAttachmentItems(context = null) {
   updateReorderAttachmentsItems();
   goUpdateCommand("cmd_selectAll");
   goUpdateCommand("cmd_openAttachment");
-
-  if (context) {
-    let box = document.getElementById(context + "_attachPublicKey");
-    box.setAttribute("hidden", !isPgpConfigured());
-    box.setAttribute("checked", gAttachMyPublicPGPKey);
-  }
+  goUpdateCommand("cmd_attachVCard");
+  goUpdateCommand("cmd_attachPublicKey");
 }
 
 function updateReorderAttachmentsItems() {
@@ -3473,7 +3487,7 @@ async function updateEncryptionReminder(canEnableOpenPGP, canEnableSMIME) {
         "l10n-id": "can-e2e-encrypt-button",
         callback() {
           gSelectedTechnologyIsPGP = canEnableOpenPGP;
-          updateE2eeOptions(true, true);
+          updateE2eeOptions(true);
           updateEncryptionOptions();
           checkRecipientKeys();
           return true;
@@ -3516,7 +3530,7 @@ function updateKeyNotifications(emailsWithMissingKeys) {
   buttons.push({
     "l10n-id": "key-notification-disable-encryption",
     callback() {
-      updateE2eeOptions(false, true);
+      updateE2eeOptions(false);
       return true;
     },
   });
@@ -4435,6 +4449,9 @@ async function ComposeStartup() {
   document
     .getElementById("cmd_attachVCard")
     .setAttribute("checked", gMsgCompose.compFields.attachVCard);
+  document
+    .getElementById("cmd_attachPublicKey")
+    .setAttribute("checked", gAttachMyPublicPGPKey);
   toggleAttachmentReminder(gMsgCompose.compFields.attachmentReminder);
   initSendFormatMenu();
 
@@ -4844,64 +4861,14 @@ function adjustSignEncryptAfterIdentityChanged(prevIdentity) {
     gSelectedTechnologyIsPGP = true;
   }
 
-  if (!prevIdentity) {
-    if (configuredOpenPGP || configuredSMIME) {
-      // Set default state for encryption and signature based on
-      // "encryptionPolicy" and "sign_mail".
-      updateE2eeOptions(gCurrentIdentity.encryptionPolicy > 0, false);
-    }
-
-    gSendEncryptedInitial = gSendEncrypted;
-    gSendSignedInitial = gCurrentIdentity.signMail;
-    gAttachMyPublicPGPKeyInitial = gAttachMyPublicPGPKey;
-
-    // automatic changes after this line
-    if (gSendSigned && gSelectedTechnologyIsPGP) {
-      gAttachMyPublicPGPKey = gCurrentIdentity.attachPgpKey;
-    }
-
-    if (gSelectedTechnologyIsPGP) {
-      gEncryptSubject = gCurrentIdentity.protectSubject;
-    }
-  } else {
-    // Encrypt if the new identity asks for it.
-    //
-    // If the user has had encryption enabled for a message initially,
-    // then the user might have seen status in the user interface,
-    // and might "know and assume" that encryption is enabled.
-    // We should not surprise the user, and switching to a different
-    // identity should never automatically disable encryption, even
-    // if the new identity isn't configured for encryption. The user
-    // should be required to acknowledge that encryption will no longer
-    // be used, by deliberately disabling it.
-    if (!gSendEncrypted) {
-      let newDefaultEncrypted = gCurrentIdentity.encryptionPolicy > 0;
-
-      if (newDefaultEncrypted) {
-        updateE2eeOptions(true, false);
-        gSendEncryptedInitial = gSendEncrypted;
-      }
-    }
-
-    // Sign if the new identity is configured to sign unencrypted emails,
-    // unless the user manually modified signing.
-    let newDefaultSigned = gCurrentIdentity.signMail;
-    if (!gSendSigned && !gUserTouchedSendSigned) {
-      if (newDefaultSigned) {
-        gSendSigned = true;
-        gSendSignedInitial = gSendSigned;
-
-        if (!gUserTouchedAttachMyPubKey) {
-          gAttachMyPublicPGPKey = false;
-        }
-      }
-    }
-
-    // Don't sign anymore if previous identity was configured to sign
-    // unencrypted emails, but not the new one.
-    if (!gSendEncrypted && gSendSignedInitial && !newDefaultSigned) {
-      gSendSigned = false;
-      gSendSignedInitial = gSendSigned;
+  if (configuredOpenPGP || configuredSMIME) {
+    if (gSendEncrypted) {
+      // Encryption was previously set (identity pref or manually).
+      // Don't automatically disable, to avoid a surprising downgrade.
+      updateE2eeOptions(true);
+    } else {
+      // Encrypt/sign if the new identity asks for it.
+      updateE2eeOptions(gCurrentIdentity.encryptionPolicy > 0);
     }
   }
 
@@ -4937,7 +4904,7 @@ function adjustSignEncryptAfterIdentityChanged(prevIdentity) {
     }
 
     if (gIsRelatedToEncryptedOriginal) {
-      updateE2eeOptions(true, true);
+      updateE2eeOptions(true);
     }
   }
 
@@ -11076,11 +11043,8 @@ function showSendEncryptedAndSigned() {
  * Optionally adjusts gAttachMyPublicPGPKey.
  *
  * @param {boolean} encrypted - True when encryption is enabled, false otherwise.
- * @param {boolean} updateAttachedKey - If true, adjust gAttachMyPublicPGPKey.
  */
-function updateE2eeOptions(encrypted, updateAttachedKey) {
-  let oldSignedEnabled = gSendSigned;
-
+function updateE2eeOptions(encrypted) {
   gSendEncrypted = encrypted;
   if (encrypted) {
     // Sign encrypted emails even if the user manually modified signing
@@ -11095,9 +11059,7 @@ function updateE2eeOptions(encrypted, updateAttachedKey) {
     clearRecipientsWithKeyIssues();
   }
 
-  if (updateAttachedKey && oldSignedEnabled != gSendSigned) {
-    updateAttachedKeyAfterSigningChange();
-  }
+  updateAttachMyPubKey();
 
   showSendEncryptedAndSigned();
 
