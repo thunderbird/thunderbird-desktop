@@ -204,6 +204,7 @@ let JSWINDOWACTORS = {
 
 XPCOMUtils.defineLazyModuleGetters(this, {
   AddonManager: "resource://gre/modules/AddonManager.jsm",
+  ChatCore: "resource:///modules/chatHandler.jsm",
   ExtensionSupport: "resource:///modules/ExtensionSupport.jsm",
   MailMigrator: "resource:///modules/MailMigrator.jsm",
   MailUsageTelemetry: "resource:///modules/MailUsageTelemetry.jsm",
@@ -594,6 +595,12 @@ MailGlue.prototype = {
           // appropriately, otherwise we get error messages like the one
           // reported in bug 1635422.
           ChromeUtils.import("resource://gre/actors/AutoCompleteParent.jsm");
+        },
+      },
+      {
+        condition: Services.prefs.getBoolPref("mail.chat.enabled"),
+        task() {
+          ChatCore.idleStart();
         },
       },
 
