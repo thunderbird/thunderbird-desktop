@@ -2842,6 +2842,7 @@ Enigmail.msg = {
       errorMsgObj,
       true,
       true,
+      false,
       true
     );
 
