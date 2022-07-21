@@ -536,7 +536,7 @@ pref("mail.tabs.drawInTitlebar", true);
 pref("mail.tabs.extraDragSpace", false);
 
 // The breakpad report server to link to in about:crashes
-pref("breakpad.reportURL", "https://crash-stats.thunderbird.net/report/");
+pref("breakpad.reportURL", "https://crash-stats.mozilla.com/report/index/");
 
 // OS Integrated Search and Indexing
 #ifdef XP_WIN
