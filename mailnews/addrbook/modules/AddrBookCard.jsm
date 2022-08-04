@@ -41,7 +41,9 @@ function AddrBookCard() {
     let vCard = this.getProperty("_vCard", "");
     try {
       if (vCard) {
-        return VCardProperties.fromVCard(vCard);
+        return VCardProperties.fromVCard(vCard, {
+          isGoogleCardDAV: this._isGoogleCardDAV,
+        });
       }
       return VCardProperties.fromPropertyMap(this._properties);
     } catch (error) {
