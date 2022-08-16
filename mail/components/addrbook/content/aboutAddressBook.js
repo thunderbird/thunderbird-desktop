@@ -2586,9 +2586,10 @@ var detailsPane = {
         subject.QueryInterface(Ci.nsIAbCard);
         updateAddressBookCount();
         if (
-          !this.currentCard ||
-          this.currentCard.directoryUID != data ||
-          !subject.equals(this.currentCard)
+          (!this.currentCard ||
+            this.currentCard.directoryUID != data ||
+            !subject.equals(this.currentCard)) &&
+          cardsPane.cardsList.childElementCount != 0
         ) {
           break;
         }
