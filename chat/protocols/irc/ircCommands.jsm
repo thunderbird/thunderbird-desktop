@@ -312,7 +312,10 @@ var commands = [
                       roomInfo.participantCount +
                       ") " +
                       roomInfo.topic,
-                    { incoming: true, noLog: true }
+                    {
+                      incoming: true,
+                      noLog: true,
+                    }
                   );
                 } while (pendingChats.length);
               })();

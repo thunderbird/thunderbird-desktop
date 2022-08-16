@@ -1069,7 +1069,10 @@ function enigmailKeyDetails(keyId) {
   parent.gSubDialog.open(
     "chrome://openpgp/content/ui/keyDetailsDlg.xhtml",
     undefined,
-    { keyId, modified: onDataModified }
+    {
+      keyId,
+      modified: onDataModified,
+    }
   );
 }
 

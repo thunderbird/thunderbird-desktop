@@ -1453,7 +1453,9 @@ MatrixRoom.prototype = {
     this._account._client.sendStateEvent(
       this._roomId,
       MatrixSDK.EventType.RoomEncryption,
-      { algorithm: OlmLib.MEGOLM_ALGORITHM }
+      {
+        algorithm: OlmLib.MEGOLM_ALGORITHM,
+      }
     );
   },
 };

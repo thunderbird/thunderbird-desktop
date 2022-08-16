@@ -3707,7 +3707,11 @@ var gFolderTreeController = {
       "chrome://messenger/content/virtualFolderProperties.xhtml",
       "",
       "chrome,modal,centerscreen",
-      { folder, searchTerms: aSearchTerms, newFolderName: name }
+      {
+        folder,
+        searchTerms: aSearchTerms,
+        newFolderName: name,
+      }
     );
   },
 

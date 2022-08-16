@@ -815,7 +815,9 @@ add_task(async function test_show_all_header_mode() {
   async function toggle_header_mode(show) {
     mc.click_through_appmenu(
       [{ id: "appmenu_View" }, { id: "appmenu_viewHeadersMenu" }],
-      { id: show ? "appmenu_viewallheaders" : "appmenu_viewnormalheaders" }
+      {
+        id: show ? "appmenu_viewallheaders" : "appmenu_viewnormalheaders",
+      }
     );
 
     await BrowserTestUtils.waitForCondition(

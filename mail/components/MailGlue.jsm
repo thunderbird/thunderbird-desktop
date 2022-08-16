@@ -695,7 +695,10 @@ MailGlue.prototype = {
         "chrome://messenger/content/messenger.xhtml",
         "_blank",
         "chrome,dialog=no,all",
-        { type: "contentTab", tabParams }
+        {
+          type: "contentTab",
+          tabParams,
+        }
       );
       linkHandled.data = true;
     }

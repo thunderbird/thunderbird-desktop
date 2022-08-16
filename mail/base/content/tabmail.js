@@ -1317,7 +1317,10 @@ var { UIFontSize } = ChromeUtils.import("resource:///modules/UIFontSize.jsm");
           "_blank",
           features.join(","),
           null,
-          { action: "restore", tabs: [tab] }
+          {
+            action: "restore",
+            tabs: [tab],
+          }
         )
         .focus();
     }

@@ -334,7 +334,9 @@ var commands = [
         conv.writeMessage(
           conv.name,
           _("conversation.error.resourceNotAvailable", conv.shortName),
-          { system: true }
+          {
+            system: true,
+          }
         );
         return true;
       }

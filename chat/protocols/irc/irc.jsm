@@ -316,7 +316,10 @@ var GenericIRCConversation = {
         this.writeMessage(
           this._account._currentServerName,
           _("error.sendMessageFailed"),
-          { error: true, system: true }
+          {
+            error: true,
+            system: true,
+          }
         );
         return;
       }
@@ -329,7 +332,10 @@ var GenericIRCConversation = {
       this.writeMessage(
         this._account._currentServerName,
         _("error.sendMessageFailed"),
-        { error: true, system: true }
+        {
+          error: true,
+          system: true,
+        }
       );
       return;
     }

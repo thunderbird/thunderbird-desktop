@@ -3035,7 +3035,9 @@ Enigmail.msg = {
       document.l10n.setAttributes(
         conflictDescription,
         "openpgp-be-careful-new-key",
-        { email: Enigmail.msg.authorEmail }
+        {
+          email: Enigmail.msg.authorEmail,
+        }
       );
       conflictDescription.removeAttribute("hidden");
     }

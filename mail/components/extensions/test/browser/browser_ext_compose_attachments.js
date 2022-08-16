@@ -205,7 +205,9 @@ add_task(async function test_file_attachments() {
       let changed2 = await browser.compose.updateAttachment(
         composeTab.id,
         attachment2.id,
-        { name: "file2 with a new name.txt" }
+        {
+          name: "file2 with a new name.txt",
+        }
       );
       browser.test.assertEq("file2 with a new name.txt", changed2.name);
       browser.test.assertEq(41, changed2.size);
@@ -322,7 +324,9 @@ add_task(async function test_file_attachments() {
       let changed4 = await browser.compose.updateAttachment(
         composeTab.id,
         attachment2.id,
-        { name: "cloud file2 with a new name.txt" }
+        {
+          name: "cloud file2 with a new name.txt",
+        }
       );
       browser.test.assertEq("cloud file2 with a new name.txt", changed4.name);
       browser.test.assertEq(30, changed4.size);
@@ -870,7 +874,9 @@ add_task(async function test_compose_attachments() {
       let tab3_changed2 = await browser.compose.updateAttachment(
         composeTab3.id,
         tab3_attachment2.id,
-        { name: "That is going to be interesting.txt" }
+        {
+          name: "That is going to be interesting.txt",
+        }
       );
       browser.test.assertEq(
         "That is going to be interesting.txt",
@@ -1034,7 +1040,9 @@ add_task(async function test_compose_attachments() {
       await browser.compose.updateAttachment(
         composeTab5.id,
         tab5_attachment2.id,
-        { name: "I am the only one left.txt" }
+        {
+          name: "I am the only one left.txt",
+        }
       );
       await tab5_renamePromise;
 

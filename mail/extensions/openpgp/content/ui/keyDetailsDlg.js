@@ -356,7 +356,9 @@ async function reloadData(firstLoad) {
     document.l10n.setAttributes(
       acceptanceVerification,
       acceptanceVerificationText,
-      { addr: EnigmailFuncs.getEmailFromUserID(gUserId).toLowerCase() }
+      {
+        addr: EnigmailFuncs.getEmailFromUserID(gUserId).toLowerCase(),
+      }
     );
   }
 

@@ -612,7 +612,9 @@
         document.l10n.setAttributes(
           this.heading,
           "message-header-custom-field",
-          { fieldName: this.dataset.prettyHeaderName }
+          {
+            fieldName: this.dataset.prettyHeaderName,
+          }
         );
       }
       this.appendChild(this.heading);

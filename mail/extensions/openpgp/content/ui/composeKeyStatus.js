@@ -67,7 +67,9 @@ async function setListEntries() {
       } else {
         statusStringDirect = await document.l10n.formatValue(
           "openpgp-compose-alias-status-direct",
-          { count: aliasKeys.length }
+          {
+            count: aliasKeys.length,
+          }
         );
       }
     } else {

@@ -3117,7 +3117,9 @@ var GlodaMsgIndexer = {
         aCallbackHandle.callbackThis,
         aCallbackHandle.callback,
         false,
-        { saneBodySize: true }
+        {
+          saneBodySize: true,
+        }
       );
       aMimeMsg = (yield this.kWorkAsync)[1];
     } else {

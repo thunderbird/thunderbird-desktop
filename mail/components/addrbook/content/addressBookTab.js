@@ -48,7 +48,10 @@ var addressBookTabType = {
         this.tab.browser.addEventListener(
           "about-addressbook-ready",
           event => aArgs.onLoad(event, this.tab.browser),
-          { capture: true, once: true }
+          {
+            capture: true,
+            once: true,
+          }
         );
       } else {
         aArgs.onLoad(null, this.tab.browser);

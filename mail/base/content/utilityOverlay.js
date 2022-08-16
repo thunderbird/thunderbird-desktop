@@ -276,7 +276,10 @@ function openTab(tabType, tabParams, where) {
     "_blank",
     "chrome,dialog=no,all",
     null,
-    { tabType, tabParams }
+    {
+      tabType,
+      tabParams,
+    }
   );
 }
 

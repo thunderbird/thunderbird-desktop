@@ -191,7 +191,6 @@ var MimeCategoryMapping = {
     "application/x-pdf",
     "image/pdf",
     "file/pdf",
-
     "application/x-bzpdf",
     "application/x-gzpdf",
   ],
