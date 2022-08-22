@@ -120,7 +120,7 @@ static void ConvertAndSanitizeFileName(const nsACString& displayName,
 
   // replace platform specific path separator and illegale characters to avoid
   // any confusion
-  aResult.ReplaceChar(FILE_PATH_SEPARATOR FILE_ILLEGAL_CHARACTERS, '-');
+  aResult.ReplaceChar(u"" FILE_PATH_SEPARATOR FILE_ILLEGAL_CHARACTERS, u'-');
 }
 
 // ***************************************************
