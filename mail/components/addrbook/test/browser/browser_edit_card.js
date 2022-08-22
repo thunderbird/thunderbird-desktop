@@ -189,6 +189,32 @@ function getFields(entryName, addIfNeeded = false, count) {
       addButtonId = "vcard-add-custom";
       expectFocusSelector = "vcard-custom:last-of-type input";
       break;
+    case "specialDate":
+      fieldsSelector = "vcard-special-date";
+      addButtonId = "vcard-add-bday-anniversary";
+      expectFocusSelector =
+        "vcard-special-date:last-of-type .vcard-type-selection";
+      break;
+    case "adr":
+      fieldsSelector = "vcard-adr";
+      addButtonId = "vcard-add-adr";
+      expectFocusSelector = "vcard-adr:last-of-type .vcard-type-selection";
+      break;
+    case "tz":
+      fieldsSelector = "vcard-tz";
+      addButtonId = "vcard-add-tz";
+      expectFocusSelector = "vcard-tz:last-of-type select";
+      break;
+    case "org":
+      fieldsSelector = "vcard-org";
+      addButtonId = "vcard-add-org";
+      expectFocusSelector = "#addr-book-edit-org input";
+      break;
+    case "role":
+      fieldsSelector = "vcard-role";
+      addButtonId = "vcard-add-org";
+      expectFocusSelector = "#addr-book-edit-org input";
+      break;
     default:
       throw new Error("entryName not found");
   }
@@ -301,14 +327,58 @@ function checkVCardInputValues(expected) {
         case "title":
           valueField = field.titleEl;
           break;
+        case "specialDate":
+          Assert.equal(
+            expectedEntry.value[0],
+            field.year.value,
+            `Year value of ${key} at position ${index}`
+          );
+          Assert.equal(
+            expectedEntry.value[1],
+            field.month.value,
+            `Month value of ${key} at position ${index}`
+          );
+          Assert.equal(
+            expectedEntry.value[2],
+            field.day.value,
+            `Day value of ${key} at position ${index}`
+          );
+          break;
+        case "adr":
+          typeField = field.vCardType.selectEl;
+          let addressValue = [
+            field.streetEl.value,
+            field.localityEl.value,
+            field.regionEl.value,
+            field.codeEl.value,
+            field.countryEl.value,
+          ];
+
+          Assert.deepEqual(
+            expectedEntry.value,
+            addressValue,
+            `Value of ${key} at position ${index}`
+          );
+          break;
+        case "tz":
+          valueField = field.selectEl;
+          break;
+        case "org":
+          valueField = field.orgEl;
+          break;
+        case "role":
+          valueField = field.roleEl;
+          break;
       }
 
       // Check the input value of the field.
-      Assert.equal(
-        expectedEntry.value,
-        valueField.value,
-        `Value of ${key} at position ${index}`
-      );
+      if (valueField) {
+        Assert.equal(
+          expectedEntry.value,
+          valueField.value,
+          `Value of ${key} at position ${index}`
+        );
+      }
 
       // Check the type of the field.
       if (expectedEntry.type || typeField) {
@@ -479,13 +549,70 @@ async function setVCardInputValues(changes) {
         case "note":
           valueField = field.textAreaEl;
           break;
+        case "specialDate":
+          if (changeEntry && changeEntry.value) {
+            field.month.value = changeEntry.value[1];
+            field.day.value = changeEntry.value[2];
+            field.year.value = changeEntry.value[0];
+          } else {
+            field.month.value = "";
+            field.day.value = "";
+            field.year.value = "";
+          }
+
+          if (changeEntry && changeEntry.key === "bday") {
+            field.selectEl.value = "bday";
+          } else {
+            field.selectEl.value = "anniversary";
+          }
+          break;
+        case "adr":
+          typeField = field.vCardType.selectEl;
+
+          for (let [index, input] of [
+            field.streetEl,
+            field.localityEl,
+            field.regionEl,
+            field.codeEl,
+            field.countryEl,
+          ].entries()) {
+            input.select();
+            if (
+              changeEntry &&
+              Array.isArray(changeEntry.value) &&
+              changeEntry.value[index]
+            ) {
+              EventUtils.sendString(changeEntry.value[index]);
+            } else {
+              EventUtils.synthesizeKey("VK_BACK_SPACE", {}, abWindow);
+            }
+          }
+          break;
+        case "tz":
+          if (changeEntry && changeEntry.value) {
+            field.selectEl.value = changeEntry.value;
+          } else {
+            field.selectEl.value = "";
+          }
+          break;
+        case "title":
+          valueField = field.titleEl;
+          break;
+        case "org":
+          valueField = field.orgEl;
+          break;
+        case "role":
+          valueField = field.roleEl;
+          break;
       }
 
-      valueField.select();
-      if (changeEntry && changeEntry.value) {
-        EventUtils.sendString(changeEntry.value);
-      } else {
-        EventUtils.synthesizeKey("VK_BACK_SPACE", {}, abWindow);
+      if (valueField) {
+        valueField.select();
+        if (changeEntry && changeEntry.value) {
+          EventUtils.sendString(changeEntry.value);
+        } else {
+          EventUtils.synthesizeKey("VK_BACK_SPACE", {}, abWindow);
+        }
       }
 
       if (typeField && changeEntry && changeEntry.type) {
@@ -2178,6 +2305,12 @@ add_task(async function test_vCard_fields() {
     ["vcard-url", "Websites"],
     ["vcard-tel", "Phone numbers"],
     ["vcard-note", "Notes"],
+    ["vcard-special-dates", "Special dates"],
+    ["vcard-adr", "Addresses"],
+    ["vcard-tz", "Time Zone"],
+    ["vcard-role", "Organizational properties"],
+    ["vcard-title", "Organizational properties"],
+    ["vcard-org", "Organizational properties"],
   ]) {
     Assert.equal(
       abDocument.querySelectorAll(selector).length,
@@ -2198,6 +2331,19 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.example.com" }],
     tel: [{ value: "+123456 789" }],
     note: [{ value: "A note to this contact" }],
+    specialDate: [
+      { value: [2000, 3, 31], key: "bday" },
+      { value: [1980, 12, 15], key: "anniversary" },
+    ],
+    adr: [
+      {
+        value: ["123 Main Street", "Any Town", "CA", "91921-1234", "U.S.A"],
+      },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: "North American Division\nMarketing" }],
   });
 
   EventUtils.synthesizeMouseAtCenter(saveEditButton, {}, abWindow);
@@ -2208,6 +2354,25 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.example.com" }],
     tel: [{ value: "+123456 789" }],
     note: [{ value: "A note to this contact" }],
+    bday: [{ value: "2000-03-31" }],
+    anniversary: [{ value: "1980-12-15" }],
+    adr: [
+      {
+        value: [
+          "",
+          "",
+          "123 Main Street",
+          "Any Town",
+          "CA",
+          "91921-1234",
+          "U.S.A",
+        ],
+      },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: ["Marketing", "North American Division"] }],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2215,6 +2380,13 @@ add_task(async function test_vCard_fields() {
     url: [],
     tel: [],
     note: [],
+    bday: [],
+    anniversary: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   // Edit the same contact and set multiple fields.
@@ -2226,6 +2398,19 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.example.com" }],
     tel: [{ value: "+123456 789" }],
     note: [{ value: "A note to this contact" }],
+    specialDate: [
+      { value: [2000, 3, 31], key: "bday" },
+      { value: [1980, 12, 15], key: "anniversary" },
+    ],
+    adr: [
+      {
+        value: ["123 Main Street", "Any Town", "CA", "91921-1234", "U.S.A"],
+      },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: "North American Division\nMarketing" }],
   });
 
   await setVCardInputValues({
@@ -2245,6 +2430,21 @@ add_task(async function test_vCard_fields() {
       { value: "+1113456789", type: "work" },
     ],
     note: [{ value: "Another note contact1\n\n\n" }],
+    specialDate: [
+      { value: [2000, 3, 31], key: "bday" },
+      { value: [1980, 12, 15], key: "anniversary" },
+      { value: [1960, 9, 17], key: "anniversary" },
+      { value: [2010, 7, 1], key: "anniversary" },
+    ],
+    adr: [
+      { value: ["123 Main Street", "", "", "", ""] },
+      { value: ["456 Side Street", "", "", "", ""], type: "home" },
+      { value: ["789 Side Street", "", "", "", ""], type: "work" },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: "North American Division\nMarketing" }],
   });
 
   EventUtils.synthesizeMouseAtCenter(saveEditButton, {}, abWindow);
@@ -2267,6 +2467,21 @@ add_task(async function test_vCard_fields() {
       { value: "+1113456789", type: "work" },
     ],
     note: [{ value: "Another note contact1\n\n\n" }],
+    bday: [{ value: "2000-03-31" }],
+    anniversary: [
+      { value: "1980-12-15" },
+      { value: "1960-09-17" },
+      { value: "2010-07-01" },
+    ],
+    adr: [
+      { value: ["", "", "123 Main Street", "", "", "", ""] },
+      { value: ["", "", "456 Side Street", "", "", "", ""], type: "home" },
+      { value: ["", "", "789 Side Street", "", "", "", ""], type: "work" },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: ["Marketing", "North American Division"] }],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2274,19 +2489,46 @@ add_task(async function test_vCard_fields() {
     url: [],
     tel: [],
     note: [],
+    bday: [],
+    anniversary: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   // Switch from contact1 to contact2 and set some entries.
   // Ensure that no fields from contact1 are leaked.
   await editContactAtIndex(1, { useMouse: true });
 
-  checkVCardInputValues({ impp: [], url: [], tel: [], note: [] });
+  checkVCardInputValues({
+    impp: [],
+    url: [],
+    tel: [],
+    note: [],
+    specialDate: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
+  });
 
   await setVCardInputValues({
     impp: [{ value: "invalid:example.com" }],
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    specialDate: [
+      { value: [1966, 12, 15], key: "bday" },
+      { value: [1954, 9, 17], key: "anniversary" },
+    ],
+    adr: [{ value: ["123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   EventUtils.synthesizeMouseAtCenter(saveEditButton, {}, abWindow);
@@ -2309,6 +2551,21 @@ add_task(async function test_vCard_fields() {
       { value: "+1113456789", type: "work" },
     ],
     note: [{ value: "Another note contact1\n\n\n" }],
+    bday: [{ value: "2000-03-31" }],
+    anniversary: [
+      { value: "1980-12-15" },
+      { value: "1960-09-17" },
+      { value: "2010-07-01" },
+    ],
+    adr: [
+      { value: ["", "", "123 Main Street", "", "", "", ""] },
+      { value: ["", "", "456 Side Street", "", "", "", ""], type: "home" },
+      { value: ["", "", "789 Side Street", "", "", "", ""], type: "work" },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: ["Marketing", "North American Division"] }],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2316,6 +2573,13 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    bday: [{ value: "1966-12-15" }],
+    anniversary: [{ value: "1954-09-17" }],
+    adr: [{ value: ["", "", "123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   // Ensure that no fields from contact2 are leaked to contact1.
@@ -2339,13 +2603,34 @@ add_task(async function test_vCard_fields() {
       { value: "+1113456789", type: "work" },
     ],
     note: [{ value: "Another note contact1\n\n\n" }],
+    specialDate: [
+      { value: [2000, 3, 31], key: "bday" },
+      { value: [1980, 12, 15], key: "anniversary" },
+      { value: [1960, 9, 17], key: "anniversary" },
+      { value: [2010, 7, 1], key: "anniversary" },
+    ],
+    adr: [
+      { value: ["123 Main Street", "", "", "", ""] },
+      { value: ["456 Side Street", "", "", "", ""], type: "home" },
+      { value: ["789 Side Street", "", "", "", ""], type: "work" },
+    ],
+    tz: [{ value: "Africa/Abidjan" }],
+    role: [{ value: "Role" }],
+    title: [{ value: "Title" }],
+    org: [{ value: ["North American Division\nMarketing"] }],
   });
 
   await setVCardInputValues({
-    impp: [{ value: "" }, { value: "" }, { value: "" }],
-    url: [{ value: "" }, { value: "" }, { value: "" }],
-    tel: [{ value: "" }, { value: "" }, { value: "" }],
-    note: [{ value: "" }],
+    impp: [{}, {}, {}],
+    url: [{}, {}, {}],
+    tel: [{}, {}, {}],
+    note: [{}],
+    specialDate: [{}, {}, {}, {}],
+    adr: [{}, {}, {}],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   EventUtils.synthesizeMouseAtCenter(saveEditButton, {}, abWindow);
@@ -2356,6 +2641,13 @@ add_task(async function test_vCard_fields() {
     url: [],
     tel: [],
     note: [],
+    bday: [],
+    anniversary: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2363,6 +2655,13 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    bday: [{ value: "1966-12-15" }],
+    anniversary: [{ value: "1954-09-17" }],
+    adr: [{ value: ["", "", "123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   // Check contact2 make changes and cancel.
@@ -2373,6 +2672,15 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    specialDate: [
+      { value: [1966, 12, 15], key: "bday" },
+      { value: [1954, 9, 17], key: "anniversary" },
+    ],
+    adr: [{ value: ["123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   await setVCardInputValues({
@@ -2383,6 +2691,12 @@ add_task(async function test_vCard_fields() {
     ],
     tel: [{ value: "650-903-0800" }, { value: "+123 456 789", type: "home" }],
     note: [],
+    specialDate: [{}, { value: [1980, 12, 15], key: "anniversary" }],
+    adr: [],
+    tz: [],
+    role: [{ value: "Some Role contact 2" }],
+    title: [],
+    org: [{ value: "Some Organization" }],
   });
 
   // Cancel the changes.
@@ -2396,6 +2710,13 @@ add_task(async function test_vCard_fields() {
     url: [],
     tel: [],
     note: [],
+    bday: [],
+    anniversary: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2403,6 +2724,13 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    bday: [{ value: "1966-12-15" }],
+    anniversary: [{ value: "1954-09-17" }],
+    adr: [{ value: ["", "", "123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   // Check that the cancel for contact2 worked cancel afterwards.
@@ -2413,6 +2741,15 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    specialDate: [
+      { value: [1966, 12, 15], key: "bday" },
+      { value: [1954, 9, 17], key: "anniversary" },
+    ],
+    adr: [{ value: ["123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   EventUtils.synthesizeMouseAtCenter(cancelEditButton, {}, abWindow);
@@ -2423,6 +2760,13 @@ add_task(async function test_vCard_fields() {
     url: [],
     tel: [],
     note: [],
+    bday: [],
+    anniversary: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
   });
 
   checkVCardValues(book.childCards[1], {
@@ -2430,12 +2774,30 @@ add_task(async function test_vCard_fields() {
     url: [{ value: "http://www.thunderbird.net" }],
     tel: [{ value: "650-903-0800" }],
     note: [{ value: "Another note\nfor contact 2" }],
+    bday: [{ value: "1966-12-15" }],
+    anniversary: [{ value: "1954-09-17" }],
+    adr: [{ value: ["", "", "123 Work Street", "", "", "", ""], type: "work" }],
+    tz: [{ value: "Africa/Accra" }],
+    role: [{ value: "Role contact 2" }],
+    title: [{ value: "Title contact 2" }],
+    org: [{ value: "Organization contact 2" }],
   });
 
   // Check that no values from contact2 are leaked to contact1 when cancelling.
   await editContactAtIndex(0, {});
 
-  checkVCardInputValues({ impp: [], url: [], tel: [], note: [] });
+  checkVCardInputValues({
+    impp: [],
+    url: [],
+    tel: [],
+    note: [],
+    specialDate: [],
+    adr: [],
+    tz: [],
+    role: [],
+    title: [],
+    org: [],
+  });
 
   await closeAddressBookWindow();
   await promiseDirectoryRemoved(book.URI);
