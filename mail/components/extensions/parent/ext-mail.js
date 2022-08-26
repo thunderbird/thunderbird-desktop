@@ -759,7 +759,7 @@ class TabTracker extends TabTrackerBase {
   get activeTab() {
     let window = windowTracker.topWindow;
     let tabmail = window && window.document.getElementById("tabmail");
-    return tabmail ? tabmail.selectedTab : null;
+    return tabmail ? tabmail.selectedTab : window;
   }
 }
 
