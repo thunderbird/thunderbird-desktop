@@ -118,9 +118,7 @@ MatrixMessage.prototype = {
     this.conversation._account._client
       .sendReadReceipt(
         this.event,
-        this.hideReadReceipts
-          ? ReceiptType.ReadPrivate
-          : ReceiptType.Read
+        this.hideReadReceipts ? ReceiptType.ReadPrivate : ReceiptType.Read
       )
       .catch(error => this.conversation.ERROR(error));
   },
