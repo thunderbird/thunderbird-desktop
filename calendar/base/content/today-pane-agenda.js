@@ -10,6 +10,7 @@
   const { CalMetronome } = ChromeUtils.import("resource:///modules/CalMetronome.jsm");
   const { XPCOMUtils } = ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
   const { cal } = ChromeUtils.import("resource:///modules/calendar/calUtils.jsm");
+  const { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
   class Agenda extends CalendarFilteredViewMixin(customElements.get("tree-listbox")) {
     _showsToday = false;
