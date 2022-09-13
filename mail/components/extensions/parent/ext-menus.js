@@ -115,6 +115,14 @@ var gMenuBuilder = {
   },
 
   createAndInsertTopLevelElements(root, contextData, nextSibling) {
+    const newWebExtensionGroupSeparator = () => {
+      let element = this.xulMenu.ownerDocument.createXULElement(
+        "menuseparator"
+      );
+      element.classList.add("webextension-group-separator");
+      return element;
+    };
+
     let rootElements;
     if (
       contextData.onBrowserAction ||
@@ -134,9 +142,7 @@ var gMenuBuilder = {
       // Action menu items are prepended to the menu, followed by a separator.
       nextSibling = nextSibling || this.xulMenu.firstElementChild;
       if (rootElements.length && !this.itemsToCleanUp.has(nextSibling)) {
-        rootElements.push(
-          this.xulMenu.ownerDocument.createXULElement("menuseparator")
-        );
+        rootElements.push(newWebExtensionGroupSeparator());
       }
     } else if (contextData.webExtContextData) {
       let {
@@ -159,9 +165,7 @@ var gMenuBuilder = {
           showDefaults &&
           !this.itemsToCleanUp.has(nextSibling)
         ) {
-          rootElements.push(
-            this.xulMenu.ownerDocument.createXULElement("menuseparator")
-          );
+          rootElements.push(newWebExtensionGroupSeparator());
         }
       } else if (!showDefaults && !overrideContext) {
         // When the default menu items should be hidden, menu items from other
@@ -178,9 +182,7 @@ var gMenuBuilder = {
       ) {
         // All extension menu items are appended at the end.
         // Prepend separator if this is the first extension menu item.
-        rootElements.unshift(
-          this.xulMenu.ownerDocument.createXULElement("menuseparator")
-        );
+        rootElements.unshift(newWebExtensionGroupSeparator());
       }
     }
 
