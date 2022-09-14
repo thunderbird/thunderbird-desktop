@@ -994,7 +994,11 @@ class Pop3Client {
    * Handle `UIDL` response.
    * @param {Pop3Response} res - UIDL response received from the server.
    */
-  _actionUidlResponse = ({ data }) => {
+  _actionUidlResponse = ({ status, success, data }) => {
+    if (status && !success) {
+      this._actionNoUidl();
+      return;
+    }
     this._lineReader.read(
       data,
       line => {
@@ -1104,6 +1108,32 @@ class Pop3Client {
         this._updateProgress();
       }
     );
+  };
+
+  /**
+   * If the server doesn't support UIDL, leaveMessagesOnServer and headersOnly
+   * feature can't be used.
+   */
+  _actionNoUidl = () => {
+    if (
+      this._server.leaveMessagesOnServer ||
+      this._server.headersOnly ||
+      this._server.limitOfflineMessageSize ||
+      this._singleUidlToDownload
+    ) {
+      this._actionError("pop3ServerDoesNotSupportUidlEtc", [
+        this._server.hostName,
+      ]);
+      return;
+    }
+    for (let [messageNumber] of this._messageSizeMap) {
+      // Send RETR for each message.
+      this._messagesToHandle.push({
+        status: UIDL_FETCH_BODY,
+        messageNumber,
+      });
+    }
+    this._actionHandleMessage();
   };
 
   /**
