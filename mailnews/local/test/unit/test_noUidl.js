@@ -15,7 +15,7 @@ class NoUidlHandler extends POP3_RFC1939_handler {
   }
 }
 
-let daemon = new Pop3Daemon();
+let daemon = new pop3Daemon();
 let server = new nsMailServer(d => {
   let handler = new NoUidlHandler(d);
   return handler;
