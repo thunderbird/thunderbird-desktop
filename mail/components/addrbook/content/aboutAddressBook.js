@@ -3048,7 +3048,7 @@ var detailsPane = {
       let span = li.querySelector(".entry-value");
       for (let part of org.filter(Boolean).reverse()) {
         if (span.firstChild) {
-          span.appendChild(document.createElement("br"));
+          span.append(" • ");
         }
         span.appendChild(document.createTextNode(part));
       }
