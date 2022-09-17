@@ -1153,4 +1153,8 @@ class MsgIncomingServer {
   }
 
   performExpand(msgWindow) {}
+
+  get wrappedJSObject() {
+    return this;
+  }
 }

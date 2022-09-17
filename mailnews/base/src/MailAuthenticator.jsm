@@ -368,14 +368,14 @@ class Pop3Authenticator extends IncomingServerAuthenticator {
     let composeBundle = Services.strings.createBundle(
       "chrome://messenger/locale/localMsgs.properties"
     );
-    let params = [this._server.username, this._server.hostname];
+    let params = [this._server.username, this._server.hostName];
     let promptString = composeBundle.formatStringFromName(
       "pop3EnterPasswordPrompt",
       params
     );
     let promptTitle = composeBundle.formatStringFromName(
       "pop3EnterPasswordPromptTitleWithUsername",
-      [this._server.hostname]
+      [this._server.hostName]
     );
     let msgWindow;
     try {
@@ -401,14 +401,14 @@ class ImapAuthenticator extends IncomingServerAuthenticator {
     let composeBundle = Services.strings.createBundle(
       "chrome://messenger/locale/imapMsgs.properties"
     );
-    let params = [this._server.username, this._server.hostname];
+    let params = [this._server.username, this._server.hostName];
     let promptString = composeBundle.formatStringFromName(
       "imapEnterServerPasswordPrompt",
       params
     );
     let promptTitle = composeBundle.formatStringFromName(
       "imapEnterPasswordPromptTitleWithUsername",
-      [this._server.hostname]
+      [this._server.hostName]
     );
     let msgWindow;
     try {
