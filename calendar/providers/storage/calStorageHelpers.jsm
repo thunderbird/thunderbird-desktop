@@ -2,7 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/* import-globals-from ../../base/src/calTimezone.js */
+
 var { cal } = ChromeUtils.import("resource:///modules/calendar/calUtils.jsm");
+var { ICAL } = ChromeUtils.import("resource:///modules/calendar/Ical.jsm");
+
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+var { XPCOMUtils } = ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 /* exported CAL_ITEM_FLAG, getInUtcOrKeepFloating, dateToText, textToDate,
  *          calStorageTimezone, getTimezone, newDateTime
@@ -17,6 +23,8 @@ const EXPORTED_SYMBOLS = [
   "getTimezone",
   "newDateTime",
 ];
+
+Services.scriptloader.loadSubScript("resource:///components/calTimezone.js");
 
 // Storage flags. These are used in the Database |flags| column to give
 // information about the item's features. For example, if the item has
@@ -112,6 +120,8 @@ function textToDate(text) {
 // other helpers
 //
 
+XPCOMUtils.defineLazyPreferenceGetter(this, "gUseIcaljs", "calendar.icaljs", false);
+
 /**
  * Prototype definition for foreign timezone.
  */
@@ -143,16 +153,25 @@ function getTimezone(aTimezone) {
   if (aTimezone.startsWith("BEGIN:VTIMEZONE")) {
     timezone = gForeignTimezonesCache[aTimezone]; // using full definition as key
     if (!timezone) {
-      try {
-        // cannot cope without parent VCALENDAR:
-        let comp = cal.icsService.parseICS(
-          "BEGIN:VCALENDAR\n" + aTimezone + "\nEND:VCALENDAR",
-          null
+      if (gUseIcaljs) {
+        timezone = new calICALJSTimezone(
+          ICAL.Timezone.fromData({
+            component: aTimezone,
+          })
         );
-        timezone = new calStorageTimezone(comp.getFirstSubcomponent("VTIMEZONE"));
         gForeignTimezonesCache[aTimezone] = timezone;
-      } catch (e) {
-        cal.ASSERT(false, e);
+      } else {
+        try {
+          // cannot cope without parent VCALENDAR:
+          let comp = cal.icsService.parseICS(
+            "BEGIN:VCALENDAR\n" + aTimezone + "\nEND:VCALENDAR",
+            null
+          );
+          timezone = new calStorageTimezone(comp.getFirstSubcomponent("VTIMEZONE"));
+          gForeignTimezonesCache[aTimezone] = timezone;
+        } catch (e) {
+          cal.ASSERT(false, e);
+        }
       }
     }
   } else {
