@@ -1152,6 +1152,7 @@ var RNP = {
 
     let rnpCannotDecrypt = false;
     let queryAllEncryptionRecipients = false;
+    let stillUndecidedIfSignatureIsBad = false;
 
     let useDecodedData;
     let processSignature;
@@ -1161,9 +1162,11 @@ var RNP = {
         processSignature = true;
         break;
       case RNPLib.RNP_ERROR_SIGNATURE_INVALID:
-        result.statusFlags |= EnigmailConstants.BAD_SIGNATURE;
+        // Either the signing key is unavailable, or the signature is
+        // indeed bad. Must check signature status below.
+        stillUndecidedIfSignatureIsBad = true;
         useDecodedData = true;
-        processSignature = false;
+        processSignature = true;
         break;
       case RNPLib.RNP_ERROR_SIGNATURE_EXPIRED:
         useDecodedData = true;
@@ -1322,7 +1325,24 @@ var RNP = {
           verify_op,
           result
         );
+
+        if (
+          (result.statusFlags &
+            (EnigmailConstants.GOOD_SIGNATURE |
+              EnigmailConstants.UNCERTAIN_SIGNATURE |
+              EnigmailConstants.EXPIRED_SIGNATURE |
+              EnigmailConstants.BAD_SIGNATURE)) !=
+          0
+        ) {
+          // A decision was already made.
+          stillUndecidedIfSignatureIsBad = false;
+        }
       }
+    }
+
+    if (stillUndecidedIfSignatureIsBad) {
+      // We didn't find more details above, so conclude it's bad.
+      result.statusFlags |= EnigmailConstants.BAD_SIGNATURE;
     }
 
     RNPLib.rnp_input_destroy(input_from_memory);
@@ -1460,6 +1480,8 @@ var RNP = {
 
     if (query_signer) {
       if (RNPLib.rnp_op_verify_signature_get_key(sig, signer_key.address())) {
+        // If sig_status isn't RNP_ERROR_KEY_NOT_FOUND then we must
+        // be able to obtain the signer key.
         throw new Error("rnp_op_verify_signature_get_key");
       }
 
