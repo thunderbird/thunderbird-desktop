@@ -78,10 +78,7 @@ class NntpClient {
     this.onData = () => {};
     this.onDone = () => {};
 
-    let uri = `news://${this._server.hostName}:${this._server.port}`;
-    this.runningUri = Services.io
-      .newURI(uri)
-      .QueryInterface(Ci.nsIMsgMailNewsUrl);
+    this.runningUri = null;
     this.urlListener = null;
     this._msgWindow = null;
     this._newsFolder = null;
@@ -92,8 +89,6 @@ class NntpClient {
    */
   connect() {
     this._done = false;
-    this.runningUri.SetUrlState(true, Cr.NS_OK);
-    this.urlListener?.OnStartRunningUrl(this.runningUri);
     if (this._socket?.readyState == "open") {
       // Reuse the connection.
       this.onOpen();
@@ -112,6 +107,28 @@ class NntpClient {
       this._socket.onopen = this._onOpen;
       this._socket.onerror = this._onError;
     }
+  }
+
+  /**
+   * Construct an nsIMsgMailNewsUrl instance, setup urlListener to notify when
+   * the current request is finished.
+   * @param {nsIUrlListener} urlListener - Callback for the request.
+   * @param {nsIMsgWindow} msgWindow - The associated msg window.
+   * @param {nsIMsgMailNewsUrl} [runningUrl] - The url to run, if provided.
+   * @returns {nsIMsgMailNewsUrl}
+   */
+  startRunningUrl(urlListener, msgWindow, runningUri) {
+    this.urlListener = urlListener;
+    this._msgWindow = msgWindow;
+    this.runningUri = runningUri;
+    if (!this.runningUri) {
+      this.runningUri = Services.io
+        .newURI(`news://${this._server.hostName}:${this._server.port}`)
+        .QueryInterface(Ci.nsIMsgMailNewsUrl);
+    }
+    this.urlListener?.OnStartRunningUrl(this.runningUri, Cr.NS_OK);
+    this.runningUri.SetUrlState(true, Cr.NS_OK);
+    return this.runningUri;
   }
 
   /**
@@ -150,7 +167,7 @@ class NntpClient {
         this._actionAuthUser();
         return;
       case SERVICE_UNAVAILABLE:
-        this._actionDone();
+        this._actionError(NNTP_ERROR_MESSAGE, res.statusText);
         return;
       default:
         if (
@@ -185,7 +202,7 @@ class NntpClient {
               this._logger.error(e);
             }
           }
-          this._actionDone(Cr.NS_ERROR_FAILURE);
+          this._actionError(NNTP_ERROR_MESSAGE, res.statusText);
           return;
         }
     }
@@ -273,17 +290,13 @@ class NntpClient {
    * Get new articles.
    * @param {string} groupName - The group to get new articles.
    * @param {boolean} getOld - Get old articles as well.
-   * @param {nsIUrlListener} urlListener - Callback for the request.
-   * @param {nsIMsgWindow} msgWindow - The associated msg window.
    */
-  getNewNews(groupName, getOld, urlListener, msgWindow) {
+  getNewNews(groupName, getOld) {
     this._currentGroupName = null;
     this._newsFolder = this._getNewsFolder(groupName);
     this._newsGroup = new NntpNewsGroup(this._server, this._newsFolder);
     this._newsGroup.getOldMessages = getOld;
     this._nextGroupName = this._newsFolder.rawName;
-    this.urlListener = urlListener;
-    this._msgWindow = msgWindow;
     this.runningUri.updatingFolder = true;
     this._firstGroupCommand = this._actionXOver;
     this._actionModeReader(this._actionGroup);
@@ -293,13 +306,11 @@ class NntpClient {
    * Get a single article by group name and article number.
    * @param {string} groupName - The group name.
    * @param {string} articleNumber - The article number.
-   * @param {nsIMsgWindow} msgWindow - The associated msg window.
    */
-  getArticleByArticleNumber(groupName, articleNumber, msgWindow) {
+  getArticleByArticleNumber(groupName, articleNumber) {
     this._newsFolder = this._server.rootFolder.getChildNamed(groupName);
     this._nextGroupName = this._getNextGroupName(groupName);
     this._articleNumber = articleNumber;
-    this._msgWindow = msgWindow;
     this._firstGroupCommand = this._actionArticle;
     this._actionModeReader(this._actionGroup);
   }
@@ -307,22 +318,18 @@ class NntpClient {
   /**
    * Get a single article by the message id.
    * @param {string} messageId - The message id.
-   * @param {nsIMsgWindow} msgWindow - The associated msg window.
    */
-  getArticleByMessageId(messageId, msgWindow) {
+  getArticleByMessageId(messageId) {
     this._articleNumber = `<${messageId}>`;
-    this._msgWindow = msgWindow;
     this._actionModeReader(this._actionArticle);
   }
 
   /**
    * Send a `Control: cancel <msg-id>` message to cancel an article, not every
    * server supports it, see rfc5537.
-   * @param {nsIUrlListener} urlListener - Callback for the request.
    * @param {string} groupName - The group name.
    */
-  cancelArticle(urlListener, groupName) {
-    this.urlListener = urlListener;
+  cancelArticle(groupName) {
     this._nextGroupName = this._getNextGroupName(groupName);
     this._firstGroupCommand = this.post;
     this._actionModeReader(this._actionGroup);
@@ -331,12 +338,10 @@ class NntpClient {
   /**
    * Send a `XPAT <header> <message-id> <pattern>` message, not every server
    * supports it, see rfc2980.
-   * @param {nsIUrlListener} urlListener - Callback for the request.
    * @param {string} groupName - The group name.
    * @param {string[]} xpatLines - An array of xpat lines to send.
    */
-  search(urlListener, groupName, xpatLines) {
-    this.urlListener = urlListener;
+  search(groupName, xpatLines) {
     this._nextGroupName = this._getNextGroupName(groupName);
     this._xpatLines = xpatLines;
     this._firstGroupCommand = this._actionXPat;
@@ -398,10 +403,8 @@ class NntpClient {
 
   /**
    * Send `POST` request to the server.
-   * @param {nsIMsgWindow} msgWindow - The associated msg window.
    */
-  post(msgWindow) {
-    this._msgWindow = msgWindow;
+  post() {
     this._sendCommand("POST");
     this._nextAction = this._actionHandlePost;
   }
