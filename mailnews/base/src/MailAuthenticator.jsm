@@ -65,24 +65,6 @@ class MailAuthenticator {
   }
 
   /**
-   * Get the ByteString form of the current password.
-   * @returns string
-   */
-  getByteStringPassword() {
-    return MailStringUtils.stringToByteString(this.getPassword());
-  }
-
-  /**
-   * Get the PLAIN auth token for a connection.
-   * @returns string
-   */
-  getPlainToken() {
-    // According to rfc4616#section-2, password should be UTF-8 BinaryString
-    // before base64 encoded.
-    return btoa("\0" + this.username + "\0" + this.getByteStringPassword());
-  }
-
-  /**
    * Get the OAuth token for a connection.
    * @returns string
    */
@@ -274,6 +256,24 @@ class SmtpAuthenticator extends MailAuthenticator {
     );
   }
 
+  /**
+   * Get the ByteString form of the current password.
+   * @returns string
+   */
+  getByteStringPassword() {
+    return MailStringUtils.stringToByteString(this.getPassword());
+  }
+
+  /**
+   * Get the PLAIN auth token for a connection.
+   * @returns string
+   */
+  getPlainToken() {
+    // According to rfc4616#section-2, password should be UTF-8 BinaryString
+    // before base64 encoded.
+    return btoa("\0" + this.username + "\0" + this.getByteStringPassword());
+  }
+
   async getOAuthToken() {
     let oauth2Module = Cc["@mozilla.org/mail/oauth2-module;1"].createInstance(
       Ci.msgIOAuth2Module
@@ -326,6 +326,26 @@ class IncomingServerAuthenticator extends MailAuthenticator {
     this._server.forgetPassword();
   }
 
+  /**
+   * Get the ByteString form of the current password.
+   * @returns string
+   */
+  async getByteStringPassword() {
+    return MailStringUtils.stringToByteString(await this.getPassword());
+  }
+
+  /**
+   * Get the PLAIN auth token for a connection.
+   * @returns string
+   */
+  async getPlainToken() {
+    // According to rfc4616#section-2, password should be UTF-8 BinaryString
+    // before base64 encoded.
+    return btoa(
+      "\0" + this.username + "\0" + (await this.getByteStringPassword())
+    );
+  }
+
   async getOAuthToken() {
     let oauth2Module = Cc["@mozilla.org/mail/oauth2-module;1"].createInstance(
       Ci.msgIOAuth2Module
@@ -361,7 +381,7 @@ class NntpAuthenticator extends IncomingServerAuthenticator {
  * @extends {IncomingServerAuthenticator}
  */
 class Pop3Authenticator extends IncomingServerAuthenticator {
-  getPassword() {
+  async getPassword() {
     if (this._server.password) {
       return this._server.password;
     }
@@ -381,7 +401,11 @@ class Pop3Authenticator extends IncomingServerAuthenticator {
     try {
       msgWindow = MailServices.mailSession.topmostMsgWindow;
     } catch (e) {}
-    return this._server.getPasswordWithUI(promptString, promptTitle, msgWindow);
+    return this._server.wrappedJSObject.getPasswordWithUIAsync(
+      promptString,
+      promptTitle,
+      msgWindow
+    );
   }
 
   promptAuthFailed() {
@@ -414,7 +438,7 @@ class ImapAuthenticator extends IncomingServerAuthenticator {
     try {
       msgWindow = MailServices.mailSession.topmostMsgWindow;
     } catch (e) {}
-    return this._server.wrappedJSObject.getPasswordFromAuthPrompt(
+    return this._server.wrappedJSObject.getPasswordWithUIAsync(
       promptString,
       promptTitle,
       msgWindow
