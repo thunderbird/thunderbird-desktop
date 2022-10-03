@@ -50,9 +50,9 @@ async function notInEditingMode(expectedFocus) {
   );
   checkToolbarState(true);
   Assert.equal(
-    expectedFocus,
     abDocument.activeElement,
-    `Focus should be on the ${expectedFocus.id}`
+    expectedFocus,
+    `Focus should be on #${expectedFocus.id}`
   );
 }
 
@@ -1454,10 +1454,9 @@ add_task(async function test_delete_button() {
   openDirectory(personalBook);
 
   let abDocument = abWindow.document;
+  let searchInput = abDocument.getElementById("searchInput");
   let cardsList = abDocument.getElementById("cards");
   let detailsPane = abDocument.getElementById("detailsPane");
-
-  let searchInput = abDocument.getElementById("searchInput");
 
   let createContactButton = abDocument.getElementById("toolbarCreateContact");
   let editButton = abDocument.getElementById("editButton");
@@ -1554,7 +1553,6 @@ add_task(async function test_delete_button() {
   Assert.ok(BrowserTestUtils.is_visible(deleteButton));
 
   // Click to delete, accept the deletion.
-
   deletionPromise = TestUtils.topicObserved("addrbook-contact-deleted");
   promptPromise = BrowserTestUtils.promiseAlertDialog("accept");
   EventUtils.synthesizeMouseAtCenter(deleteButton, {}, abWindow);

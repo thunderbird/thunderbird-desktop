@@ -1520,6 +1520,14 @@ var cardsPane = {
     this.cardsList.addEventListener("dblclick", this);
     this.cardsList.addEventListener("dragstart", this);
     this.cardsList.addEventListener("contextmenu", this);
+    this.cardsList.addEventListener("rowcountchange", () => {
+      if (
+        document.activeElement == this.cardsList &&
+        this.cardsList.view.rowCount == 0
+      ) {
+        this.searchInput.focus();
+      }
+    });
     this.cardsList.addEventListener("searchstatechange", () =>
       this._updatePlaceholder()
     );
@@ -1955,8 +1963,14 @@ var cardsPane = {
       return;
     }
 
+    // TODO: Setting the index should be unnecessary.
+    let indexAfterDelete = this.cardsList.currentIndex;
     // Delete cards from address books or mailing lists.
     this.cardsList.view.deleteSelectedCards();
+    this.cardsList.currentIndex = Math.min(
+      indexAfterDelete,
+      this.cardsList.view.rowCount - 1
+    );
   },
 
   _onContextMenu(event) {
@@ -2372,6 +2386,7 @@ var detailsPane = {
       "toolbarCreateList"
     ).label;
     this.editButton = document.getElementById("editButton");
+    this.selectedCardsSection = document.getElementById("selectedCards");
     this.form = document.getElementById("editContactForm");
     this.vCardEdit = this.form.querySelector("vcard-edit");
     this.deleteButton = document.getElementById("detailsDeleteButton");
@@ -2544,6 +2559,10 @@ var detailsPane = {
   },
 
   async observe(subject, topic, data) {
+    let hadFocus =
+      this.node.contains(document.activeElement) ||
+      document.activeElement == document.body;
+
     switch (topic) {
       case "addrbook-contact-created":
         subject.QueryInterface(Ci.nsIAbCard);
@@ -2551,7 +2570,7 @@ var detailsPane = {
         if (
           !this.currentCard ||
           this.currentCard.directoryUID != data ||
-          subject.getProperty("_originalUID", "") != this.currentCard.UID
+          this.currentCard.UID != subject.getProperty("_originalUID", "")
         ) {
           break;
         }
@@ -2569,7 +2588,7 @@ var detailsPane = {
         if (
           !this.currentCard ||
           this.currentCard.directoryUID != data ||
-          !subject.equals(this.currentCard)
+          !this.currentCard.equals(subject)
         ) {
           break;
         }
@@ -2585,33 +2604,62 @@ var detailsPane = {
       case "addrbook-contact-deleted":
         subject.QueryInterface(Ci.nsIAbCard);
         updateAddressBookCount();
-        if (
-          (!this.currentCard ||
-            this.currentCard.directoryUID != data ||
-            !subject.equals(this.currentCard)) &&
-          cardsPane.cardsList.childElementCount != 0
-        ) {
-          break;
-        }
 
-        // The card being displayed was deleted.
-        this.isEditing = false;
-        this.displayCards();
-        // FIXME: Focus should remain on the cardsList if it is already there
-        // and move to the next item.
-        cardsPane.searchInput.focus();
+        if (
+          this.currentCard?.directoryUID == data &&
+          this.currentCard.equals(subject)
+        ) {
+          // The card being displayed was deleted.
+          this.isEditing = false;
+          this.displayCards();
+
+          if (hadFocus) {
+            if (cardsPane.cardsList.view.rowCount == 0) {
+              cardsPane.searchInput.focus();
+            } else {
+              cardsPane.cardsList.focus();
+            }
+          }
+        } else if (!this.selectedCardsSection.hidden) {
+          for (let li of this.selectedCardsSection.querySelectorAll("li")) {
+            if (li._card.directoryUID == data && li._card.equals(subject)) {
+              // A selected card was deleted.
+              this.displayCards(cardsPane.selectedCards);
+              break;
+            }
+          }
+        }
         break;
       case "addrbook-list-updated":
         subject.QueryInterface(Ci.nsIAbDirectory);
-        if (this.currentList && subject.URI == this.currentList.mailListURI) {
+        if (this.currentList && this.currentList.mailListURI == subject.URI) {
           this.displayList(this.currentList);
         }
         break;
       case "addrbook-list-deleted":
         subject.QueryInterface(Ci.nsIAbDirectory);
-        if (this.currentList && subject.URI == this.currentList.mailListURI) {
+        if (this.currentList && this.currentList.mailListURI == subject.URI) {
+          // The list being displayed was deleted.
           this.displayCards();
-          cardsPane.searchInput.focus();
+
+          if (hadFocus) {
+            if (cardsPane.cardsList.view.rowCount == 0) {
+              cardsPane.searchInput.focus();
+            } else {
+              cardsPane.cardsList.focus();
+            }
+          }
+        } else if (!this.selectedCardsSection.hidden) {
+          for (let li of this.selectedCardsSection.querySelectorAll("li")) {
+            if (
+              li._card.directoryUID == data &&
+              li._card.mailListURI == subject.URI
+            ) {
+              // A selected list was deleted.
+              this.displayCards(cardsPane.selectedCards);
+              break;
+            }
+          }
         }
         break;
     }
@@ -2732,13 +2780,13 @@ var detailsPane = {
 
     this.actions.hidden = this.writeButton.hidden;
 
-    let section = document.getElementById("selectedCards");
-    let list = section.querySelector("ul");
+    let list = this.selectedCardsSection.querySelector("ul");
     list.replaceChildren();
     let template = document.getElementById("selectedCard").content
       .firstElementChild;
     for (let card of cards) {
       let li = list.appendChild(template.cloneNode(true));
+      li._card = card;
       let avatar = li.querySelector(".recipient-avatar");
       let name = li.querySelector(".name");
       let address = li.querySelector(".address");
@@ -2768,7 +2816,7 @@ var detailsPane = {
         avatar.classList.add("is-mail-list");
       }
     }
-    section.hidden = false;
+    this.selectedCardsSection.hidden = false;
 
     this.node.hidden = this.splitter.isCollapsed = false;
     document.getElementById("viewContact").scrollTo(0, 0);
@@ -3515,8 +3563,14 @@ var detailsPane = {
         {}
       ) === 0
     ) {
+      // TODO: Setting the index should be unnecessary.
+      let indexAfterDelete = cardsPane.cardsList.currentIndex;
       book.deleteCards([card]);
-      // The addrbook-contact-deleted notification will update the UI.
+      cardsPane.cardsList.currentIndex = Math.min(
+        indexAfterDelete,
+        cardsPane.cardsList.view.rowCount - 1
+      );
+      // The addrbook-contact-deleted notification will update the details pane UI.
     }
   },
 
@@ -3554,13 +3608,13 @@ var detailsPane = {
       return ABView.prototype.collator.compare(a[key], b[key]);
     });
 
-    let section = document.getElementById("selectedCards");
-    let list = section.querySelector("ul");
+    let list = this.selectedCardsSection.querySelector("ul");
     list.replaceChildren();
     let template = document.getElementById("selectedCard").content
       .firstElementChild;
     for (let card of cards) {
       let li = list.appendChild(template.cloneNode(true));
+      li._card = card;
       let avatar = li.querySelector(".recipient-avatar");
       let name = li.querySelector(".name");
       let address = li.querySelector(".address");
@@ -3580,7 +3634,7 @@ var detailsPane = {
         avatar.appendChild(letter);
       }
     }
-    section.hidden = list.childElementCount == 0;
+    this.selectedCardsSection.hidden = list.childElementCount == 0;
 
     let book = MailServices.ab.getDirectoryFromUID(listCard.directoryUID);
     this.writeButton.hidden = list.childElementCount == 0;
