@@ -22,6 +22,7 @@ interface nsIPop3IncomingServer : nsISupports {
   attribute nsIPop3Protocol runningProtocol;
   // client adds uidls to mark one by one, then calls markMessages
   void addUidlToMark(in string aUidl, in int32_t newStatus);
+  // TODO: make this async.
   void markMessages();
   attribute boolean authenticated;
   /* account to which this server defers storage, for global inbox */
@@ -33,5 +34,3 @@ interface nsIPop3IncomingServer : nsISupports {
     in Array<nsIPop3IncomingServer> aServers, in nsIMsgWindow aMsgWindow,
     in nsIMsgFolder aFolder, in nsIUrlListener aListener);
 };
-
-

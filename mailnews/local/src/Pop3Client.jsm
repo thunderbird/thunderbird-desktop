@@ -235,8 +235,17 @@ class Pop3Client {
   async markMessages(uidlsToMark) {
     this._logger.debug("markMessages", uidlsToMark);
     if (!this._uidlMap) {
-      await this._loadUidlState();
+      this._loadUidlState();
     }
+    // Callers of nsIPop3IncomingServer.markMessages (e.g. filters) expect it to
+    // act as a sync function, otherwise, the flags set by filters may not take
+    // effect.
+    Services.tm.spinEventLoopUntil(
+      "nsIPop3IncomingServer.markMessages is a synchronous function",
+      () => {
+        return this._uidlMap;
+      }
+    );
     for (let [uidl, status] of uidlsToMark) {
       let uidlState = this._uidlMap.get(uidl);
       this._uidlMap.set(uidl, {
@@ -1254,7 +1263,7 @@ class Pop3Client {
         }
 
         let state = this._uidlMap.get(this._currentMessage.uidl);
-        if (state?.status == UIDL_KEEP) {
+        if (state?.status == UIDL_FETCH_BODY) {
           this._actionRetr();
           return;
         }
@@ -1267,6 +1276,7 @@ class Pop3Client {
           uidl: this._currentMessage.uidl,
           receivedAt: Math.floor(Date.now() / 1000),
         });
+        this._uidlMapChanged = true;
         this._actionHandleMessage();
       }
     );
@@ -1335,6 +1345,7 @@ class Pop3Client {
               uidl: this._currentMessage.uidl,
               receivedAt: Math.floor(Date.now() / 1000),
             });
+            this._uidlMapChanged = true;
             this._actionHandleMessage();
           }
         } else {
