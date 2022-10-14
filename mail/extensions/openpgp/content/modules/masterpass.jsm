@@ -201,7 +201,7 @@ var OpenPGPMasterpass = {
               this.secringFilename + ".old.corrupt"
             );
             await IOUtils.move(secRingFile.path + ".old", backupOld);
-          } catch (eOld) {};
+          } catch (eOld) {}
 
           let backup2 = await IOUtils.createUniqueFile(
             Services.dirsvc.get("ProfD", Ci.nsIFile).path,
