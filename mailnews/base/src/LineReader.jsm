@@ -4,6 +4,8 @@
 
 const EXPORTED_SYMBOLS = ["LineReader"];
 
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
 /**
  * For a single request, mail servers may return several multi-line responses. A
  * definition of multi-line responses can be found at rfc3977#section-3.1.1.
