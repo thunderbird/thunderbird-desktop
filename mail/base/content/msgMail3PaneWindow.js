@@ -2230,6 +2230,11 @@ function ThreadPaneOnDragStart(aEvent) {
       new messageFlavorDataProvider(),
       index
     );
+    aEvent.dataTransfer.mozSetDataAt(
+      "application/x-moz-file-promise-dest-filename",
+      msgFileName.replace(/(.{74}).*(.{10})$/u, "$1...$2"),
+      index
+    );
   }
 
   aEvent.dataTransfer.effectAllowed = "copyMove";
@@ -2256,7 +2261,7 @@ messageFlavorDataProvider.prototype = {
     );
     let fileUri = Services.io.newURI(fileUriStr.data);
     let fileUrl = fileUri.QueryInterface(Ci.nsIURL);
-    let fileName = fileUrl.fileName;
+    let fileName = fileUrl.fileName.replace(/(.{74}).*(.{10})$/u, "$1...$2");
 
     let destDirPrimitive = {};
     aTransferable.getTransferData(

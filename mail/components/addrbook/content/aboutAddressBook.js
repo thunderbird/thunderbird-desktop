@@ -2301,7 +2301,7 @@ var cardsPane = {
         event.dataTransfer.setData("text/vcard", decodeURIComponent(vCard));
         event.dataTransfer.setData(
           "application/x-moz-file-promise-dest-filename",
-          card.displayName + ".vcf"
+          `${card.displayName}.vcf`.replace(/(.{74}).*(.{10})$/u, "$1...$2")
         );
         event.dataTransfer.setData(
           "application/x-moz-file-promise-url",
