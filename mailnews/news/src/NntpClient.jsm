@@ -737,6 +737,7 @@ class NntpClient {
     }
     this._sendCommand(`AUTHINFO user ${this._newsFolder.groupUsername}`, true);
     this._nextAction = this._actionAuthResult;
+    this._authenticator.username = this._newsFolder.groupUsername;
   }
 
   /**
