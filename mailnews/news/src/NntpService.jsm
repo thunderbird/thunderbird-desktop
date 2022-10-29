@@ -216,6 +216,14 @@ class NntpService {
     });
   }
 
+  downloadNewsgroupsForOffline(msgWindow, urlListener) {
+    let { NewsDownloader } = ChromeUtils.import(
+      "resource:///modules/NewsDownloader.jsm"
+    );
+    let downloader = new NewsDownloader(msgWindow, urlListener);
+    downloader.start();
+  }
+
   /**
    * Find the hostname of a NNTP server from a group name.
    * @param {string} groupName - The group name.
