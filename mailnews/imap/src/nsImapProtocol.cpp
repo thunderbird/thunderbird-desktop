@@ -1635,6 +1635,7 @@ void nsImapProtocol::EstablishServerConnection() {
       } else {
         // let's record the user as authenticated.
         m_imapServerSink->SetUserAuthenticated(true);
+        m_hostSessionList->SetPasswordVerifiedOnline(GetImapServerKey());
 
         ProcessAfterAuthenticated();
         // the connection was a success
