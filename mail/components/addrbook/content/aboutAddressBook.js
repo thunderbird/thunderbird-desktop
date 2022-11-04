@@ -79,6 +79,31 @@ UIFontSize.registerWindow(window);
 var booksList;
 
 window.addEventListener("load", () => {
+
+  document.addEventListener("keydown", event => {
+    if (
+      !(AppConstants.platform == "macosx" ? event.metaKey : event.ctrlKey) ||
+      ["Shift", "Control", "Meta"].includes(event.key)
+    ) {
+      return;
+    }
+
+    // Always use lowercase to compare the key and avoid OS inconsistencies:
+    // For Cmd/Ctrl+Shift+A, on Mac, key = "a" vs. on Windows/Linux, key = "A".
+    switch (event.key.toLowerCase()) {
+      // Always prevent the default behavior of the keydown if we intercepted
+      // the key in order to avoid triggering OS specific shortcuts.
+      // We're temporarily hardcoding Ctrl/Cmd+n for ESR 102 lacking the string.
+      case "n": {
+        // Ctrl/Cmd+n.
+        event.preventDefault();
+        createContact();
+        break;
+      }
+    }
+  });
+
+
   document
     .getElementById("toolbarCreateBook")
     .addEventListener("command", event => {
