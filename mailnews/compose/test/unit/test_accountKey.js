@@ -17,7 +17,7 @@ let MockNntpServiceFactory = {
   },
 };
 
-add_setup(async function() {
+function mock() {
   let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
   registrar.registerFactory(
     Components.ID("{4816dd44-fe15-4719-8cfb-a2f8ee46d787}"),
@@ -25,7 +25,7 @@ add_setup(async function() {
     "@mozilla.org/messenger/nntpservice;1",
     MockNntpServiceFactory
   );
-});
+}
 
 /**
  * Test that when accountKey is not passed to sendMessageFile, MessageSend can
@@ -36,6 +36,7 @@ add_task(async function testAccountKey() {
   let server = setupServerDaemon();
   localAccountUtils.loadLocalMailAccount();
   server.start();
+  mock();
   let smtpServer = getBasicSmtpServer(server.port);
   let identity = getSmtpIdentity("from@foo.invalid", smtpServer);
   let account = MailServices.accounts.createAccount();
