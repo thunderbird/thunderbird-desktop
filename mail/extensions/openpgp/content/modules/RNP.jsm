@@ -35,7 +35,7 @@ var RNP = {
     this.hasRan = true;
     try {
       RNPLib = RNPLibLoader.init();
-      if (!RNPLib) {
+      if (!RNPLib || !RNPLib.loaded) {
         return;
       }
       if (await RNPLib.init()) {
@@ -46,6 +46,10 @@ var RNP = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  getRNPLibStatus() {
+    return RNPLib.getRNPLibStatus();
   },
 
   async init(opts) {
