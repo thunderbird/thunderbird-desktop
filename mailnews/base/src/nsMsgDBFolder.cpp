@@ -645,6 +645,7 @@ nsresult nsMsgDBFolder::ReadDBFolderInfo(bool force) {
   if (force || !mInitializedFromCache) {
     nsCOMPtr<nsIDBFolderInfo> folderInfo;
     nsCOMPtr<nsIMsgDatabase> db;
+    bool weOpenedDB = !mDatabase;
     result =
         GetDBFolderInfoAndDB(getter_AddRefs(folderInfo), getter_AddRefs(db));
     if (NS_SUCCEEDED(result)) {
@@ -679,6 +680,7 @@ nsresult nsMsgDBFolder::ReadDBFolderInfo(bool force) {
           rv = db->HasNew(&hasnew);
           if (NS_FAILED(rv)) return rv;
         }
+        if (weOpenedDB) CloseDBIfFolderNotOpen(false);
       }
     } else {
       // we tried to open DB but failed - don't keep trying.
