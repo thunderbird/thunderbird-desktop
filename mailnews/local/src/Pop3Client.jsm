@@ -258,19 +258,25 @@ class Pop3Client {
 
   /**
    * Send `QUIT` request to the server.
-   * @param {Function} [nextAction] - Callback function after QUIT response.
+   * @param {Function} nextAction - Callback function after QUIT response.
    */
-  quit(nextAction = this.close) {
-    this._send("QUIT");
-    this._nextAction = nextAction;
+  quit(nextAction) {
+    this._onData = () => {};
+    this._onError = () => {};
+    if (this._socket?.readyState == "open") {
+      this._send("QUIT");
+      this._nextAction = nextAction || this.close;
+    } else if (nextAction) {
+      nextAction();
+    }
   }
 
   /**
    * Close the socket.
    */
-  close() {
+  close = () => {
     this._socket.close();
-  }
+  };
 
   /**
    * The open event handler.
@@ -349,6 +355,7 @@ class Pop3Client {
   _onError = event => {
     this._logger.error(`${event.name}: a ${event.message} error occurred`);
     this._server.serverBusy = false;
+    this.quit();
     let secInfo = event.target.transport?.securityInfo;
     if (secInfo) {
       this.runningUri.failedSecInfo = secInfo;
