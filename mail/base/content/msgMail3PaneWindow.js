@@ -1152,7 +1152,7 @@ function reportAccountSizes() {
   Services.telemetry.keyedScalarSet("tb.account.total_messages", "Other", 0);
   Services.telemetry.keyedScalarSet("tb.account.total_messages", "Total", 0);
 
-  for (let server of lazy.MailServices.accounts.allServers) {
+  for (let server of MailServices.accounts.allServers) {
     if (
       server instanceof Ci.nsIPop3IncomingServer &&
       server.deferredToAccount
