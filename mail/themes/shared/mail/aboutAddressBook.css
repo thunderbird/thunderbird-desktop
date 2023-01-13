@@ -111,7 +111,7 @@ body.layout-table {
 }
 
 .toolbarbutton-1:focus-visible {
-  outline: var(--in-content-focus-outline);
+  outline: var(--focus-outline);
 }
 
 #toolbarCreateBook {
