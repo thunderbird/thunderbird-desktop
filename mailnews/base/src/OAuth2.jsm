@@ -37,6 +37,7 @@ function OAuth2(scope, issuerDetails) {
   this.authorizationEndpoint = issuerDetails.authorizationEndpoint;
   this.clientId = issuerDetails.clientId;
   this.consumerSecret = issuerDetails.clientSecret || null;
+  this.useCORS = issuerDetails.useCORS;
   this.redirectionEndpoint =
     issuerDetails.redirectionEndpoint || "http://localhost";
   this.tokenEndpoint = issuerDetails.tokenEndpoint;
@@ -57,6 +58,7 @@ OAuth2.prototype = {
   requestWindowFeatures: "chrome,private,centerscreen,width=980,height=750",
   requestWindowTitle: "",
   scope: null,
+  useCORS: true,
 
   accessToken: null,
   refreshToken: null,
@@ -254,11 +256,17 @@ OAuth2.prototype = {
       data.append("redirect_uri", this.redirectionEndpoint);
     }
 
-    fetch(this.tokenEndpoint, {
+    const fetchOptions = {
       method: "POST",
       cache: "no-cache",
       body: data,
-    })
+    };
+
+    if (!this.useCORS) {
+      fetchOptions.mode = "no-cors";
+    }
+
+    fetch(this.tokenEndpoint, fetchOptions)
       .then(response => response.json())
       .then(result => {
         let resultStr = JSON.stringify(result, null, 2);
