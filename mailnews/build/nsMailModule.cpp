@@ -242,7 +242,6 @@
 #include "nsCertPicker.h"
 #include "nsMsgSMIMECID.h"
 #include "nsMsgComposeSecure.h"
-#include "nsSMimeJSHelper.h"
 #include "nsEncryptedSMIMEURIsService.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -595,7 +594,6 @@ NS_DEFINE_NAMED_CID(NS_MSGMDNGENERATOR_CID);
 // smime factories
 ////////////////////////////////////////////////////////////////////////////////
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsMsgComposeSecure)
-NS_GENERIC_FACTORY_CONSTRUCTOR(nsSMimeJSHelper)
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsEncryptedSMIMEURIsService)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsCMSDecoder, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsCMSDecoderJS, Init)
@@ -605,7 +603,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsCMSSecureMessage, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsCertPicker, Init)
 
 NS_DEFINE_NAMED_CID(NS_MSGCOMPOSESECURE_CID);
-NS_DEFINE_NAMED_CID(NS_SMIMEJSJELPER_CID);
 NS_DEFINE_NAMED_CID(NS_SMIMEENCRYPTURISERVICE_CID);
 NS_DEFINE_NAMED_CID(NS_CMSDECODER_CID);
 NS_DEFINE_NAMED_CID(NS_CMSDECODERJS_CID);
@@ -821,7 +818,6 @@ const mozilla::Module::CIDEntry kMailNewsCIDs[] = {
     {&kNS_MSGMDNGENERATOR_CID, false, NULL, nsMsgMdnGeneratorConstructor},
     // SMime Entries
     {&kNS_MSGCOMPOSESECURE_CID, false, NULL, nsMsgComposeSecureConstructor},
-    {&kNS_SMIMEJSJELPER_CID, false, NULL, nsSMimeJSHelperConstructor},
     {&kNS_SMIMEENCRYPTURISERVICE_CID, false, NULL,
      nsEncryptedSMIMEURIsServiceConstructor},
     {&kNS_CMSDECODER_CID, false, NULL, nsCMSDecoderConstructor},
@@ -1016,7 +1012,6 @@ const mozilla::Module::ContractIDEntry kMailNewsContracts[] = {
     {NS_MSGMDNGENERATOR_CONTRACTID, &kNS_MSGMDNGENERATOR_CID},
     // SMime Entries
     {NS_MSGCOMPOSESECURE_CONTRACTID, &kNS_MSGCOMPOSESECURE_CID},
-    {NS_SMIMEJSHELPER_CONTRACTID, &kNS_SMIMEJSJELPER_CID},
     {NS_SMIMEENCRYPTURISERVICE_CONTRACTID, &kNS_SMIMEENCRYPTURISERVICE_CID},
     {NS_CMSSECUREMESSAGE_CONTRACTID, &kNS_CMSSECUREMESSAGE_CID},
     {NS_CMSDECODER_CONTRACTID, &kNS_CMSDECODER_CID},

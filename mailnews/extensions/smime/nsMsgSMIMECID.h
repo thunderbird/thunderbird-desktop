@@ -13,16 +13,6 @@
     }                                                \
   }
 
-#define NS_SMIMEJSHELPER_CONTRACTID \
-  "@mozilla.org/messenger-smime/smimejshelper;1"
-
-#define NS_SMIMEJSJELPER_CID                         \
-  { /* d57d928c-60e4-4f81-999d-5c762e611205 */       \
-    0xd57d928c, 0x60e4, 0x4f81, {                    \
-      0x99, 0x9d, 0x5c, 0x76, 0x2e, 0x61, 0x12, 0x05 \
-    }                                                \
-  }
-
 #define NS_CMSDECODERJS_CONTRACTID "@mozilla.org/nsCMSDecoderJS;1"
 
 #define NS_CMSDECODERJS_CID                          \
