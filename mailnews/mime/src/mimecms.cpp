@@ -362,8 +362,13 @@ NS_IMETHODIMP nsSMimeVerificationListener::Notify(
       signature_status = nsICMSMessageErrors::SUCCESS;
   }
 
-  ProxySignedStatus(mHeaderSink, mMimeNestingLevel, signature_status,
-                    signerCert, mMsgNeckoURL);
+  if (NS_IsMainThread()) {
+    mHeaderSink->SignedStatus(mMimeNestingLevel, signature_status,
+                      signerCert, mMsgNeckoURL);
+  } else {
+    ProxySignedStatus(mHeaderSink, mMimeNestingLevel, signature_status,
+                      signerCert, mMsgNeckoURL);
+  }
 
   return NS_OK;
 }
