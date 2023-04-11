@@ -463,6 +463,10 @@ class NntpClient {
     if (this._inReadingMode) {
       nextAction();
     } else {
+      this._currentAction = () => {
+        this._inReadingMode = false;
+        this._actionModeReader(nextAction);
+      };
       this._sendCommand("MODE READER");
       this._inReadingMode = true;
       this._nextAction = () => {
