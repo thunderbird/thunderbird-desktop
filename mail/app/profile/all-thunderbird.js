@@ -1342,3 +1342,9 @@ pref("app.donation.eoy.version", 1);
 pref("app.donation.eoy.version.viewed", 0);
 pref("app.donation.eoy.url", "https://www.thunderbird.net/thunderbird/102.0/eoy/");
 
+// Beta appeal
+pref("app.beta_appeal.version", 1);
+pref("app.beta_appeal.version.viewed", 0);
+pref("app.beta_appeal.url", "https://www.thunderbird.net/thunderbird/102.0/beta-appeal/?locale=%LOCALE%&version=%VERSION%&channel=%CHANNEL%&os=%OS%&buildid=%APPBUILDID%");
+// June 21st expiry.
+pref("app.beta_appeal.expiry", 1687323600);
