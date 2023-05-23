@@ -151,7 +151,7 @@ SmtpService.prototype = {
           await new Promise(resolve => (socketOnDrain = resolve));
         }
         // In practice, chunks are buffered by TCPSocket, progress reaches 100%
-        // almost immediately.
+        // almost immediately unless message is larger than chunk size.
         sentSize += chunk.length;
         progressListener?.onProgressChange(
           null,
@@ -165,6 +165,9 @@ SmtpService.prototype = {
       sstream.close();
       fstream.close();
       client.end();
+
+      // Set progress to indeterminate.
+      progressListener?.onProgressChange(null, null, 0, -1, 0, -1);
     };
     client.ondrain = () => {
       // Socket buffer is empty, safe to continue sending.
