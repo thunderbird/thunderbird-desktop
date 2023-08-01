@@ -1337,10 +1337,10 @@ pref("print.print_headerright", "");
 // Enable Masonry Layout for AddressBook.
 pref("layout.css.grid-template-masonry-value.enabled", true);
 
-// Donation appeal.
-pref("app.donation.eoy.version", 2);
+// End of year donation appeal.
+pref("app.donation.eoy.version", 1);
 pref("app.donation.eoy.version.viewed", 0);
-pref("app.donation.eoy.url", "https://www.thunderbird.net/thunderbird/115.0/appeal/");
+pref("app.donation.eoy.url", "https://www.thunderbird.net/thunderbird/102.0/eoy/");
 
 // Beta appeal
 pref("app.beta_appeal.version", 1);
