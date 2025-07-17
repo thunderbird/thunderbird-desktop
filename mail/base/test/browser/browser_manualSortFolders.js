@@ -52,7 +52,7 @@ add_setup(async function () {
   });
 });
 
-async function dargAndDropFolder(element, target, below = false) {
+async function dragAndDropFolder(element, target, below = false) {
   const elementRow = about3Pane.folderPane.getRowForFolder(element);
   const targetRow = about3Pane.folderPane.getRowForFolder(target);
   const targetRect = targetRow.getBoundingClientRect();
@@ -133,7 +133,7 @@ add_task(async function test_sort_single_folder() {
   Assert.equal(folderTree.selectedIndex, 3);
 
   // Test dragging folderB above folderA.
-  await dargAndDropFolder(folderB, folderA);
+  await dragAndDropFolder(folderB, folderA);
 
   Assert.deepEqual(
     Array.from(
@@ -156,7 +156,7 @@ add_task(async function test_sort_single_folder() {
   );
 
   // Test dragging folderC below folderB.
-  await dargAndDropFolder(folderC, folderB, true);
+  await dragAndDropFolder(folderC, folderB, true);
 
   Assert.deepEqual(
     Array.from(
@@ -179,7 +179,7 @@ add_task(async function test_sort_single_folder() {
   );
 
   // Test dragging folderB below folderD and making it a child of folderD.
-  await dargAndDropFolder(folderB, folderD, true);
+  await dragAndDropFolder(folderB, folderD, true);
 
   // folderB should now be a child of folderD.
   folderB = folderD.getChildNamed("folderB");
