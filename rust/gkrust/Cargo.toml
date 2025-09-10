@@ -21,10 +21,9 @@ mailnews_ui_glue = { version = "0.1.0", path = "../mailnews_ui_glue" }
 sys_tray = { version = "0.1.0", path = "../sys_tray" }
 aa-stroke = { git = "https://github.com/FirefoxGraphics/aa-stroke", rev = "a821fa621c2def48e90c82774b4c6563b5a8ea4a" }
 abridged_certs = { path = "../../../security/manager/ssl/abridged_certs" }
-app_services_logger = { path = "../../../services/common/app_services_logger" }
-audio_thread_priority = { version = "0.32" }
-audioipc2-client = { git = "https://github.com/mozilla/audioipc", rev = "e6f44a2bd1e57d11dfc737632a9e849077632330", optional = true }
-audioipc2-server = { git = "https://github.com/mozilla/audioipc", rev = "e6f44a2bd1e57d11dfc737632a9e849077632330", optional = true }
+audio_thread_priority = { version = "0.34" }
+audioipc2-client = { git = "https://github.com/mozilla/audioipc", rev = "ec44d33e5924f6618467fdb18010d626701fd110", optional = true }
+audioipc2-server = { git = "https://github.com/mozilla/audioipc", rev = "ec44d33e5924f6618467fdb18010d626701fd110", optional = true }
 authrs_bridge = { path = "../../../dom/webauthn/authrs_bridge" }
 binary_http = { path = "../../../netwerk/protocol/http/binary_http" }
 bitsdownload = { path = "../../../toolkit/components/bitsdownload", optional = true }
@@ -36,9 +35,9 @@ chardetng_c = { version = "0.1.1" }
 cose-c = { version = "0.1.5" }
 crash_helper_client = { path = "../../../toolkit/crashreporter/crash_helper_client", optional = true }
 crypto_hash = { path = "../../../security/manager/ssl/crypto_hash" }
-cubeb-coreaudio = { git = "https://github.com/mozilla/cubeb-coreaudio-rs", rev = "2407441a2f67341a0e13b4ba6547555e387c671c", optional = true }
-cubeb-pulse = { git = "https://github.com/mozilla/cubeb-pulse-rs", rev = "8678dcab1c287de79c4c184ccc2e065bc62b70e2", optional = true, features = ['pulse-dlopen'] }
-cubeb-sys = { version = "0.13", optional = true, features = ['gecko-in-tree'] }
+cubeb-coreaudio = { git = "https://github.com/mozilla/cubeb-coreaudio-rs", rev = "721b915d12dd899a67596cd3d9357a31c0af45b5", optional = true, features = ['vpio-forcelist'] }
+cubeb-pulse = { git = "https://github.com/mozilla/cubeb-pulse-rs", rev = "e0ddf430162f9113a9a90dc52b349d273baa3ec5", optional = true, features = ['pulse-dlopen'] }
+cubeb-sys = { version = "0.29", optional = true, features = ['gecko-in-tree'] }
 dap_ffi = { path = "../../../toolkit/components/telemetry/dap/ffi" }
 data-encoding-ffi = { path = "../../../dom/fs/parent/rust/data-encoding-ffi" }
 data_storage = { path = "../../../security/manager/ssl/data_storage" }
@@ -54,6 +53,7 @@ fluent-langneg-ffi = { path = "../../../intl/locale/rust/fluent-langneg-ffi" }
 fog_control = { path = "../../../toolkit/components/glean" }
 gecko-profiler = { path = "../../../tools/profiler/rust-api" }
 gecko_logger = { path = "../../../xpcom/rust/gecko_logger" }
+gecko_tracing = { path = "../../../xpcom/rust/gecko_tracing" }
 geckoservo = { path = "../../../servo/ports/geckolib" }
 gkrust_utils = { path = "../../../xpcom/rust/gkrust_utils" }
 http_sfv = { path = "../../../netwerk/base/http-sfv" }
@@ -78,7 +78,7 @@ mozannotation_client = { path = "../../../toolkit/crashreporter/mozannotation_cl
 mozannotation_server = { path = "../../../toolkit/crashreporter/mozannotation_server", optional = true }
 mozglue-static = { path = "../../../mozglue/static/rust" }
 mozurl = { path = "../../../netwerk/base/mozurl" }
-mp4parse_capi = { git = "https://github.com/mozilla/mp4parse-rust", rev = "d3e4d255bd149d341c7e90f5e9fc84e743a8e179", features = ['missing-pixi-permitted'] }
+mp4parse_capi = { git = "https://github.com/mozilla/mp4parse-rust", rev = "f955be5d2a04a631c0f1777d6f35370ea1a99e2d", features = ['missing-pixi-permitted'] }
 neqo_glue = { path = "../../../netwerk/socket/neqo_glue" }
 netwerk_helper = { path = "../../../netwerk/base/rust-helper" }
 nserror = { path = "../../../xpcom/rust/nserror" }
@@ -93,7 +93,7 @@ profiler_helper = { path = "../../../tools/profiler/rust-helper", optional = tru
 qcms = { path = "../../../gfx/qcms", features = ['c_bindings', 'neon'] }
 rsdparsa_capi = { path = "../../../dom/media/webrtc/sdp/rsdparsa_capi" }
 rure = { version = "0.2.2" }
-rusqlite = { workspace = true, features = ['modern_sqlite', 'in_gecko'] }
+rusqlite = { workspace = true, features = ['modern_sqlite'] }
 rust_minidump_writer_linux = { path = "../../../toolkit/crashreporter/rust_minidump_writer_linux", optional = true }
 signature_cache = { path = "../../../security/certverifier/signature_cache" }
 static_prefs = { path = "../../../modules/libpref/init/static_prefs" }
