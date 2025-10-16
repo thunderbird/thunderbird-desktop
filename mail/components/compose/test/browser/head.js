@@ -19,16 +19,14 @@ const generator = new MessageGenerator();
 /**
  * Sets up a POP3/SMTP account for these tests.
  *
- * @param {string} [incomingType="pop3"] - The type of incoming server to use
- *   this account. Defaults to POP3, as it doesn't need an actual server.
  * @returns {object} - The account, identity, and outgoing server.
  */
-function createSMTPAccount(incomingType = "pop3") {
+function createSMTPAccount() {
   const smtpAccount = MailServices.accounts.createAccount();
   smtpAccount.incomingServer = MailServices.accounts.createIncomingServer(
     "user",
-    "test.test",
-    incomingType
+    "test",
+    "pop3"
   );
   smtpAccount.incomingServer.prettyName = "SMTP Account";
 
