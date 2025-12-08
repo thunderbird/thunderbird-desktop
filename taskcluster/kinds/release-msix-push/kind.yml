@@ -10,14 +10,14 @@ transforms:
     - gecko_taskgraph.transforms.release_msix_push:transforms
     - gecko_taskgraph.transforms.task:transforms
 
-kind-dependencies:
-    - repackage-shippable-l10n-msix
+#kind-dependencies:
+#    - repackage-shippable-l10n-msix
 
 task-defaults:
     description: Pushes msix archives to Microsoft Store
     run-on-projects: []  # to make sure this never runs as part of CI
-    run-on-releases: [beta, release, esr140]
-    shipping-phase: ship  # note override in transform
+#    run-on-releases: [beta, release, esr140]
+#    shipping-phase: ship  # note override in transform
     treeherder:
         platform: win32-shippable/opt
         kind: build
@@ -36,8 +36,8 @@ task-defaults:
                 default: mock
         publish-mode: Manual
 
-tasks:
-    thunderbird:
-        shipping-product: thunderbird
-        treeherder:
-            symbol: MSIX(push)
+#tasks:
+#    thunderbird:
+#        shipping-product: thunderbird
+#        treeherder:
+#            symbol: MSIX(push)
