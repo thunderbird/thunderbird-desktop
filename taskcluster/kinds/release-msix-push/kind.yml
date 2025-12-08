@@ -10,8 +10,8 @@ transforms:
     - gecko_taskgraph.transforms.release_msix_push:transforms
     - gecko_taskgraph.transforms.task:transforms
 
-kind-dependencies:
-    - repackage-shippable-l10n-msix
+#kind-dependencies:
+#    - repackage-shippable-l10n-msix
 
 task-defaults:
     description: Pushes msix archives to Microsoft Store
