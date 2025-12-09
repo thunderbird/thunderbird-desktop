@@ -2,722 +2,657 @@
     "af": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ar": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ast": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "be": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "bg": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "br": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ca": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "cak": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "cs": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "cy": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "da": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "de": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "dsb": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "el": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "en-CA": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "en-GB": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "es-AR": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "es-ES": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "es-MX": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "et": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "eu": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "fi": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "fr": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "fy-NL": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ga-IE": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "gd": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "gl": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "he": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "hr": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "hsb": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "hu": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "hy-AM": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "id": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "is": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "it": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ja": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ja-JP-mac": {
         "pin": false,
         "platforms": [
             "macosx64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ka": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "kab": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "kk": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ko": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "lt": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "lv": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ms": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "nb-NO": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "nl": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "nn-NO": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "pa-IN": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "pl": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "pt-BR": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "pt-PT": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "rm": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ro": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "ru": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "sk": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "sl": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "sq": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "sr": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "sv-SE": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "th": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "tr": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "uk": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "uz": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "vi": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "zh-CN": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     },
     "zh-TW": {
         "pin": false,
         "platforms": [
-            "linux",
             "linux64",
             "macosx64",
             "win32",
             "win64"
         ],
-        "revision": "d5f3e8cfcf37c188e7baf70b99b4c071fbb0890e"
+        "revision": "2cb1e6f9e7bbab390a0aa53fe6c9405406f416f6"
     }
 }
