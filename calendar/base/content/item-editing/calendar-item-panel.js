@@ -210,7 +210,6 @@ function windowCloseListener(aEvent) {
 function onLoadCalendarItemPanel(aIframeId, aUrl) {
   let iframe;
   let iframeSrc;
-  let args;
   const dialog = document.querySelector("dialog");
 
   if (!gTabmail) {
@@ -227,7 +226,6 @@ function onLoadCalendarItemPanel(aIframeId, aUrl) {
     const iframeId = aIframeId || gTabmail.currentTabInfo.iframe.id;
     iframe = document.getElementById(iframeId);
     iframeSrc = aUrl;
-    args = iframe.contentWindow.arguments;
 
     // Add a listener to detect close events, prompt user about saving changes.
     window.addEventListener("close", windowCloseListener);
@@ -242,27 +240,31 @@ function onLoadCalendarItemPanel(aIframeId, aUrl) {
     // Note: iframe.contentWindow is undefined before the iframe is inserted here.
     dialog.insertBefore(iframe, document.getElementById("status-bar"));
 
-    iframe.addEventListener("load", function loadHandler(event) {
-      if (event.target.location.href == "about:blank") {
-        return;
-      }
-      // Push setting dimensions to the end of the event queue.
-      setTimeout(() => {
-        const body = iframe.contentDocument.body;
-        // Make sure the body does not exceed its content's size.
-        body.style.width = "fit-content";
-        body.style.height = "fit-content";
-        const { scrollHeight, scrollWidth } = body;
-        iframe.style.minHeight = `${scrollHeight}px`;
-        iframe.style.minWidth = `${scrollWidth}px`;
-        // Reset the body.
-        body.style.width = null;
-        body.style.height = null;
-      });
-      iframe.removeEventListener("load", loadHandler);
-    });
+    iframe.contentWindow.addEventListener(
+      "load",
+      () => {
+        // Push setting dimensions to the end of the event queue.
+        setTimeout(() => {
+          const body = iframe.contentDocument.body;
+          // Make sure the body does not exceed its content's size.
+          body.style.width = "fit-content";
+          body.style.height = "fit-content";
+          const { scrollHeight, scrollWidth } = body;
+          iframe.style.minHeight = `${scrollHeight}px`;
+          iframe.style.minWidth = `${scrollWidth}px`;
+          // Reset the body.
+          body.style.width = null;
+          body.style.height = null;
+        });
+      },
+      { once: true }
+    );
 
-    args = window.arguments;
+    // Move the args so they are positioned relative to the iframe,
+    // for the window dialog just as they are for the tab.
+    // XXX Should we delete the arguments here in the parent context
+    // so they are only accessible in one place?
+    iframe.contentWindow.arguments = [window.arguments[0]];
 
     // hide the ok and cancel dialog buttons
     const accept = dialog.getButton("accept");
@@ -293,25 +295,8 @@ function onLoadCalendarItemPanel(aIframeId, aUrl) {
     }
   }
 
-  // Move the args so they are positioned relative to the iframe,
-  // for the window dialog just as they are for the tab.
-  // XXX Should we delete the arguments here in the parent context
-  // so they are only accessible in one place?
-  iframe.addEventListener(
-    "DOMContentLoaded",
-    function contentLoadedHandler(event) {
-      if (event.target.location.href == "about:blank") {
-        return;
-      }
-      iframe.contentWindow.arguments = args;
-      iframe.contentWindow.gTimezonesEnabled = gConfig.timezonesEnabled;
-      iframe.removeEventListener("DOMContentLoaded", contentLoadedHandler, { capture: true });
-    },
-    { capture: true }
-  );
-
   // event or task
-  const calendarItem = args[0].calendarEvent;
+  const calendarItem = iframe.contentWindow.arguments[0].calendarEvent;
   gConfig.isEvent = calendarItem.isEvent();
 
   // for tasks in a window dialog, set the dialog id for CSS selection.

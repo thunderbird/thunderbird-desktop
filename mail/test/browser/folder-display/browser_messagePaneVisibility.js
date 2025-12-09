@@ -198,10 +198,7 @@ add_task(async function test_message_pane_persistence_generally_works() {
       info("tab " + iTab);
 
       await switch_tab(iTab);
-      if (
-        tabmail.currentAbout3Pane.document.readyState != "complete" ||
-        tabmail.currentAbout3Pane.location.href == "about:blank"
-      ) {
+      if (tabmail.currentAbout3Pane.document.readyState != "complete") {
         await BrowserTestUtils.waitForEvent(tabmail.currentAbout3Pane, "load");
         await new Promise(resolve =>
           tabmail.currentAbout3Pane.setTimeout(resolve)
