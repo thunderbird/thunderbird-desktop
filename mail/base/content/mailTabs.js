@@ -35,31 +35,25 @@ var mailTabType = {
     browser.addEventListener("DOMLinkAdded", linkRelIconHandler);
     browser.addEventListener("DOMLinkChanged", linkRelIconHandler);
     if (onDOMContentLoaded) {
-      const contentLoadedHandler = event => {
-        if (event.target.ownerGlobal.location.href == "about:blank") {
-          return;
-        }
-        if (!tab.closed) {
-          onDOMContentLoaded(event.target.ownerGlobal);
-        }
-        browser.removeEventListener("DOMContentLoaded", contentLoadedHandler, {
-          capture: true,
-        });
-      };
-      browser.addEventListener("DOMContentLoaded", contentLoadedHandler, {
-        capture: true,
-      });
+      browser.addEventListener(
+        "DOMContentLoaded",
+        event => {
+          if (!tab.closed) {
+            onDOMContentLoaded(event.target.ownerGlobal);
+          }
+        },
+        { capture: true, once: true }
+      );
     }
-    const loadHandler = event => {
-      if (event.target.ownerGlobal.location.href == "about:blank") {
-        return;
-      }
-      if (!tab.closed) {
-        onLoad(event.target.ownerGlobal);
-      }
-      browser.removeEventListener("load", loadHandler, { capture: true });
-    };
-    browser.addEventListener("load", loadHandler, { capture: true });
+    browser.addEventListener(
+      "load",
+      event => {
+        if (!tab.closed) {
+          onLoad(event.target.ownerGlobal);
+        }
+      },
+      { capture: true, once: true }
+    );
 
     tab.title = "";
     tab.panel.id = `${tab.mode.name}${tab.mode._nextId}`;

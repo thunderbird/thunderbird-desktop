@@ -173,10 +173,7 @@ class MessagePane extends HTMLElement {
    * @returns {Promise}
    */
   async isReady() {
-    if (
-      this.messageBrowser.contentDocument.readyState != "complete" ||
-      this.messageBrowser.contentWindow.location.href == "about:blank"
-    ) {
+    if (this.messageBrowser.contentDocument.readyState != "complete") {
       await new Promise(resolve => {
         this.messageBrowser.addEventListener("load", resolve, {
           capture: true,
@@ -185,10 +182,7 @@ class MessagePane extends HTMLElement {
       });
     }
 
-    if (
-      this.multiMessageBrowser.contentDocument.readyState != "complete" ||
-      this.multiMessageBrowser.contentWindow.location.href == "about:blank"
-    ) {
+    if (this.multiMessageBrowser.contentDocument.readyState != "complete") {
       await new Promise(resolve => {
         this.multiMessageBrowser.addEventListener("load", resolve, {
           capture: true,
@@ -311,7 +305,7 @@ class MessagePane extends HTMLElement {
     }
 
     this.messageBrowser.hidden = true;
-    this.messageBrowser.contentWindow.displayMessage?.();
+    this.messageBrowser.contentWindow.displayMessage();
   }
 
   /**
@@ -359,7 +353,7 @@ class MessagePane extends HTMLElement {
     }
 
     this.multiMessageBrowser.hidden = true;
-    this.multiMessageBrowser.contentWindow.gMessageSummary?.clear();
+    this.multiMessageBrowser.contentWindow.gMessageSummary.clear();
   }
 
   /**
