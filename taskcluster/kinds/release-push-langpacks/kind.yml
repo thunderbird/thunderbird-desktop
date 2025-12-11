@@ -35,9 +35,9 @@ tasks:
                             macosx64.*: unlisted
                             default: listed
                     default: unlisted
-        run:
-            using: run-task
             command:
+                - /builds/worker/bin/run-task
+                - "--"
                 - /builds/worker/venv/bin/python
                 - /builds/worker/bin/atn_langpack.py
         run-on-projects: []
