@@ -9,14 +9,14 @@ s3_bucket_paths:
 default_locales:  # if given an empty locale, use these locales
     - en-US
 tasktype_map:  # Map task reference to task type.
-    release-source: build
+    release-source-signing: signing
 
 # A default entry, which the mappings below extend and override.
 # Final 'destinations' will be the product of:
 # s3_bucket_paths + destinations + locale_prefix + pretty_name
 default: &default
     from:
-        - release-source
+        - release-source-signing
     all_locales: false
     description: "TO_BE_OVERRIDDEN"
     locale_prefix: ''
@@ -35,3 +35,12 @@ mapping:
         checksums_path:
             by-platform:
                 thunderbird-source: source/thunderbird-${version}.source.tar.xz
+    source.tar.xz.asc:
+        <<: *default
+        description: "Detached signature for the source file"
+        pretty_name:
+            by-platform:
+                thunderbird-source: thunderbird-${version}.source.tar.xz.asc
+        checksums_path:
+            by-platform:
+                thunderbird-source: source/thunderbird-${version}.source.tar.xz.asc

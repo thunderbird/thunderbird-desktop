@@ -7,17 +7,15 @@ loader: taskgraph.loader.transform:loader
 transforms:
     - taskgraph.transforms.from_deps
     - gecko_taskgraph.transforms.name_sanity
-    - gecko_taskgraph.transforms.beetmover
-    - gecko_taskgraph.transforms.beetmover_source
+    - gecko_taskgraph.transforms.build_signing
+    - gecko_taskgraph.transforms.signing
     - gecko_taskgraph.transforms.task
 
 kind-dependencies:
-    - release-source-signing
+    - release-source
 
 tasks:
-    beetmover-source:
+    release-source-signing:
         from-deps:
-            group-by: single-with-filters
+            copy-attributes: true
         shipping-phase: promote
-        attributes:
-            artifact_map: comm/taskcluster/comm_taskgraph/manifests/source_files.yml
