@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Tests local folders which should have a localised name that is different
- * from the folder's name.
+ * Tests folders which should have a localised name that is different from the
+ * folder's name.
  */
 
 add_task(function () {
@@ -56,6 +56,7 @@ add_task(function () {
     panorama ? "Sent" : ""
   );
 
+  // A sent mail folder with a different name, so not created by us.
   const sentFolder2 = rootFolder.createLocalSubfolder("Sent Mail");
   sentFolder2.setFlag(Ci.nsMsgFolderFlags.SentMail);
   Assert.equal(sentFolder2.name, "Sent Mail");
@@ -77,6 +78,7 @@ add_task(function () {
     panorama ? "Drafts" : ""
   );
 
+  // A drafts folder with a different name, so not created by us.
   const draftsFolder2 = rootFolder.createLocalSubfolder("Draft");
   draftsFolder2.setFlag(Ci.nsMsgFolderFlags.Drafts);
   Assert.equal(draftsFolder2.name, "Draft");
@@ -103,6 +105,7 @@ add_task(function () {
     panorama ? "Trash" : ""
   );
 
+  // A trash folder with a different name, so not created by us.
   const trashFolder2 = rootFolder.createLocalSubfolder("Bin");
   trashFolder2.setFlag(Ci.nsMsgFolderFlags.Trash);
   Assert.equal(trashFolder2.name, "Bin");
@@ -112,6 +115,7 @@ add_task(function () {
     panorama ? "Bin" : ""
   );
 
+  // A trash folder with a different name, so not created by us.
   const trashFolder3 = rootFolder.createLocalSubfolder("Deleted");
   trashFolder3.setFlag(Ci.nsMsgFolderFlags.Trash);
   Assert.equal(trashFolder3.name, "Deleted");
@@ -130,13 +134,13 @@ add_task(function () {
     panorama ? "Unsent Messages" : ""
   );
 
-  const junkFolder = rootFolder.createLocalSubfolder("Junk");
+  const junkFolder = rootFolder.createLocalSubfolder("Spam");
   junkFolder.setFlag(Ci.nsMsgFolderFlags.Junk);
-  Assert.equal(junkFolder.name, "Junk");
+  Assert.equal(junkFolder.name, "Spam");
   Assert.equal(junkFolder.localizedName, spamFolderName);
   Assert.equal(
     junkFolder.msgDatabase.dBFolderInfo.folderName,
-    panorama ? "Junk" : ""
+    panorama ? "Spam" : ""
   );
 
   const archivesFolder1 = rootFolder.createLocalSubfolder("Archives");

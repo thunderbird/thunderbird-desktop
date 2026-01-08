@@ -55,7 +55,6 @@ tags = ["dataadapter"]
 ["test_relations.js"]
 
 ["test_serverFromPrefs.js"]
-tags = ["foldernames"]
 
 ["test_setFolderName.js"]
 
