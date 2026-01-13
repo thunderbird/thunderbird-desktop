@@ -106,7 +106,7 @@
     stroke: currentColor;
   }
 
-  &[checked] > .toolbarbutton-icon-end {
+  &[checked="true"] > .toolbarbutton-icon-end {
     transform: scaleY(-1);
   }
 }

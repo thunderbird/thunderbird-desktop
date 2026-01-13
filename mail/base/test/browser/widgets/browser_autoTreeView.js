@@ -103,7 +103,10 @@ add_task(async function () {
   function checkPickerState(expectedChecked) {
     updatePickerItems();
     for (let i = 0; i < expectedChecked.length; i++) {
-      Assert.equal(pickerItems[i].hasAttribute("checked"), expectedChecked[i]);
+      Assert.equal(
+        pickerItems[i].getAttribute("checked"),
+        expectedChecked[i] ? "true" : null
+      );
       Assert.equal(
         pickerItems[i].disabled,
         ["colour", "selected"].includes(pickerItems[i].value)
@@ -366,7 +369,7 @@ add_task(async function () {
     const pickerItem = pickerPopup.querySelector(
       `menuitem[value="${columnID}"]`
     );
-    const visible = pickerItem.hasAttribute("checked");
+    const visible = pickerItem.getAttribute("checked") === "true";
     pickerPopup.activateItem(pickerItem);
     pickerPopup.hidePopup();
     await BrowserTestUtils.waitForPopupEvent(pickerPopup, "hidden");

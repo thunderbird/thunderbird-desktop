@@ -11,9 +11,8 @@ var { CalendarTestUtils } = ChromeUtils.importESModule(
 
 /* globals toggleOrientation */
 
-const isRotated = document
-  .getElementById("calendar_toggle_orientation_command")
-  .hasAttribute("checked");
+const isRotated =
+  document.getElementById("calendar_toggle_orientation_command").getAttribute("checked") == "true";
 const shouldBeRotated = Services.prefs.getBoolPref("calendar.test.rotateViews", false);
 
 if (isRotated != shouldBeRotated) {

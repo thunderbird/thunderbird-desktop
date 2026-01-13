@@ -898,7 +898,7 @@ var TagFacetingFilter = {
   reflectInDOM(aNode, aFilterValue, aDocument, aMuxer, aCallId) {
     if (aCallId !== null && aCallId == "menuItem") {
       aFilterValue
-        ? aNode.toggleAttribute("checked", aFilterValue)
+        ? aNode.setAttribute("checked", aFilterValue)
         : aNode.removeAttribute("checked");
     } else {
       aNode.pressed = aFilterValue;

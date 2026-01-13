@@ -134,7 +134,7 @@ var commandController = {
     cmd_toggleTag: event => {
       commandController._toggleMessageTag(
         event.target.value,
-        event.target.hasAttribute("checked")
+        event.target.getAttribute("checked") == "true"
       );
     },
     cmd_markReadByDate() {

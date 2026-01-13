@@ -762,7 +762,7 @@ async function checkComposeHeaders(expected) {
     for (const item of composeDocument.querySelectorAll(`menuitem[command="cmd_toggleReturnReceipt"],
     toolbarbutton[command="cmd_toggleReturnReceipt"]`)) {
       is(
-        item.hasAttribute("checked"),
+        item.getAttribute("checked") == "true",
         expected.returnReceipt,
         "returnReceipt in window should be correct"
       );
@@ -776,7 +776,8 @@ async function checkComposeHeaders(expected) {
       "deliveryStatusNotification in composeFields should be correct"
     );
     is(
-      composeDocument.getElementById("dsnMenu").hasAttribute("checked"),
+      composeDocument.getElementById("dsnMenu").getAttribute("checked") ==
+        "true",
       !!expected.deliveryStatusNotification,
       "deliveryStatusNotification in window should be correct"
     );
@@ -805,7 +806,7 @@ async function checkComposeHeaders(expected) {
       const menuitem = composeDocument.getElementById(id);
       is(
         format == expectedFormat,
-        menuitem.hasAttribute("checked"),
+        menuitem.getAttribute("checked") == "true",
         "checked state of the deliveryFormat menu item <${id}> in window should be correct"
       );
     }

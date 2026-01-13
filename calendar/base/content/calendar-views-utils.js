@@ -228,7 +228,11 @@ function switchToView(viewType) {
     const view = views[i];
     const commandId = "calendar_" + view.id + "_command";
     const command = document.getElementById(commandId);
-    command.toggleAttribute("checked", view.id == viewType + "-view");
+    if (view.id == viewType + "-view") {
+      command.setAttribute("checked", "true");
+    } else {
+      command.removeAttribute("checked");
+    }
   }
 
   document.l10n.setAttributes(
@@ -388,10 +392,11 @@ function getMinimonth() {
  */
 function toggleOrientation() {
   const cmd = document.getElementById("calendar_toggle_orientation_command");
-  const newValue = cmd.toggleAttribute("checked");
+  const newValue = cmd.getAttribute("checked") == "true" ? "false" : "true";
+  cmd.setAttribute("checked", newValue);
 
   for (const view of getViewBox().children) {
-    view.rotated = newValue;
+    view.rotated = newValue == "true";
   }
 
   // orientation refreshes automatically
@@ -405,10 +410,11 @@ function toggleOrientation() {
  */
 function toggleWorkdaysOnly() {
   const cmd = document.getElementById("calendar_toggle_workdays_only_command");
-  const newValue = cmd.toggleAttribute("checked");
+  const newValue = cmd.getAttribute("checked") == "true" ? "false" : "true";
+  cmd.setAttribute("checked", newValue);
 
   for (const view of getViewBox().children) {
-    view.workdaysOnly = newValue;
+    view.workdaysOnly = newValue == "true";
   }
 
   // Refresh the current view
@@ -420,10 +426,11 @@ function toggleWorkdaysOnly() {
  */
 function toggleTasksInView() {
   const cmd = document.getElementById("calendar_toggle_tasks_in_view_command");
-  const newValue = cmd.toggleAttribute("checked");
+  const newValue = cmd.getAttribute("checked") == "true" ? "false" : "true";
+  cmd.setAttribute("checked", newValue);
 
   for (const view of getViewBox().children) {
-    view.tasksInView = newValue;
+    view.tasksInView = newValue == "true";
   }
 
   // Refresh the current view
@@ -435,10 +442,11 @@ function toggleTasksInView() {
  */
 function toggleShowCompletedInView() {
   const cmd = document.getElementById("calendar_toggle_show_completed_in_view_command");
-  const newValue = cmd.toggleAttribute("checked");
+  const newValue = cmd.getAttribute("checked") == "true" ? "false" : "true";
+  cmd.setAttribute("checked", newValue);
 
   for (const view of getViewBox().children) {
-    view.showCompleted = newValue;
+    view.showCompleted = newValue == "true";
   }
 
   // Refresh the current view

@@ -56,7 +56,7 @@
       const commandName = "calendar_" + propertyKey + "-" + propertyValue + "_command";
       const command = document.getElementById(commandName);
       if (command) {
-        command.toggleAttribute("checked", true);
+        command.setAttribute("checked", "true");
       }
     }
   };

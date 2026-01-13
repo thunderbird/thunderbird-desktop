@@ -190,7 +190,7 @@ add_task(async function testSidebar() {
     await BrowserTestUtils.waitForPopupEvent(pickerPopup, "shown");
     for (const menuitem of pickerPopup.querySelectorAll("menuitem[value]")) {
       Assert.equal(
-        menuitem.hasAttribute("checked"),
+        menuitem.getAttribute("checked") === "true",
         expectedColumns.includes(menuitem.value),
         `${menuitem.value} checked state`
       );
@@ -215,7 +215,7 @@ add_task(async function testSidebar() {
     const pickerItem = pickerPopup.querySelector(
       `menuitem[value="${columnID}"]`
     );
-    const visible = pickerItem.hasAttribute("checked");
+    const visible = pickerItem.getAttribute("checked") === "true";
     pickerPopup.activateItem(pickerItem);
     pickerPopup.hidePopup();
     await BrowserTestUtils.waitForPopupEvent(pickerPopup, "hidden");

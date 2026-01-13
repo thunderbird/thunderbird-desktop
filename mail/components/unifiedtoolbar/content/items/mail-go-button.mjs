@@ -121,7 +121,7 @@ class MailGoButton extends MailTabButton {
         commandEvent.stopPropagation();
       });
       if (relativePosition === 0 && !messageHistory.canPop(0)) {
-        newMenuItem.toggleAttribute("checked", true);
+        newMenuItem.setAttribute("checked", true);
         newMenuItem.setAttribute("type", "radio");
       }
       items.push(newMenuItem);

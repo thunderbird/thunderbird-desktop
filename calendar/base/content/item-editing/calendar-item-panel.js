@@ -566,7 +566,12 @@ function updatePrivacy(aArg) {
             node.removeAttribute("collapsed");
           }
 
-          node.toggleAttribute("checked", aArg.privacy == currentPrivacyValue);
+          // Checked state
+          if (aArg.privacy == currentPrivacyValue) {
+            node.setAttribute("checked", "true");
+          } else {
+            node.removeAttribute("checked");
+          }
         }
       }
     }
@@ -591,7 +596,12 @@ function updatePrivacy(aArg) {
             node.removeAttribute("collapsed");
           }
 
-          node.toggleAttribute("checked", aArg.privacy == currentPrivacyValue);
+          // Checked state
+          if (aArg.privacy == currentPrivacyValue) {
+            node.setAttribute("checked", "true");
+          } else {
+            node.removeAttribute("checked");
+          }
         }
       }
     }
@@ -680,10 +690,10 @@ function updatePriority(aArg) {
     const priorityNormal = document.getElementById("cmd_priority_normal");
     const priorityHigh = document.getElementById("cmd_priority_high");
 
-    priorityNone.toggleAttribute("checked", priorityLevel == "none");
-    priorityLow.toggleAttribute("checked", priorityLevel == "low");
-    priorityNormal.toggleAttribute("checked", priorityLevel == "normal");
-    priorityHigh.toggleAttribute("checked", priorityLevel == "high");
+    priorityNone.setAttribute("checked", priorityLevel == "none" ? "true" : "false");
+    priorityLow.setAttribute("checked", priorityLevel == "low" ? "true" : "false");
+    priorityNormal.setAttribute("checked", priorityLevel == "normal" ? "true" : "false");
+    priorityHigh.setAttribute("checked", priorityLevel == "high" ? "true" : "false");
 
     // Status bar panel
     const priorityPanel = document.getElementById("status-priority");
@@ -740,7 +750,7 @@ function updateStatus(aArg) {
     const matches = node.getAttribute("value") == aArg.status;
     found = found || matches;
 
-    node.toggleAttribute("checked", matches);
+    node.setAttribute("checked", matches ? "true" : "false");
 
     if (aIndex > 0) {
       statusLabels[aIndex - 1].hidden = !matches;
@@ -776,8 +786,8 @@ function updateShowTimeAs(aArg) {
   const showAsBusy = document.getElementById("cmd_showtimeas_busy");
   const showAsFree = document.getElementById("cmd_showtimeas_free");
 
-  showAsBusy.toggleAttribute("checked", aArg.showTimeAs == "OPAQUE");
-  showAsFree.toggleAttribute("checked", aArg.showTimeAs == "TRANSPARENT");
+  showAsBusy.setAttribute("checked", aArg.showTimeAs == "OPAQUE" ? "true" : "false");
+  showAsFree.setAttribute("checked", aArg.showTimeAs == "TRANSPARENT" ? "true" : "false");
 
   document.getElementById("status-freebusy").collapsed =
     aArg.showTimeAs != "OPAQUE" && aArg.showTimeAs != "TRANSPARENT";
@@ -806,7 +816,7 @@ function updateMarkCompletedMenuItem(aArg) {
   if (gTabmail) {
     const completedCommand = document.getElementById("calendar_toggle_completed_command");
     const isCompleted = aArg.percentComplete == 100;
-    completedCommand.toggleAttribute("checked", isCompleted);
+    completedCommand.setAttribute("checked", isCompleted);
   }
 }
 
@@ -829,7 +839,7 @@ function postponeTask(aDuration) {
  */
 function getTimezoneCommandState() {
   const cmdTimezone = document.getElementById("cmd_timezone");
-  return cmdTimezone.hasAttribute("checked");
+  return cmdTimezone.getAttribute("checked") == "true";
 }
 
 /**
@@ -841,7 +851,7 @@ function getTimezoneCommandState() {
  */
 function updateTimezoneCommand(aArg) {
   const cmdTimezone = document.getElementById("cmd_timezone");
-  cmdTimezone.toggleAttribute("checked", aArg.timezonesEnabled);
+  cmdTimezone.setAttribute("checked", aArg.timezonesEnabled);
   gConfig.timezonesEnabled = aArg.timezonesEnabled;
 }
 
@@ -851,7 +861,7 @@ function updateTimezoneCommand(aArg) {
 function toggleTimezoneLinks() {
   const cmdTimezone = document.getElementById("cmd_timezone");
   const currentState = getTimezoneCommandState();
-  cmdTimezone.toggleAttribute("checked", !currentState);
+  cmdTimezone.setAttribute("checked", currentState ? "false" : "true");
   gConfig.timezonesEnabled = !currentState;
   sendMessage({ command: "toggleTimezoneLinks", checked: !currentState });
 }
@@ -925,7 +935,10 @@ function onCommandViewToolbar(aToolbarId, aMenuItemId) {
 
   const toolbarCollapsed = toolbar.collapsed;
 
-  menuItem.toggleAttribute("checked", toolbarCollapsed);
+  // toggle the checkbox
+  menuItem.setAttribute("checked", toolbarCollapsed);
+
+  // toggle visibility of the toolbar
   toolbar.collapsed = !toolbarCollapsed;
 
   Services.xulStore.persist(toolbar, "collapsed");

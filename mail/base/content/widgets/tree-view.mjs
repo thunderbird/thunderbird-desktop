@@ -2116,7 +2116,11 @@ class TreeViewTableHeader extends HTMLTableSectionElement {
           menuitem.label = column.name;
         }
 
-        menuitem.toggleAttribute("checked", !column.hidden);
+        if (!column.hidden) {
+          menuitem.setAttribute("checked", "true");
+        } else {
+          menuitem.removeAttribute("checked");
+        }
 
         // Disable those columns we don't want to allow hiding.
         if (column.picker === false) {

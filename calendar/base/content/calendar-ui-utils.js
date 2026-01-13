@@ -413,7 +413,7 @@ function setupAttendanceMenu(aMenu, aItems) {
               if (!document.getElementById(checkedId)) {
                 const checked = item.ownerDocument.createXULElement("menuitem");
                 checked.setAttribute("type", "checkbox");
-                checked.toggleAttribute("checked", true);
+                checked.setAttribute("checked", "true");
                 checked.setAttribute("label", item.getAttribute("label"));
                 checked.setAttribute("value", item.getAttribute("value"));
                 checked.setAttribute("scope", item.getAttribute("scope"));
@@ -425,7 +425,7 @@ function setupAttendanceMenu(aMenu, aItems) {
             }
             case "menuitem": {
               item.removeAttribute("hidden");
-              item.toggleAttribute("checked", true);
+              item.setAttribute("checked", "true");
               break;
             }
           }

@@ -131,22 +131,23 @@ function updateCheckedStateForIgnoreAndWatchThreadCmds() {
   const folder = message?.folder;
 
   const killThreadItem = document.getElementById("cmd_killThread");
-  killThreadItem.toggleAttribute(
-    "checked",
-    folder?.msgDatabase.isIgnored(message.messageKey)
-  );
-
+  if (folder?.msgDatabase.isIgnored(message.messageKey)) {
+    killThreadItem.setAttribute("checked", "true");
+  } else {
+    killThreadItem.removeAttribute("checked");
+  }
   const killSubthreadItem = document.getElementById("cmd_killSubthread");
-  killSubthreadItem.toggleAttribute(
-    "checked",
-    folder && message.flags & Ci.nsMsgMessageFlags.Ignored
-  );
-
+  if (folder && message.flags & Ci.nsMsgMessageFlags.Ignored) {
+    killSubthreadItem.setAttribute("checked", "true");
+  } else {
+    killSubthreadItem.removeAttribute("checked");
+  }
   const watchThreadItem = document.getElementById("cmd_watchThread");
-  watchThreadItem.toggleAttribute(
-    "checked",
-    folder?.msgDatabase.isWatched(message.messageKey)
-  );
+  if (folder?.msgDatabase.isWatched(message.messageKey)) {
+    watchThreadItem.setAttribute("checked", "true");
+  } else {
+    watchThreadItem.removeAttribute("checked");
+  }
 }
 
 function file_init() {
@@ -216,10 +217,11 @@ function InitEditMessagesMenu() {
 
   // Initialize the Favorite Folder checkbox in the Edit menu.
   const favoriteFolderMenu = document.getElementById("menu_favoriteFolder");
-  favoriteFolderMenu.toggleAttribute(
-    "checked",
-    folder?.getFlag(Ci.nsMsgFolderFlags.Favorite)
-  );
+  if (folder?.getFlag(Ci.nsMsgFolderFlags.Favorite)) {
+    favoriteFolderMenu.setAttribute("checked", "true");
+  } else {
+    favoriteFolderMenu.removeAttribute("checked");
+  }
 
   const propertiesController = getEnabledControllerForCommand("cmd_properties");
   const propertiesMenuItem = document.getElementById("menu_properties");
@@ -291,16 +293,22 @@ function view_init(event) {
     "view_toolbars_popup_quickFilterBar"
   );
   if (qfbMenuItem) {
-    qfbMenuItem.toggleAttribute("checked", quickFilterBarVisible);
+    qfbMenuItem.setAttribute("checked", quickFilterBarVisible);
   }
 
   const qfbAppMenuItem = document.getElementById("appmenu_quickFilterBar");
-  qfbAppMenuItem?.toggleAttribute("checked", quickFilterBarVisible);
+  if (qfbAppMenuItem) {
+    if (quickFilterBarVisible) {
+      qfbAppMenuItem.setAttribute("checked", "true");
+    } else {
+      qfbAppMenuItem.removeAttribute("checked");
+    }
+  }
 
   const messagePaneMenuItem = document.getElementById("menu_showMessage");
   if (!messagePaneMenuItem.hidden) {
     // Hidden in the standalone msg window.
-    messagePaneMenuItem.toggleAttribute(
+    messagePaneMenuItem.setAttribute(
       "checked",
       accountCentralVisible ? false : messagePaneVisible
     );
@@ -310,7 +318,7 @@ function view_init(event) {
   const messagePaneAppMenuItem = document.getElementById("appmenu_showMessage");
   if (messagePaneAppMenuItem && !messagePaneAppMenuItem.hidden) {
     // Hidden in the standalone msg window.
-    messagePaneAppMenuItem.toggleAttribute(
+    messagePaneAppMenuItem.setAttribute(
       "checked",
       accountCentralVisible ? false : messagePaneVisible
     );
@@ -320,7 +328,7 @@ function view_init(event) {
   const folderPaneMenuItem = document.getElementById("menu_showFolderPane");
   if (!folderPaneMenuItem.hidden) {
     // Hidden in the standalone msg window.
-    folderPaneMenuItem.toggleAttribute("checked", folderPaneVisible);
+    folderPaneMenuItem.setAttribute("checked", folderPaneVisible);
   }
 
   const folderPaneAppMenuItem = document.getElementById(
@@ -328,7 +336,7 @@ function view_init(event) {
   );
   if (folderPaneAppMenuItem && !folderPaneAppMenuItem.hidden) {
     // Hidden in the standalone msg window.
-    folderPaneAppMenuItem.toggleAttribute("checked", folderPaneVisible);
+    folderPaneAppMenuItem.setAttribute("checked", folderPaneVisible);
   }
 
   const threadPaneMenuItem = document.getElementById(
@@ -369,7 +377,7 @@ function view_init(event) {
   );
   document
     .getElementById("viewAttachmentsInlineMenuitem")
-    .toggleAttribute("checked", viewAttachmentInline);
+    .setAttribute("checked", viewAttachmentInline);
 
   document.commandDispatcher.updateCommands("create-menu-view");
 
@@ -382,7 +390,7 @@ function view_init(event) {
     spacesToolbarMenu.checked = isSpacesVisible;
     document
       .getElementById("viewToolbarsPopupSpacesToolbar")
-      .toggleAttribute("checked", isSpacesVisible);
+      .setAttribute("checked", isSpacesVisible);
   }
 }
 
@@ -401,7 +409,7 @@ function initUiDensityMenu(event) {
 
   for (const item of event.target.querySelectorAll("menuitem")) {
     if (item.mode == currentDensity) {
-      item.toggleAttribute("checked", true);
+      item.setAttribute("checked", "true");
       break;
     }
   }
@@ -425,7 +433,11 @@ function initUiDensityAppMenu() {
   for (const item of document.querySelectorAll(
     "#appMenu-uiDensity-controls > toolbarbutton"
   )) {
-    item.toggleAttribute("checked", item.mode == currentDensity);
+    if (item.mode == currentDensity) {
+      item.setAttribute("checked", "true");
+    } else {
+      item.removeAttribute("checked");
+    }
   }
 }
 
@@ -440,14 +452,16 @@ function InitViewLayoutStyleMenu(event, appmenu) {
     : event.target;
 
   const layoutStyleMenuitem = parent.children[paneConfig];
-  layoutStyleMenuitem?.toggleAttribute("checked", true);
+  if (layoutStyleMenuitem) {
+    layoutStyleMenuitem.setAttribute("checked", "true");
+  }
 
   if (XULStoreUtils.isItemHidden("messenger", "threadPaneHeader")) {
     parent.querySelector(`[name="threadheader"]`).removeAttribute("checked");
   } else {
     parent
       .querySelector(`[name="threadheader"]`)
-      .toggleAttribute("checked", true);
+      .setAttribute("checked", "true");
   }
 }
 
@@ -488,7 +502,7 @@ function InitViewSortByMenu() {
 
   const setSortItemAttrs = function (id, sortKey) {
     const menuItem = document.getElementById(id);
-    menuItem.toggleAttribute(
+    menuItem.setAttribute(
       "checked",
       primarySortType == Ci.nsMsgViewSortType[sortKey]
     );
@@ -512,30 +526,28 @@ function InitViewSortByMenu() {
 
   document
     .getElementById("sortAscending")
-    .toggleAttribute(
+    .setAttribute(
       "checked",
       primarySortOrder == Ci.nsMsgViewSortOrder.ascending
     );
   document
     .getElementById("sortDescending")
-    .toggleAttribute(
+    .setAttribute(
       "checked",
       primarySortOrder == Ci.nsMsgViewSortOrder.descending
     );
 
-  document
-    .getElementById("sortThreaded")
-    .toggleAttribute("checked", showThreaded);
+  document.getElementById("sortThreaded").setAttribute("checked", showThreaded);
   document
     .getElementById("sortUnthreaded")
-    .toggleAttribute("checked", !showThreaded && !showGroupedBySort);
+    .setAttribute("checked", !showThreaded && !showGroupedBySort);
 
   const groupBySortOrderMenuItem = document.getElementById("groupBySort");
   groupBySortOrderMenuItem.toggleAttribute(
     "disabled",
     !isSortTypeValidForGrouping
   );
-  groupBySortOrderMenuItem.toggleAttribute("checked", showGroupedBySort);
+  groupBySortOrderMenuItem.setAttribute("checked", showGroupedBySort);
 }
 
 function InitViewMessagesMenu() {
@@ -555,22 +567,22 @@ function InitViewMessagesMenu() {
 
   document
     .getElementById("viewUnreadMessagesMenuItem")
-    .toggleAttribute("checked", !!viewWrapper?.showUnreadOnly);
+    .setAttribute("checked", !!viewWrapper?.showUnreadOnly);
 
   document
     .getElementById("viewThreadsWithUnreadMenuItem")
-    .toggleAttribute("checked", !!viewWrapper?.specialViewThreadsWithUnread);
+    .setAttribute("checked", !!viewWrapper?.specialViewThreadsWithUnread);
 
   document
     .getElementById("viewWatchedThreadsWithUnreadMenuItem")
-    .toggleAttribute(
+    .setAttribute(
       "checked",
       !!viewWrapper?.specialViewWatchedThreadsWithUnread
     );
 
   document
     .getElementById("viewIgnoredThreadsMenuItem")
-    .toggleAttribute("checked", !!viewWrapper?.showIgnored);
+    .setAttribute("checked", !!viewWrapper?.showIgnored);
 }
 
 function InitMessageMenu() {
@@ -647,7 +659,7 @@ function InitMessageMenu() {
   const index = FeedMessageHandler.onOpenPref;
   document
     .getElementById("menu_openFeedMessage")
-    .children[index].toggleAttribute("checked", true);
+    .children[index].setAttribute("checked", true);
 
   const openRssMenu = document.getElementById("openFeedMessage");
   openRssMenu.hidden = !isFeed;
@@ -663,7 +675,11 @@ function InitMessageMenu() {
   for (const id of ["killThread", "killSubthread", "watchThread"]) {
     const item = document.getElementById(id);
     const command = document.getElementById(item.getAttribute("command"));
-    item.toggleAttribute("checked", command.hasAttribute("checked"));
+    if (command.hasAttribute("checked")) {
+      item.setAttribute("checked", command.getAttribute("checked"));
+    } else {
+      item.removeAttribute("checked");
+    }
   }
 }
 
@@ -740,13 +756,13 @@ function InitViewHeadersMenu() {
   const headerchoice = Services.prefs.getIntPref("mail.show_headers");
   document
     .getElementById("cmd_viewAllHeader")
-    .toggleAttribute(
+    .setAttribute(
       "checked",
       headerchoice == Ci.nsMimeHeaderDisplayTypes.AllHeaders
     );
   document
     .getElementById("cmd_viewNormalHeader")
-    .toggleAttribute(
+    .setAttribute(
       "checked",
       headerchoice == Ci.nsMimeHeaderDisplayTypes.NormalHeaders
     );
@@ -803,28 +819,28 @@ function InitViewBodyMenu() {
     !disallow_classes &&
     AllowHTML_menuitem
   ) {
-    AllowHTML_menuitem.toggleAttribute("checked", true);
+    AllowHTML_menuitem.setAttribute("checked", true);
   } else if (
     !prefer_plaintext &&
     html_as == 3 &&
     disallow_classes > 0 &&
     Sanitized_menuitem
   ) {
-    Sanitized_menuitem.toggleAttribute("checked", true);
+    Sanitized_menuitem.setAttribute("checked", true);
   } else if (
     prefer_plaintext &&
     html_as == 1 &&
     disallow_classes > 0 &&
     AsPlaintext_menuitem
   ) {
-    AsPlaintext_menuitem.toggleAttribute("checked", true);
+    AsPlaintext_menuitem.setAttribute("checked", true);
   } else if (
     !prefer_plaintext &&
     html_as == 4 &&
     !disallow_classes &&
     AllBodyParts_menuitem
   ) {
-    AllBodyParts_menuitem.toggleAttribute("checked", true);
+    AllBodyParts_menuitem.setAttribute("checked", true);
   }
   // else (the user edited prefs/user.js) check none of the radio menu items
 
@@ -836,7 +852,7 @@ function InitViewBodyMenu() {
     ];
     const checked = FeedMessageHandler.onSelectPref;
     for (const [index, id] of viewRssMenuItemIds.entries()) {
-      document.getElementById(id).toggleAttribute("checked", index == checked);
+      document.getElementById(id).setAttribute("checked", index == checked);
     }
     const hideOptions = checked == FeedMessageHandler.kSelectOverrideWebPage;
     AllowHTML_menuitem.hidden = hideOptions;
@@ -930,7 +946,7 @@ function InitMessageTags(parent, elementName = "menuitem", classes) {
     SetMessageTagLabel(item, index + 1, tagInfo.tag);
 
     if (removeKey) {
-      item.toggleAttribute("checked", true);
+      item.setAttribute("checked", "true");
     }
     item.setAttribute("value", tagInfo.key);
     item.setAttribute("type", "checkbox");
@@ -955,7 +971,11 @@ function getMsgToolbarMenu_init() {
 function InitMessageMark() {
   const tab = document.getElementById("tabmail")?.currentTabInfo;
   const flaggedItem = document.getElementById("markFlaggedMenuItem");
-  flaggedItem.toggleAttribute("checked", tab?.message?.isFlagged);
+  if (tab?.message?.isFlagged) {
+    flaggedItem.setAttribute("checked", "true");
+  } else {
+    flaggedItem.removeAttribute("checked");
+  }
 
   document.commandDispatcher.updateCommands("create-menu-mark");
 }
@@ -1395,7 +1415,7 @@ function ToggleInlineAttachment(target) {
     "mail.inline_attachments"
   );
   Services.prefs.setBoolPref("mail.inline_attachments", viewAttachmentInline);
-  target.toggleAttribute("checked", viewAttachmentInline);
+  target.setAttribute("checked", viewAttachmentInline ? "true" : "false");
 }
 
 function IsGetNewMessagesEnabled() {

@@ -39,7 +39,7 @@ function addCalendarNames(aEvent) {
       "contextChangeTaskCalendar(event);"
     );
     if (tasks.every(task => task.calendar == tasks[0].calendar) && selIndex > -1) {
-      calendarMenuPopup.children[selIndex].toggleAttribute("checked", true);
+      calendarMenuPopup.children[selIndex].setAttribute("checked", "true");
     }
   }
 }
@@ -332,8 +332,12 @@ function tasksToEvents() {
 /**
  * Toggle the completed state on selected tasks.
  *
- * @param {Event} aEvent - The originating event.
+ * @param {?Event} aEvent - The originating event, can be null.
  */
 function toggleCompleted(aEvent) {
-  contextChangeTaskProgress(aEvent.target.hasAttribute("checked") ? 0 : 100);
+  if (aEvent.target.getAttribute("checked") == "true") {
+    contextChangeTaskProgress(0);
+  } else {
+    contextChangeTaskProgress(100);
+  }
 }

@@ -163,7 +163,7 @@ add_task(async function testHideFolderPaneHeader() {
 
   EventUtils.synthesizeMouseAtCenter(toggleFolderHeader, {}, window);
   await BrowserTestUtils.waitForCondition(
-    () => toggleFolderHeader.hasAttribute("checked"),
+    () => toggleFolderHeader.getAttribute("checked") == "true",
     "The toggle header menu item is checked"
   );
 
@@ -369,7 +369,7 @@ add_task(async function testInitialActiveModes() {
   Assert.ok(
     moreContext
       .querySelector("#folderPaneMoreContextAllFolders")
-      .hasAttribute("checked"),
+      .getAttribute("checked"),
     "'All' toggle should be checked"
   );
   Assert.equal(
@@ -471,7 +471,7 @@ add_task(async function testFolderModesDeactivation() {
       Assert.ok(
         moreContext
           .querySelector("#folderPaneMoreContextAllFolders")
-          .hasAttribute("checked"),
+          .getAttribute("checked"),
         "'All' toggle is checked"
       );
     }
@@ -643,7 +643,7 @@ add_task(async function testFolderSizeHidden() {
   Assert.ok(
     !moreContext
       .querySelector("#folderPaneHeaderToggleFolderSize")
-      .hasAttribute("checked"),
+      .getAttribute("checked"),
     "The folder size toggle is unchecked"
   );
 
@@ -677,7 +677,7 @@ add_task(async function testTotalCountHidden() {
   Assert.ok(
     !moreContext
       .querySelector("#folderPaneHeaderToggleTotalCount")
-      .hasAttribute("checked"),
+      .getAttribute("checked"),
     "The total count toggle is unchecked"
   );
   await BrowserTestUtils.waitForCondition(

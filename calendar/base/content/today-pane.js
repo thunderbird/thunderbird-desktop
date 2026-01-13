@@ -168,7 +168,11 @@ var TodayPane = {
     document
       .querySelectorAll("#task-context-menu-filter-todaypane-popup > menuitem")
       .forEach(item => {
-        item.toggleAttribute("checked", item.getAttribute("value") == filter);
+        if (item.getAttribute("value") == filter) {
+          item.setAttribute("checked", "true");
+        } else {
+          item.removeAttribute("checked");
+        }
       });
 
     const showCompleted = document.getElementById("show-completed-checkbox").checked;

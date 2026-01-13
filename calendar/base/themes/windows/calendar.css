@@ -17,7 +17,7 @@
 
 /* Today pane button in status bar */
 #calendar-status-todaypane-button,
-#calendar-status-todaypane-button[checked] {
+#calendar-status-todaypane-button[checked="true"] {
   padding: 0 2px !important;
 }
 

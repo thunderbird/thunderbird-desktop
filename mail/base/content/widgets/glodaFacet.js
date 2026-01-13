@@ -291,12 +291,13 @@
         return;
       }
       this.checkbox.checked = val;
-      this.toggleAttribute("checked", val);
       if (val) {
+        this.setAttribute("checked", "true");
         if (!this.disabled) {
           FacetContext.addFacetConstraint(this.faceter, true, this.trueGroups);
         }
       } else {
+        this.removeAttribute("checked");
         this.checkbox.removeAttribute("checked");
         if (!this.disabled) {
           FacetContext.removeFacetConstraint(
@@ -310,7 +311,7 @@
     }
 
     get checked() {
-      return this.hasAttribute("checked");
+      return this.getAttribute("checked") == "true";
     }
 
     extraSetup() {}
@@ -414,7 +415,12 @@
         return;
       }
 
-      this.checkbox.toggleAttribute("checked", this.hasAttribute("checked"));
+      if (this.hasAttribute("checked")) {
+        this.checkbox.setAttribute("checked", this.getAttribute("checked"));
+      } else {
+        this.checkbox.removeAttribute("checked");
+      }
+
       this.checkbox.toggleAttribute("disabled", this.hasAttribute("disabled"));
     }
 

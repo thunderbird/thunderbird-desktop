@@ -152,12 +152,12 @@ function RefreshViewPopup(viewPopup) {
   const currentViewValue = ViewPickerBinding.currentViewValue;
 
   const viewAll = viewPopup.querySelector('[value="' + kViewItemAll + '"]');
-  viewAll.toggleAttribute("checked", currentViewValue == kViewItemAll);
+  viewAll.setAttribute("checked", currentViewValue == kViewItemAll);
 
   const viewUnread = viewPopup.querySelector(
     '[value="' + kViewItemUnread + '"]'
   );
-  viewUnread.toggleAttribute("checked", currentViewValue == kViewItemUnread);
+  viewUnread.setAttribute("checked", currentViewValue == kViewItemUnread);
 
   const viewNotDeleted = viewPopup.querySelector(
     '[value="' + kViewItemNotDeleted + '"]'
@@ -178,7 +178,7 @@ function RefreshViewPopup(viewPopup) {
 
     if (imapServer.deleteModel == Ci.nsMsgImapDeleteModels.IMAPDelete) {
       viewNotDeleted.removeAttribute("hidden");
-      viewNotDeleted.toggleAttribute(
+      viewNotDeleted.setAttribute(
         "checked",
         currentViewValue == kViewItemNotDeleted
       );
@@ -222,7 +222,7 @@ function RefreshCustomViewsPopup(parent, elementName = "menuitem", classes) {
       item.setAttribute("class", classes);
     }
     if (kViewItemFirstCustom + i == currentView) {
-      item.toggleAttribute("checked", true);
+      item.setAttribute("checked", true);
     }
 
     item.addEventListener("command", () =>
@@ -266,7 +266,7 @@ function RefreshTagsPopup(parent, elementName = "menuitem", classes) {
     item.setAttribute("type", "radio");
 
     if (tagInfo.key == currentTagKey) {
-      item.toggleAttribute("checked", true);
+      item.setAttribute("checked", true);
     }
     if (tagInfo.color) {
       item.setAttribute("style", `color: ${tagInfo.color};`);

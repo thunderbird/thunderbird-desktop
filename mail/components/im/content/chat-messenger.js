@@ -61,7 +61,7 @@ function openChatContextMenu(popup) {
 
   document
     .getElementById("spellCheckEnable")
-    .toggleAttribute("checked", spellchecker.enabled);
+    .setAttribute("checked", spellchecker.enabled);
   document
     .getElementById("spellCheckDictionaries")
     .toggleAttribute("hidden", !spellchecker.enabled);
@@ -106,7 +106,7 @@ function enableInlineSpellCheck(aEnableInlineSpellCheck) {
   gChatSpellChecker.enabled = aEnableInlineSpellCheck;
   document
     .getElementById("spellCheckEnable")
-    .toggleAttribute("checked", aEnableInlineSpellCheck);
+    .setAttribute("checked", aEnableInlineSpellCheck);
   document
     .getElementById("spellCheckDictionaries")
     .toggleAttribute("hidden", !aEnableInlineSpellCheck);

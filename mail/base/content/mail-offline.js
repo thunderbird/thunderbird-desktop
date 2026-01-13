@@ -238,7 +238,7 @@ var MailOfflineMgr = {
   updateOfflineUI(aIsOffline) {
     document
       .getElementById("goOfflineMenuItem")
-      .toggleAttribute("checked", aIsOffline);
+      .setAttribute("checked", aIsOffline);
     var statusBarPanel = document.getElementById("offline-status");
     if (aIsOffline) {
       statusBarPanel.setAttribute("offline", "true");

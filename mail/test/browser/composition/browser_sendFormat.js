@@ -138,7 +138,7 @@ function assertSendFormatInMenu(composeWindow, expectFormat, msg) {
     const menuitem = composeWindow.document.getElementById(menuitemId);
     const checked = expectFormat == format;
     Assert.equal(
-      menuitem.hasAttribute("checked"),
+      menuitem.getAttribute("checked") == "true",
       checked,
       `${menuitemId} should ${checked ? "not " : ""}be checked: ${msg}`
     );

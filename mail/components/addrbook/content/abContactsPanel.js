@@ -290,12 +290,12 @@ function onAbContextShowing() {
     const startupURI = Services.prefs.getCharPref(
       "mail.addr_book.view.startupURI"
     );
-    startupItem.toggleAttribute(
+    startupItem.setAttribute(
       "checked",
       startupURI == getSelectedDirectoryURI()
     );
   } else {
-    startupItem.toggleAttribute("checked", false);
+    startupItem.setAttribute("checked", "false");
   }
 }
 

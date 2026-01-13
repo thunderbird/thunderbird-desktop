@@ -1694,7 +1694,7 @@ add_task(async function testAccountOrder() {
   moreContext.activateItem(localFoldersItem);
   // This doesn't happen instantly on Mac.
   await TestUtils.waitForCondition(
-    () => localFoldersItem.hasAttribute("checked"),
+    () => localFoldersItem.getAttribute("checked") == "true",
     "waiting for local folders to become hidden"
   );
   moreContext.hidePopup();
@@ -1709,8 +1709,8 @@ add_task(async function testAccountOrder() {
   EventUtils.synthesizeMouseAtCenter(moreButton, {}, about3Pane);
   await BrowserTestUtils.waitForPopupEvent(moreContext, "shown");
   Assert.equal(
-    localFoldersItem.hasAttribute("checked"),
-    true,
+    localFoldersItem.getAttribute("checked"),
+    "true",
     "local folders should be hidden"
   );
   moreContext.activateItem(localFoldersItem);

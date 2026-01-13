@@ -159,9 +159,17 @@ class MenuTestHelper {
       );
     }
     if (expected.checked) {
-      Assert.ok(actual.hasAttribute("checked"), `${actual.id} checked`);
+      Assert.equal(
+        actual.getAttribute("checked"),
+        "true",
+        `${actual.id} checked`
+      );
     } else if (["checkbox", "radio"].includes(actual.getAttribute("type"))) {
-      Assert.ok(!actual.hasAttribute("checked"), `${actual.id} not checked`);
+      Assert.ok(
+        !actual.hasAttribute("checked") ||
+          actual.getAttribute("checked") == "false",
+        `${actual.id} not checked`
+      );
     }
     if (expected.l10nID) {
       const attributes = actual.ownerDocument.l10n.getAttributes(actual);

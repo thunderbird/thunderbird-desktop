@@ -446,7 +446,7 @@ var gPrivacyPane = {
       return;
     }
 
-    osReauthCheckbox.toggleAttribute("checked", LoginHelper.getOSAuthEnabled());
+    osReauthCheckbox.setAttribute("checked", LoginHelper.getOSAuthEnabled());
 
     setEventListener(
       "osReauthCheckbox",
