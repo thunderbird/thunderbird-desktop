@@ -114,7 +114,7 @@ function hiddenWindowStartup() {
   for (const id of disabledItems) {
     element = document.getElementById(id);
     if (element) {
-      element.toggleAttribute("disabled", true);
+      element.setAttribute("disabled", "true");
     }
   }
 

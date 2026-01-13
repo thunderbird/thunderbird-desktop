@@ -1773,6 +1773,10 @@ function updateComposeItems() {
  *   items to the state stored before disabling them.
  */
 function updateAllItems(disable) {
+  function isDisabled(i) {
+    return i.hasAttribute("disabled") && i.getAttribute("disabled") !== "false";
+  }
+
   for (const item of document.querySelectorAll(
     "menu, toolbarbutton, [command], [oncommand]"
   )) {
@@ -1786,7 +1790,7 @@ function updateAllItems(disable) {
         continue;
       }
 
-      if (item.hasAttribute("disabled")) {
+      if (isDisabled(item)) {
         // This item is already disabled, do not touch it.
         continue;
       }
@@ -1800,7 +1804,7 @@ function updateAllItems(disable) {
       }
 
       // Disable.
-      item.toggleAttribute("disabled", true);
+      item.setAttribute("disabled", "true");
       item.setAttribute("disabledForSend", "true");
     } else {
       if (!item.hasAttribute("disabledForSend")) {
@@ -1958,7 +1962,7 @@ function setSecuritySettings(menu_id) {
     "checked",
     !disableEnc && gSelectedTechnologyIsPGP && gSendEncrypted && gEncryptSubject
   );
-  encryptSubjectItem.toggleAttribute(
+  encryptSubjectItem.setAttribute(
     "disabled",
     disableEnc || !gSelectedTechnologyIsPGP || !gSendEncrypted
   );
@@ -9827,7 +9831,7 @@ function MakeFromFieldEditable(ignoreWarning) {
   }
 
   const customizeMenuitem = document.getElementById("cmd_customizeFromAddress");
-  customizeMenuitem.toggleAttribute("disabled", true);
+  customizeMenuitem.setAttribute("disabled", "true");
   const identityElement = document.getElementById("msgIdentity");
   const identityElementWidth = `${
     identityElement.getBoundingClientRect().width

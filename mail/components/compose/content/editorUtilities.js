@@ -329,7 +329,11 @@ function SetElementEnabledById(elementID, doEnable) {
 
 function SetElementEnabled(element, doEnable) {
   if (element) {
-    element.toggleAttribute("disabled", !doEnable);
+    if (doEnable) {
+      element.removeAttribute("disabled");
+    } else {
+      element.setAttribute("disabled", "true");
+    }
   } else {
     dump("Element  not found in SetElementEnabled\n");
   }

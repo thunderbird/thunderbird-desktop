@@ -14,7 +14,7 @@
     outline: var(--focus-outline);
   }
 
-  &[disabled] {
+  &[disabled="true"] {
     opacity: 0.5;
   }
 }

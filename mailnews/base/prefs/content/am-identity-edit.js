@@ -441,16 +441,25 @@ function setupSignatureItems() {
   var attachSignature = document.getElementById("identity.attachSignature");
   var checked = attachSignature.checked;
 
-  htmlSigText.toggleAttribute("disabled", checked);
-  htmlSigFormat.toggleAttribute("disabled", checked);
-  signature.toggleAttribute(
-    "disabled",
-    !(checked && !getAccountValueIsLocked(signature))
-  );
-  browse.toggleAttribute(
-    "disabled",
-    !(checked && !getAccountValueIsLocked(browse))
-  );
+  if (checked) {
+    htmlSigText.setAttribute("disabled", "disabled");
+    htmlSigFormat.setAttribute("disabled", "true");
+  } else {
+    htmlSigText.removeAttribute("disabled");
+    htmlSigFormat.removeAttribute("disabled");
+  }
+
+  if (checked && !getAccountValueIsLocked(signature)) {
+    signature.removeAttribute("disabled");
+  } else {
+    signature.setAttribute("disabled", "disabled");
+  }
+
+  if (checked && !getAccountValueIsLocked(browse)) {
+    browse.removeAttribute("disabled");
+  } else {
+    browse.setAttribute("disabled", "true");
+  }
 }
 
 function editVCard() {

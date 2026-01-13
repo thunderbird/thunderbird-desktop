@@ -100,7 +100,7 @@ async function subtest_check_account_actions(
   );
   Assert.notEqual(actionAddMailAccount, undefined);
   Assert.equal(
-    !actionAddMailAccount.hasAttribute("disabled"),
+    !actionAddMailAccount.getAttribute("disabled"),
     isAddAccountEnabled
   );
 
@@ -110,7 +110,7 @@ async function subtest_check_account_actions(
   );
   Assert.notEqual(actionAddOtherAccount, undefined);
   Assert.equal(
-    !actionAddOtherAccount.hasAttribute("disabled"),
+    !actionAddOtherAccount.getAttribute("disabled"),
     isAddAccountEnabled
   );
   await close_popup(window, content_tab_e(tab, "accountAddPopup"));
@@ -126,7 +126,7 @@ async function subtest_check_account_actions(
   ).contentDocument.getElementById("defaultAccount");
   Assert.notEqual(actionSetDefault, undefined);
   Assert.equal(
-    !actionSetDefault.hasAttribute("disabled"),
+    !actionSetDefault.getAttribute("disabled"),
     isSetAsDefaultEnabled
   );
 }

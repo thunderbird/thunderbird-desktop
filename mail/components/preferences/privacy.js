@@ -562,7 +562,7 @@ var gPrivacyPane = {
       Services.prefs.prefIsLocked(PREF_UPLOAD_ENABLED) ||
       !AppConstants.MOZ_TELEMETRY_REPORTING
     ) {
-      checkbox.toggleAttribute("disabled", true);
+      checkbox.setAttribute("disabled", "true");
       return;
     }
 

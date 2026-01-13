@@ -243,7 +243,7 @@ class SortedItemSelectList {
       item.classList.add(className);
     }
     if (disabled) {
-      item.toggleAttribute("disabled", true);
+      item.setAttribute("disabled", "true");
     }
     return item;
   }

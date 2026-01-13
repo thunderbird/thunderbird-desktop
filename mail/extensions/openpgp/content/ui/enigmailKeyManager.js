@@ -277,7 +277,7 @@ function enigmailKeyMenu() {
   // Disable the "Generate key" menu item if no mail account is available.
   document
     .getElementById("genKey")
-    .toggleAttribute("disabled", MailServices.accounts.defaultAccount == null);
+    .setAttribute("disabled", MailServices.accounts.defaultAccount == null);
 
   // Disable the context menu if no keys are selected.
   return keyList.length > 0;

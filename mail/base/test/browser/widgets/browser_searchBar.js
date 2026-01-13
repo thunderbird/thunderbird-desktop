@@ -302,7 +302,7 @@ add_task(async function test_disabled() {
   ok(!input.disabled, "Input enabled");
   ok(!button.disabled, "Button enabled");
 
-  searchBar.toggleAttribute("disabled", true);
+  searchBar.setAttribute("disabled", true);
 
   ok(input.disabled, "Disabled propagated to input");
   ok(button.disabled, "Disabled propagated to button");

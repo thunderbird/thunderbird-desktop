@@ -2005,11 +2005,11 @@ window.addEventListener(
         "disabled",
         tabmail.tabInfo.every(info => info == currentTabInfo || !info.canClose)
       );
-      recentlyClosedMenu.toggleAttribute(
+      recentlyClosedMenu.setAttribute(
         "disabled",
         !tabmail.recentlyClosedTabs.length
       );
-      closeItem.toggleAttribute("disabled", !currentTabInfo.canClose);
+      closeItem.setAttribute("disabled", !currentTabInfo.canClose);
       return true;
     });
 

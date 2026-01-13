@@ -209,7 +209,7 @@ form {
     background-color: var(--hub-menulist-background-color);
 
     &:hover,
-    &[open="true"]:not([disabled]),
+    &[open="true"]:not([disabled="true"]),
     &:focus-visible {
       border-color: var(--hub-menulist-border-color-hover-focus-open);
       background-color: var(--hub-menulist-background-color-hover-focus-open);

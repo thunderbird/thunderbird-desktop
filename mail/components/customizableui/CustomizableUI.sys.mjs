@@ -124,7 +124,7 @@ var CustomizableUIInternal = {
       // the ShadowRoot or a disabled menu item.
       if (
         target.nodeType == target.DOCUMENT_FRAGMENT_NODE ||
-        target.hasAttribute("disabled")
+        target.getAttribute("disabled") == "true"
       ) {
         return true;
       }

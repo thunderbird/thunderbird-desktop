@@ -35,7 +35,7 @@ async function checkDeviceManager({ buttonIsDisabled }) {
   const changePwButton =
     deviceManagerWindow.document.getElementById("change_pw_button");
   is(
-    changePwButton.hasAttribute("disabled"),
+    changePwButton.getAttribute("disabled") == "true",
     buttonIsDisabled,
     "Change Password button is in the correct state: " + buttonIsDisabled
   );

@@ -369,8 +369,8 @@ var gAccountManager = {
    * the state of the buttons.
    */
   temporarilyDisableButtons() {
-    document.getElementById("cmd_disconnect").toggleAttribute("disabled", true);
-    document.getElementById("cmd_connect").toggleAttribute("disabled", true);
+    document.getElementById("cmd_disconnect").setAttribute("disabled", "true");
+    document.getElementById("cmd_connect").setAttribute("disabled", "true");
     clearTimeout(this.disableTimerID);
     this.accountList.focus();
     this.disableTimerID = setTimeout(
@@ -446,7 +446,11 @@ var gAccountManager = {
     const disabledItems = ["connect", "disconnect"];
     for (const name of disabledItems) {
       const elt = document.getElementById("cmd_" + name);
-      elt.toggleAttribute("disabled", isCommandDisabled);
+      if (isCommandDisabled) {
+        elt.setAttribute("disabled", "true");
+      } else {
+        elt.removeAttribute("disabled");
+      }
     }
   },
   onContextMenuShowing(event) {

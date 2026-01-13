@@ -623,7 +623,9 @@
           );
         }
 
-        menu.toggleAttribute("disabled", specialFoldersMap.length == 0);
+        if (specialFoldersMap.length == 0) {
+          menu.setAttribute("disabled", "true");
+        }
 
         this._initializedSpecials.add(specialType);
       }
@@ -991,8 +993,14 @@
         // select a valid folder per the filter for this picker. If there are
         // no children, then no folder passed the filter; disable the menulist
         // as there's nothing to choose from.
-        const noFolders = !this.childElementCount;
-        this.parentNode.toggleAttribute("disabled", noFolders);
+        let noFolders;
+        if (!this.childElementCount) {
+          this.parentNode.setAttribute("disabled", true);
+          noFolders = true;
+        } else {
+          this.parentNode.removeAttribute("disabled");
+          noFolders = false;
+        }
 
         setupParent(folder, this.parentNode, noFolders);
         return !!folder;

@@ -29,7 +29,7 @@
   }
 }
 
-#calendar-add-task-button[disabled] {
+#calendar-add-task-button[disabled="true"] {
   fill-opacity: 0.5;
 }
 

@@ -67,7 +67,7 @@ const Steps = {
           }
           li.classList.add("current");
           li.setAttribute("aria-current", "step");
-          button.toggleAttribute("disabled", true);
+          button.setAttribute("disabled", "disabled");
         } else {
           li.classList.add("completed");
           button.addEventListener("click", () => {
@@ -89,7 +89,7 @@ const Steps = {
           document.l10n.setAttributes(button, "step-count", {
             number: this._pastSteps.length + index + 1,
           });
-          button.toggleAttribute("disabled", true);
+          button.setAttribute("disabled", "disabled");
           li.append(button);
           //TODO tooltips
           return li;

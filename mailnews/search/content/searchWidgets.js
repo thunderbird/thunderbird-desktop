@@ -306,7 +306,11 @@
       } else {
         this.menulist.removeAttribute("flex");
       }
-      this.menulist.toggleAttribute("disabled", this.hasAttribute("disabled"));
+      if (this.hasAttribute("disabled")) {
+        this.menulist.setAttribute("disabled", this.getAttribute("disabled"));
+      } else {
+        this.menulist.removeAttribute("disabled");
+      }
     }
 
     set searchScope(val) {
@@ -1021,7 +1025,11 @@
       if (!this.input) {
         return;
       }
-      this.input.toggleAttribute("disabled", this.hasAttribute("disabled"));
+      if (this.hasAttribute("disabled")) {
+        this.input.setAttribute("disabled", this.getAttribute("disabled"));
+      } else {
+        this.input.removeAttribute("disabled");
+      }
     }
 
     /**
@@ -1258,7 +1266,7 @@
           const unavailableActions = this.usedActionsList();
           for (let index = 0; index < this.menuitems.length; index++) {
             const menu = this.menuitems[index];
-            menu.toggleAttribute("disabled", menu.value in unavailableActions);
+            menu.setAttribute("disabled", menu.value in unavailableActions);
           }
         });
 

@@ -1470,7 +1470,7 @@ function InitObjectPropertiesMenuitem() {
     }
   } else {
     // We show generic "Properties" string, but disable the command.
-    cmd.toggleAttribute("disabled", true);
+    cmd.setAttribute("disabled", "true");
   }
   cmd.setAttribute("label", menuStr);
   cmd.setAttribute("accesskey", GetString("ObjectPropertiesAccessKey"));
@@ -2287,13 +2287,13 @@ function InitTOCMenu() {
   var removeMenuitem = document.getElementById("removeTOCMenuitem");
   if (removeMenuitem && createMenuitem && updateMenuitem) {
     if (elt) {
-      createMenuitem.toggleAttribute("disabled", true);
+      createMenuitem.setAttribute("disabled", "true");
       updateMenuitem.removeAttribute("disabled");
       removeMenuitem.removeAttribute("disabled");
     } else {
       createMenuitem.removeAttribute("disabled");
-      removeMenuitem.toggleAttribute("disabled", true);
-      updateMenuitem.toggleAttribute("disabled", true);
+      removeMenuitem.setAttribute("disabled", "true");
+      updateMenuitem.setAttribute("disabled", "true");
     }
   }
 }

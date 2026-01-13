@@ -190,7 +190,7 @@
   border: 1px solid transparent;
   border-radius: var(--button-border-radius);
 
-  &:not([disabled]):hover {
+  &:not([disabled="true"]):hover {
     background-color: var(--toolbarbutton-hover-background);
     border-color: var(--toolbarbutton-hover-bordercolor);
     box-shadow: var(--toolbarbutton-hover-boxshadow);
@@ -260,7 +260,7 @@
   stroke: currentColor;
   fill-opacity: var(--toolbarbutton-icon-fill-opacity);
 
-  &:not([disabled]):hover {
+  &:not([disabled="true"]):hover {
     background: var(--toolbarbutton-hover-background);
     border-color: var(--toolbarbutton-hover-bordercolor);
     box-shadow: var(--toolbarbutton-hover-boxshadow);

@@ -3,7 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /* import-globals-from ../../../../toolkit/content/preferencesBindings.js */
-/* global gAccount * / // From mailnews/base/prefs/content/am-identity-edit.js
+/* import-globals-from ../../../mailnews/base/prefs/content/am-identity-edit.js */
+
 /* global EnigRevokeKey */
 
 var { MailServices } = ChromeUtils.importESModule(
@@ -1237,7 +1238,7 @@ async function reloadOpenPgpUI() {
 
         dateButton.removeAttribute("hidden");
         // This key is expired, so make it unselectable.
-        radio.toggleAttribute("disabled", true);
+        radio.setAttribute("disabled", "true");
       } else {
         // If the key expires in less than 6 months.
         const sixMonths = new Date();

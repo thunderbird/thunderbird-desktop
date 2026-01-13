@@ -386,13 +386,13 @@ function HideMenus() {
 
   var favoriteFolder = document.getElementById("menu_favoriteFolder");
   if (favoriteFolder) {
-    favoriteFolder.toggleAttribute("disabled", true);
+    favoriteFolder.setAttribute("disabled", "true");
     favoriteFolder.toggleAttribute("hidden", true);
   }
 
   favoriteFolder = document.getElementById("appmenu_favoriteFolder");
   if (favoriteFolder) {
-    favoriteFolder.toggleAttribute("disabled", true);
+    favoriteFolder.setAttribute("disabled", "true");
     favoriteFolder.toggleAttribute("hidden", true);
   }
 

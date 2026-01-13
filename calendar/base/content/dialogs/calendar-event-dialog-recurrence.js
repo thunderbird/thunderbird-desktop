@@ -272,7 +272,7 @@ const RecurrencePreview = {
     const activeMinimonth = this.node.querySelector(`calendar-minimonth[active-month="true"]`);
 
     if (activeMinimonth.getAttribute("initial-month") == "true") {
-      document.getElementById("recurrencePrevious").toggleAttribute("disabled", true);
+      document.getElementById("recurrencePrevious").setAttribute("disabled", "true");
     } else {
       document.getElementById("recurrencePrevious").removeAttribute("disabled");
     }
@@ -398,7 +398,7 @@ const DaypickerMonthday = {
     const mainbox = document.querySelector(".daypicker-monthday-mainbox");
     for (const row of mainbox.children) {
       for (const child of row.children) {
-        child.toggleAttribute("disabled", true);
+        child.setAttribute("disabled", "true");
       }
     }
   },
@@ -901,7 +901,7 @@ function disableOrEnable(item) {
 function disableRecurrenceFields(aAttributeName) {
   const disableElements = document.getElementsByAttribute(aAttributeName, "true");
   for (let i = 0; i < disableElements.length; i++) {
-    disableElements[i].toggleAttribute("disabled", true);
+    disableElements[i].setAttribute("disabled", "true");
   }
 }
 
@@ -959,13 +959,13 @@ function updateRecurrenceRange() {
   if (durationSelection == "ntimes") {
     rangeTimesCount.removeAttribute("disabled");
   } else {
-    rangeTimesCount.toggleAttribute("disabled", true);
+    rangeTimesCount.setAttribute("disabled", "true");
   }
 
   if (durationSelection == "until") {
     rangeUntilDate.removeAttribute("disabled");
   } else {
-    rangeUntilDate.toggleAttribute("disabled", true);
+    rangeUntilDate.setAttribute("disabled", "true");
   }
 }
 
@@ -1153,7 +1153,7 @@ function updateRecurrencePattern() {
       const dailyDays = document.getElementById("daily-days");
       dailyDays.removeAttribute("disabled");
       if (dailyGroup.selectedIndex == 1) {
-        dailyDays.toggleAttribute("disabled", true);
+        dailyDays.setAttribute("disabled", "true");
       }
       break;
     }
@@ -1173,8 +1173,8 @@ function updateRecurrencePattern() {
       if (monthlyGroup.selectedIndex == 0) {
         monthlyDays.disable();
       } else {
-        monthlyOrdinal.toggleAttribute("disabled", true);
-        monthlyWeekday.toggleAttribute("disabled", true);
+        monthlyOrdinal.setAttribute("disabled", "true");
+        monthlyWeekday.setAttribute("disabled", "true");
       }
       break;
     }
@@ -1196,14 +1196,14 @@ function updateRecurrencePattern() {
       yearlyPeriodOfLabel.removeAttribute("disabled");
       yearlyPeriodOfMonthLabel.removeAttribute("disabled");
       if (yearlyGroup.selectedIndex == 0) {
-        yearlyOrdinal.toggleAttribute("disabled", true);
-        yearlyWeekday.toggleAttribute("disabled", true);
-        yearlyMonthRule.toggleAttribute("disabled", true);
-        yearlyPeriodOfLabel.toggleAttribute("disabled", true);
+        yearlyOrdinal.setAttribute("disabled", "true");
+        yearlyWeekday.setAttribute("disabled", "true");
+        yearlyMonthRule.setAttribute("disabled", "true");
+        yearlyPeriodOfLabel.setAttribute("disabled", "true");
       } else {
-        yearlyDays.toggleAttribute("disabled", true);
-        yearlyMonthOrdinal.toggleAttribute("disabled", true);
-        yearlyPeriodOfMonthLabel.toggleAttribute("disabled", true);
+        yearlyDays.setAttribute("disabled", "true");
+        yearlyMonthOrdinal.setAttribute("disabled", "true");
+        yearlyPeriodOfMonthLabel.setAttribute("disabled", "true");
       }
       break;
     }

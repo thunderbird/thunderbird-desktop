@@ -440,11 +440,11 @@ function onCommandDeleteItem() {
 function disableSaving(disabled) {
   const cmdSave = document.getElementById("cmd_save");
   if (cmdSave) {
-    cmdSave.toggleAttribute("disabled", disabled);
+    cmdSave.setAttribute("disabled", disabled);
   }
   const cmdAccept = document.getElementById("cmd_accept");
   if (cmdAccept) {
-    cmdAccept.toggleAttribute("disabled", disabled);
+    cmdAccept.setAttribute("disabled", disabled);
   }
 }
 
@@ -880,7 +880,7 @@ function attachURL() {
  * @param {boolean} aArg.attachUrlCommand - Enable the attach url command?
  */
 function updateAttachment(aArg) {
-  document.getElementById("cmd_attach_url").toggleAttribute("disabled", !aArg.attachUrlCommand);
+  document.getElementById("cmd_attach_url").setAttribute("disabled", !aArg.attachUrlCommand);
 }
 
 /**
@@ -890,7 +890,7 @@ function updateAttachment(aArg) {
  * @param {boolean} aArg.attendeesCommand - Enable the attendees command?
  */
 function updateAttendeesCommand(aArg) {
-  document.getElementById("cmd_attendees").toggleAttribute("disabled", !aArg.attendeesCommand);
+  document.getElementById("cmd_attendees").setAttribute("disabled", !aArg.attendeesCommand);
 }
 
 /**
@@ -900,8 +900,8 @@ function updateAttendeesCommand(aArg) {
  * @param {boolean} aEnable - Enable the commands?
  */
 function enableAcceptCommand(aEnable) {
-  document.getElementById("cmd_accept").toggleAttribute("disabled", !aEnable);
-  document.getElementById("cmd_save").toggleAttribute("disabled", !aEnable);
+  document.getElementById("cmd_accept").setAttribute("disabled", !aEnable);
+  document.getElementById("cmd_save").setAttribute("disabled", !aEnable);
 }
 
 /**
@@ -984,11 +984,11 @@ function onCommandCustomize() {
   const menubarId = gTabmail ? "mail-menubar" : "event-menubar";
   const menubar = document.getElementById(menubarId);
   for (const menuitem of menubar.children) {
-    menuitem.toggleAttribute("disabled", true);
+    menuitem.setAttribute("disabled", true);
   }
 
   // Disable the toolbar context menu items
-  document.getElementById("cmd_customize").toggleAttribute("disabled", true);
+  document.getElementById("cmd_customize").setAttribute("disabled", "true");
 
   let wintype = document.documentElement.getAttribute("windowtype");
   wintype = wintype.replace(/:/g, "");

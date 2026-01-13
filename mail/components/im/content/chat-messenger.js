@@ -1207,7 +1207,13 @@ var chatHandler = {
     }
 
     const chatStatusCmd = document.getElementById("cmd_chatStatus");
-    chatStatusCmd?.toggleAttribute("disabled", !hasAccount);
+    if (chatStatusCmd) {
+      if (hasAccount) {
+        chatStatusCmd.removeAttribute("disabled");
+      } else {
+        chatStatusCmd.setAttribute("disabled", true);
+      }
+    }
 
     const addBuddyButton = document.getElementById("button-add-buddy");
     if (addBuddyButton) {
@@ -1215,7 +1221,13 @@ var chatHandler = {
     }
 
     const addBuddyCmd = document.getElementById("cmd_addChatBuddy");
-    addBuddyCmd?.toggleAttribute("disabled", !connected);
+    if (addBuddyCmd) {
+      if (connected) {
+        addBuddyCmd.removeAttribute("disabled");
+      } else {
+        addBuddyCmd.setAttribute("disabled", true);
+      }
+    }
 
     const joinChatButton = document.getElementById("button-join-chat");
     if (joinChatButton) {
@@ -1223,7 +1235,13 @@ var chatHandler = {
     }
 
     const joinChatCmd = document.getElementById("cmd_joinChat");
-    joinChatCmd?.toggleAttribute("disabled", !canJoinChat);
+    if (joinChatCmd) {
+      if (canJoinChat) {
+        joinChatCmd.removeAttribute("disabled");
+      } else {
+        joinChatCmd.setAttribute("disabled", true);
+      }
+    }
 
     const groupIds = ["conversations", "onlinecontacts", "offlinecontacts"];
     const contactlist = document.getElementById("contactlistbox");

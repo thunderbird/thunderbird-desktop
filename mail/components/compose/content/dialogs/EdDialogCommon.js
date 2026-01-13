@@ -560,7 +560,7 @@ function FillLinkMenulist(linkMenulist, headingsArray) {
         return;
       }
       const item = createMenuItem(GetString("NoNamedAnchorsOrHeadings"));
-      item.toggleAttribute("disabled", true);
+      item.setAttribute("disabled", "true");
       menuItems.push(item);
     }
     window.addEventListener("contextmenu", () => {

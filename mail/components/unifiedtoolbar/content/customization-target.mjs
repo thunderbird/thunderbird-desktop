@@ -82,7 +82,7 @@ class CustomizationTarget extends ListBoxSelection {
           is: "customizable-element",
         });
         element.setAttribute("item-id", itemId);
-        element.toggleAttribute("disabled", true);
+        element.setAttribute("disabled", "disabled");
         element.classList.toggle("collapsed", !availableItems.includes(itemId));
         element.draggable = true;
         return element;
@@ -225,7 +225,7 @@ class CustomizationTarget extends ListBoxSelection {
    * @param {?CustomizableElement} item - Item from another list.
    */
   #adoptItem(item) {
-    item?.toggleAttribute("disabled", true);
+    item?.setAttribute("disabled", "disabled");
   }
 
   moveItemForward(...args) {
