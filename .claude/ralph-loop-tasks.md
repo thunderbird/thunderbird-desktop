@@ -216,7 +216,7 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 ---
 
 ### Task 1.8: Implement Tab Lifecycle Methods
-**Status:** pending
+**Status:** completed
 **Repo:** thunderbird-desktop
 **Goal:** Implement saveTabState, restoreTab, persistTab for session restore
 
@@ -231,7 +231,16 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 
 **Success Criteria:** Life tab persists across Thunderbird restarts
 
-**Completion Notes:**
+**Completion Notes:** Enhanced lifecycle methods for session persistence:
+- `showTab(tab)`: Sets browser type="content" and primary="true" when tab activated
+- `saveTabState(tab)`: Removes primary attribute when switching away from tab
+- `persistTab(tab)`: Returns state object with:
+  - `background`: Whether tab was in background when session saved
+  - `url`: Current browser URL (stored for future use)
+- `restoreTab(tabmail, state)`: Opens Life tab with persisted background state
+- All methods follow calendar-tabs.js patterns
+- Syntax verified with Node.js --check
+- Manual testing: Open Life tab, close Thunderbird, restart - tab should restore
 
 ---
 

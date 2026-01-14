@@ -103,11 +103,16 @@ var lifeTabType = {
 
       /**
        * Called when the tab is shown/activated.
+       * The opposite of saveTabState - restores any visual state.
        *
        * @param {object} tab - The tab info object.
        */
       showTab(tab) {
-        // Placeholder for any actions needed when showing the tab
+        // Ensure browser is set to primary type when shown
+        if (tab.browser) {
+          tab.browser.setAttribute("type", "content");
+          tab.browser.setAttribute("primary", "true");
+        }
       },
 
       /**
@@ -121,26 +126,43 @@ var lifeTabType = {
 
       /**
        * Persists the tab state for session restore.
+       * Called when Thunderbird is closing to save tab state.
        *
        * @param {object} tab - The tab info object.
        * @returns {object} State object to be persisted.
        */
       persistTab(tab) {
         const tabmail = document.getElementById("tabmail");
-        return {
+        const state = {
           // Store whether this tab was in the background
           background: tab !== tabmail.currentTabInfo,
         };
+
+        // Store the current URL if available (for future use when
+        // the dashboard supports different views/states)
+        if (tab.browser?.currentURI?.spec) {
+          state.url = tab.browser.currentURI.spec;
+        }
+
+        return state;
       },
 
       /**
        * Restores a tab from persisted state.
+       * Called when Thunderbird starts and restores the session.
        *
        * @param {object} tabmail - The tabmail element.
        * @param {object} state - The persisted state object.
        */
       restoreTab(tabmail, state) {
-        tabmail.openTab("life", state);
+        // Open the Life tab, passing the persisted state
+        // The background property will be used by tabmail to determine
+        // if this tab should be switched to after restoration
+        tabmail.openTab("life", {
+          background: state.background,
+          // Don't restore URL for now - always start fresh with default
+          // url: state.url,
+        });
       },
 
       /**
@@ -191,11 +213,16 @@ var lifeTabType = {
 
   /**
    * Saves the tab state when deactivated/hidden.
+   * The opposite of showTab - called when switching away from tab.
    *
    * @param {object} tab - The tab info object.
    */
   saveTabState(tab) {
-    // Placeholder for saving any tab-specific state
+    // When tab is hidden/deactivated, remove primary attribute
+    if (tab.browser) {
+      tab.browser.setAttribute("type", "content");
+      tab.browser.removeAttribute("primary");
+    }
   },
 };
 
