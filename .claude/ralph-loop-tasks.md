@@ -245,7 +245,7 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 ---
 
 ### Task 1.9: Add Keyboard Shortcut for Life Tab
-**Status:** pending
+**Status:** completed
 **Repo:** thunderbird-desktop
 **Goal:** Add keyboard shortcut to quickly switch to Life Dashboard
 
@@ -259,7 +259,15 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 
 **Success Criteria:** Keyboard shortcut opens/focuses Life Dashboard tab
 
-**Completion Notes:**
+**Completion Notes:** Added Ctrl+Shift+L (Cmd+Shift+L on Mac) keyboard shortcut:
+- Created `mail/base/content/life-keys.inc.xhtml`:
+  - Keyset with id="life-keys"
+  - Key with id="key_openLifeDashboard", key="L", modifiers="accel,shift"
+  - Documented the "L" mnemonic for "Life Dashboard" in comments
+- Added #include in messenger.xhtml after calendar-keys.inc.xhtml
+- Updated Go menu item to reference key="key_openLifeDashboard" for accelerator display
+- Shortcut opens Life Dashboard tab via tabmail.openTab('life', {})
+- Manual testing: Press Ctrl+Shift+L to open Life tab, check Go menu shows shortcut
 
 ---
 
