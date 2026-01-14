@@ -364,7 +364,7 @@
 ---
 
 ### Task 3.6: Integrate Mailbox Reader with Ingestion Pipeline
-**Status:** pending
+**Status:** completed
 **Repo:** email-poc
 **Goal:** Connect mailbox reader to existing email ingestion pipeline
 
@@ -392,7 +392,15 @@
 
 **Success Criteria:** Can ingest Thunderbird mail into the knowledge graph database
 
-**Completion Notes:**
+**Completion Notes:** Implemented full integration with email-poc database:
+- Added THUNDERBIRD provider to core domain and API models
+- Created ThunderbirdIngestor class coordinating profile discovery, mbox reading, database storage
+- Supports incremental sync via SyncTracker, progress callbacks, dry-run mode
+- Created CLI with commands: list-profiles, list-accounts, list-folders, ingest, reset-sync
+- CLI supports --profile, --database-url, --full, --dry-run, --account filter options
+- Added typer/rich dependencies, mailbox-reader script entry point
+- 15 new tests covering ingestion, sync, error handling
+- All 88 mailbox package tests pass
 
 ---
 
