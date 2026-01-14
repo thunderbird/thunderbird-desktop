@@ -862,7 +862,7 @@
 ---
 
 ### Task 5.3: Implement Click-to-Open in Thunderbird
-**Status:** pending
+**Status:** completed
 **Repo:** both
 **Goal:** Clicking email in dashboard opens it in Thunderbird's native viewer
 
@@ -888,7 +888,19 @@
 
 **Success Criteria:** Clicking email in dashboard opens native Thunderbird viewer
 
-**Completion Notes:**
+**Completion Notes:** Implemented postMessage-based communication between dashboard and Thunderbird:
+- Thunderbird side (lifeTabs.js):
+  - Added MailUtils import for native message display
+  - setupMessageListener() receives postMessage events from dashboard
+  - switchToMailTab() navigates to mail tab
+  - openEmailByMessageId() searches all accounts/folders for message by Message-ID
+  - findMessageInFolder() recursive folder search using msgDatabase.getMsgHdrForMessageID
+  - MailUtils.displayMessageInFolderTab() opens message in native viewer
+- Dashboard side (EmailViewer.tsx):
+  - Added "Open in Thunderbird" button with external link icon
+  - openInThunderbird() sends postMessage with type, messageId, subject
+  - Graceful fallback when not running in Thunderbird
+- Both repos committed with separate commits
 
 ---
 
