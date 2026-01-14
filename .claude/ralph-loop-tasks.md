@@ -338,7 +338,7 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 ---
 
 ### Task 2.2: Set Up Dependency Injection for Repositories
-**Status:** pending
+**Status:** completed
 **Repo:** email-poc
 **Goal:** Configure FastAPI dependency injection to access existing repositories
 
@@ -353,7 +353,21 @@ The lifeTabs.js file will now be included in the messenger.jar chrome package an
 
 **Success Criteria:** API can access repositories via dependency injection
 
-**Completion Notes:**
+**Completion Notes:** Created dependency injection system:
+- `dependencies.py` with:
+  - `get_db_session()` - yields SQLAlchemy session from session factory
+  - `DBSession` type alias for cleaner annotations
+  - `get_account_repository()` - returns AccountRepositoryImpl
+  - `get_email_repository()` - returns EmailRepositoryImpl
+  - `get_canonical_entity_repository()` - returns CanonicalEntityRepositoryImpl
+  - `get_entity_mention_repository()` - returns EntityMentionRepositoryImpl
+  - `get_entity_relationship_repository()` - returns EntityRelationshipRepositoryImpl
+- Updated `main.py` with `GET /health/db` endpoint that:
+  - Uses dependency injection to get AccountRepository
+  - Tests database connectivity by listing active accounts
+  - Returns status with connection info or error details
+- All repository dependencies use session factory initialized at startup
+- Python syntax verified
 
 ---
 
