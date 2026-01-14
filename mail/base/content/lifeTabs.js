@@ -61,16 +61,16 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, %23f5f7fa 0%25, %23c3cfe2 100%25);
-      color: %23333;
+      background: linear-gradient(135deg, %231a1a2e 0%25, %2316213e 100%25);
+      color: %23e0e0e0;
       padding: 20px;
     }
     .container {
-      background: white;
+      background: %232d2d44;
       border-radius: 12px;
       padding: 40px;
-      max-width: 500px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 550px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       text-align: center;
     }
     h1 {
@@ -79,8 +79,8 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       font-size: 24px;
     }
     .status {
-      background: %23fff3cd;
-      border: 1px solid %23ffc107;
+      background: %23453a2e;
+      border: 1px solid %23b8860b;
       border-radius: 8px;
       padding: 16px;
       margin: 20px 0;
@@ -90,19 +90,19 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       margin-bottom: 12px;
     }
     p {
-      color: %23666;
+      color: %23aaa;
       line-height: 1.6;
       margin-bottom: 12px;
     }
     .instructions {
       text-align: left;
-      background: %23f8f9fa;
+      background: %23252538;
       border-radius: 8px;
       padding: 16px;
       margin-top: 20px;
     }
     .instructions h3 {
-      color: %23333;
+      color: %23e0e0e0;
       margin-bottom: 12px;
       font-size: 16px;
     }
@@ -110,15 +110,16 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       padding-left: 20px;
     }
     .instructions li {
-      margin-bottom: 8px;
-      color: %23555;
+      margin-bottom: 10px;
+      color: %23bbb;
     }
     code {
-      background: %23e9ecef;
-      padding: 2px 6px;
+      background: %231a1a2e;
+      padding: 2px 8px;
       border-radius: 4px;
       font-family: 'SF Mono', Monaco, 'Courier New', monospace;
       font-size: 13px;
+      color: %2398d8c8;
     }
     .retry-btn {
       background: %23667eea;
@@ -132,7 +133,29 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       transition: background 0.2s;
     }
     .retry-btn:hover {
-      background: %23556cd6;
+      background: %235563d9;
+    }
+    .troubleshoot {
+      text-align: left;
+      background: %231e1e30;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      border: 1px solid %23333;
+    }
+    .troubleshoot h3 {
+      color: %23e0e0e0;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .troubleshoot ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+    .troubleshoot li {
+      margin-bottom: 6px;
+      color: %23999;
+      font-size: 13px;
     }
   </style>
 </head>
@@ -143,18 +166,28 @@ const LIFE_DASHBOARD_ERROR_PAGE = `data:text/html,
       <div class="status-icon">%E2%9A%A0%EF%B8%8F</div>
       <strong>Backend Server Not Available</strong>
     </div>
-    <p>The Life Dashboard backend is not running or cannot be reached.</p>
+    <p>The Life Dashboard backend is not running at <code>${LIFE_DASHBOARD_API_URL}</code></p>
     <div class="instructions">
-      <h3>To start the backend:</h3>
+      <h3>Quick Start:</h3>
       <ol>
-        <li>Navigate to the email-poc directory</li>
-        <li>Run: <code>cd packages/api</code></li>
-        <li>Start the server: <code>uvicorn api.main:app --reload</code></li>
+        <li>Open a terminal in the <code>email-poc/v1</code> directory</li>
+        <li>Build the dashboard: <code>./packages/api/scripts/build-dashboard.sh</code></li>
+        <li>Start the server: <code>uv run uvicorn api.main:app</code></li>
         <li>Wait for "Application startup complete"</li>
-        <li>Click Retry below or press Ctrl+Shift+L</li>
+        <li>Click <strong>Retry Connection</strong> below</li>
       </ol>
     </div>
-    <button class="retry-btn" onclick="location.href='${LIFE_DASHBOARD_API_URL}'">
+    <div class="troubleshoot">
+      <h3>Troubleshooting:</h3>
+      <ul>
+        <li>Verify the server is running: <code>curl ${LIFE_DASHBOARD_API_URL}/health</code></li>
+        <li>Check if port 8000 is available or in use</li>
+        <li>Ensure PostgreSQL database is running and accessible</li>
+        <li>Check terminal for error messages</li>
+        <li>Review logs in the API package directory</li>
+      </ul>
+    </div>
+    <button class="retry-btn" onclick="window.location.reload()">
       Retry Connection
     </button>
   </div>
