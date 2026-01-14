@@ -45,7 +45,7 @@
 ---
 
 ### Task 1.2: Create Life Tab Type Skeleton
-**Status:** pending
+**Status:** completed
 **Repo:** thunderbird-desktop
 **Goal:** Create `lifeTabs.js` with minimal tab type definition
 
@@ -63,7 +63,16 @@
 
 **Success Criteria:** File created with valid tab type structure (syntax correct, follows patterns)
 
-**Completion Notes:**
+**Completion Notes:** Created `mail/base/content/lifeTabs.js` with:
+- `lifeTabMonitor` object for tab monitoring (follows calendar pattern)
+- `lifeTabType` with name="life", panelId="lifeTabPanel"
+- Single "life" mode with maxTabs=1
+- Full implementations of: openTab, showTab, closeTab, persistTab, restoreTab, onTitleChanged, shouldSwitchTo
+- Command handling stubs (supportsCommand, isCommandEnabled, doCommand, onEvent)
+- saveTabState at tab type level
+- Lazy getter for notificationbox
+- Window load event listener for registration (follows calendar-tabs.js pattern)
+- Node.js syntax check passed
 
 ---
 
