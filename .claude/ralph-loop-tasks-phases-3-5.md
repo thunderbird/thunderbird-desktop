@@ -905,7 +905,7 @@
 ---
 
 ### Task 5.4: Add Backend Auto-Start Capability
-**Status:** pending
+**Status:** completed
 **Repo:** both
 **Goal:** Optionally start backend automatically when opening Life tab
 
@@ -935,7 +935,20 @@
 
 **Success Criteria:** Backend can optionally auto-start when Life tab opens
 
-**Completion Notes:**
+**Completion Notes:** Implemented subprocess-based auto-start with configurable options:
+- email-poc: Created start-server.sh with --check, --stop, --port, --host, --foreground options
+  - PID file tracking, graceful shutdown, port conflict detection
+  - Supports uv run or venv activation for Python execution
+  - Logs to server.log in API package directory
+- Thunderbird: Added LIFE_DASHBOARD_AUTO_START configuration object
+  - enabled: Toggle feature on/off
+  - backendPath: Path to email-poc/v1/packages/api/scripts
+  - maxRetries: Retry attempts after starting (default 3)
+  - retryDelay: Delay between retries in ms (default 2000)
+- Uses Subprocess.sys.mjs to execute start-server.sh from Thunderbird
+- Updated error page with auto-start configuration instructions
+- Updated AI_INTEGRATION_STATUS.md with documentation
+- Both repos committed separately
 
 ---
 
