@@ -782,7 +782,7 @@
 ## Phase 5: Integration
 
 ### Task 5.1: Configure FastAPI to Serve React Dashboard
-**Status:** pending
+**Status:** completed
 **Repo:** email-poc
 **Goal:** Serve built React app from FastAPI
 
@@ -812,7 +812,15 @@
 
 **Success Criteria:** FastAPI serves React dashboard at root, API at /api paths
 
-**Completion Notes:**
+**Completion Notes:** Configured FastAPI to serve React dashboard:
+- Added serve_dashboard (bool) and dashboard_dir (str) settings to config.py
+- Dashboard auto-detected at packages/dashboard/dist/ relative to API
+- Root path (/) serves React index.html when dashboard is built
+- SPA catch-all route (/{path:path}) handles client-side routing
+- /assets mount for dashboard JS/CSS files
+- /static mount preserved for API test page fallback
+- Created scripts/build-dashboard.sh to build dashboard
+- Syntax verified, dashboard build tested successfully
 
 ---
 
