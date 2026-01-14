@@ -19,6 +19,10 @@ var { MailE10SUtils } = ChromeUtils.importESModule(
   "resource:///modules/MailE10SUtils.sys.mjs"
 );
 
+var { MailUtils } = ChromeUtils.importESModule(
+  "resource:///modules/MailUtils.sys.mjs"
+);
+
 /**
  * Configuration for the Life Dashboard backend connection.
  *
@@ -262,12 +266,152 @@ var lifeTabType = {
           // Configure browser for content loading
           tab.browser.setAttribute("type", "content");
 
+          // Set up message listener for dashboard communication
+          this.setupMessageListener(tab);
+
           // Determine the URL to load
           const url = args.url || LIFE_DASHBOARD_API_URL;
 
           // Check if backend is available before loading
           this.checkBackendAndLoad(tab, url);
         }
+      },
+
+      /**
+       * Sets up a message listener for communication from the dashboard.
+       * The dashboard can send messages to request actions like opening emails.
+       *
+       * @param {object} tab - The tab info object.
+       */
+      setupMessageListener(tab) {
+        // Remove any existing listener to avoid duplicates
+        if (tab.messageListener) {
+          window.removeEventListener("message", tab.messageListener);
+        }
+
+        // Create message listener
+        tab.messageListener = event => {
+          // Only accept messages from our dashboard
+          if (!event.origin.startsWith(LIFE_DASHBOARD_API_URL)) {
+            return;
+          }
+
+          const data = event.data;
+          if (!data || !data.type) {
+            return;
+          }
+
+          switch (data.type) {
+            case "lifeDashboard:openMail":
+              // Switch to the mail tab
+              this.switchToMailTab();
+              break;
+
+            case "lifeDashboard:openEmail":
+              // Try to open a specific email by searching for it
+              if (data.messageId) {
+                this.openEmailByMessageId(data.messageId, data.subject);
+              } else {
+                // Just switch to mail tab if no message ID
+                this.switchToMailTab();
+              }
+              break;
+
+            default:
+              // Unknown message type, ignore
+              break;
+          }
+        };
+
+        window.addEventListener("message", tab.messageListener);
+      },
+
+      /**
+       * Switches to the Mail tab.
+       * Opens a new mail tab if one doesn't exist.
+       */
+      switchToMailTab() {
+        const tabmail = document.getElementById("tabmail");
+        if (!tabmail) {
+          return;
+        }
+
+        // Find existing mail3PaneTab
+        const mailTab = tabmail.tabInfo.find(
+          t => t.mode.name === "mail3PaneTab"
+        );
+
+        if (mailTab) {
+          // Switch to existing mail tab
+          tabmail.switchToTab(mailTab);
+        } else {
+          // Open new mail tab
+          tabmail.openTab("mail3PaneTab", {});
+        }
+      },
+
+      /**
+       * Attempts to open an email by its Message-ID.
+       * If the message cannot be found, switches to the mail tab.
+       *
+       * @param {string} messageId - The Message-ID of the email to open.
+       * @param {string} subject - The subject of the email (for search fallback).
+       */
+      openEmailByMessageId(messageId, subject) {
+        // Try to find the message across all accounts and folders
+        const accounts = MailServices?.accounts?.accounts || [];
+
+        for (const account of accounts) {
+          const rootFolder = account.incomingServer?.rootFolder;
+          if (!rootFolder) {
+            continue;
+          }
+
+          const msgHdr = this.findMessageInFolder(rootFolder, messageId);
+          if (msgHdr) {
+            // Found the message, display it
+            MailUtils.displayMessageInFolderTab(msgHdr, true);
+            return;
+          }
+        }
+
+        // Message not found, just switch to mail tab
+        // The user can manually search for the email
+        this.switchToMailTab();
+      },
+
+      /**
+       * Recursively searches for a message in a folder and its subfolders.
+       *
+       * @param {nsIMsgFolder} folder - The folder to search in.
+       * @param {string} messageId - The Message-ID to find.
+       * @returns {nsIMsgDBHdr|null} The message header if found, null otherwise.
+       */
+      findMessageInFolder(folder, messageId) {
+        // Try to get the message from this folder's database
+        try {
+          const db = folder.msgDatabase;
+          if (db) {
+            const msgHdr = db.getMsgHdrForMessageID(messageId);
+            if (msgHdr) {
+              return msgHdr;
+            }
+          }
+        } catch {
+          // Database might not be available for this folder
+        }
+
+        // Search subfolders
+        if (folder.hasSubFolders) {
+          for (const subfolder of folder.subFolders) {
+            const msgHdr = this.findMessageInFolder(subfolder, messageId);
+            if (msgHdr) {
+              return msgHdr;
+            }
+          }
+        }
+
+        return null;
       },
 
       /**
