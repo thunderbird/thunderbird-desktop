@@ -319,7 +319,7 @@
 ---
 
 ### Task 3.5: Implement Incremental Sync Tracking
-**Status:** pending
+**Status:** completed
 **Repo:** email-poc
 **Goal:** Track which messages have been processed to enable incremental updates
 
@@ -349,7 +349,17 @@
 
 **Success Criteria:** Can incrementally sync only new messages from mbox files
 
-**Completion Notes:**
+**Completion Notes:** Implemented full SyncTracker class in new sync.py module:
+- JSON-based state persistence with hash-based filenames for uniqueness
+- load_state/save_state/delete_state for state management
+- needs_sync(): Detects file modifications via size and mtime comparison
+- was_truncated(): Detects file compaction requiring full rescan
+- get_new_messages(): Returns only unprocessed messages using Message-ID tracking
+- reset_state(): Forces full resync by deleting state
+- get_all_states() and get_sync_summary() for monitoring
+- Automatic state save after sync completion
+- 21 new tests covering state persistence, change detection, incremental sync, truncation handling
+- All 73 mailbox package tests pass
 
 ---
 
