@@ -825,7 +825,7 @@
 ---
 
 ### Task 5.2: Update Thunderbird Tab for Dashboard
-**Status:** pending
+**Status:** completed
 **Repo:** thunderbird-desktop
 **Goal:** Configure Thunderbird Life tab to load React dashboard
 
@@ -849,7 +849,15 @@
 
 **Success Criteria:** Life tab loads React dashboard successfully
 
-**Completion Notes:**
+**Completion Notes:** Updated Thunderbird Life tab for React dashboard integration:
+- LIFE_DASHBOARD_API_URL already set to http://localhost:8000 (correct)
+- Health check at /health endpoint already implemented
+- Error page redesigned with dark mode styling matching React dashboard
+- Added Quick Start section with build-dashboard.sh instructions
+- Added Troubleshooting section with common issues checklist
+- Retry button now reloads page to trigger new health check
+- Deep linking supported via existing SPA catch-all route in FastAPI
+- JavaScript syntax verified
 
 ---
 
