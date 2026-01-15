@@ -294,9 +294,9 @@ var lifeTabType = {
         // Store reference to mode object for method calls
         const mode = lifeTabType.modes.life;
 
-        // Set the tab icon
+        // Set the tab icon (lightbulb for Life Dashboard)
         tab.tabNode.setIcon(
-          "chrome://messenger/skin/icons/new/compact/calendar.svg"
+          "chrome://messenger/skin/icons/new/normal/life.svg"
         );
         // Set the tab title
         tab.title = "Life Dashboard";

@@ -253,6 +253,10 @@ img {
     content: var(--spaces-icon-chat);
   }
 
+  #lifeButton & {
+    content: var(--spaces-icon-life);
+  }
+
   #settingsButton & {
     content: var(--spaces-icon-settings);
   }

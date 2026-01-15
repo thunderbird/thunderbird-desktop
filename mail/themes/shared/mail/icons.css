@@ -241,6 +241,7 @@
   --spaces-icon-overflow: url("chrome://messenger/skin/icons/new/normal/overflow.svg");
   --spaces-icon-settings: url("chrome://messenger/skin/icons/new/normal/settings.svg");
   --spaces-icon-collapse: url("chrome://messenger/skin/icons/new/normal/collapse.svg");
+  --spaces-icon-life: url("chrome://messenger/skin/icons/new/normal/life.svg");
 
   --folder-pane-mail: var(--icon-mail);
   --folder-pane-mail-secure: var(--icon-mail-secure);
@@ -305,6 +306,7 @@
   --spaces-icon-overflow: var(--icon-overflow);
   --spaces-icon-settings: var(--icon-settings);
   --spaces-icon-collapse: var(--icon-collapse);
+  --spaces-icon-life: url("chrome://messenger/skin/icons/new/compact/life.svg");
 
   --font-size-increase: url("chrome://messenger/skin/icons/new/compact/add-circle.svg");
   --font-size-decrease: url("chrome://messenger/skin/icons/new/compact/subtract-circle.svg");
@@ -319,6 +321,7 @@
   --spaces-icon-overflow: url("chrome://messenger/skin/icons/new/touch/overflow.svg");
   --spaces-icon-settings: url("chrome://messenger/skin/icons/new/touch/settings.svg");
   --spaces-icon-collapse: url("chrome://messenger/skin/icons/new/touch/collapse.svg");
+  --spaces-icon-life: url("chrome://messenger/skin/icons/new/touch/life.svg");
 
   --folder-pane-mail: url("chrome://messenger/skin/icons/new/normal/mail.svg");
   --folder-pane-mail-secure: url("chrome://messenger/skin/icons/new/normal/mail-secure.svg");
