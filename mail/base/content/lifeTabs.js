@@ -291,6 +291,9 @@ var lifeTabType = {
        * @param {object} args - Optional arguments for opening the tab.
        */
       openTab(tab, args) {
+        // Store reference to mode object for method calls
+        const mode = lifeTabType.modes.life;
+
         // Set the tab icon
         tab.tabNode.setIcon(
           "chrome://messenger/skin/icons/new/compact/calendar.svg"
@@ -306,13 +309,13 @@ var lifeTabType = {
           tab.browser.setAttribute("type", "content");
 
           // Set up message listener for dashboard communication
-          this.setupMessageListener(tab);
+          mode.setupMessageListener(tab);
 
           // Determine the URL to load
           const url = args.url || LIFE_DASHBOARD_API_URL;
 
           // Check if backend is available before loading
-          this.checkBackendAndLoad(tab, url);
+          mode.checkBackendAndLoad(tab, url);
         }
       },
 
