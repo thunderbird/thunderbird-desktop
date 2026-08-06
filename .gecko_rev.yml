@@ -1,7 +1,7 @@
 ---
 GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
 GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/releases/mozilla-esr153
-GECKO_HEAD_REV: 945961e4f3d01697d1e6305c7c32ec113b0c2b17
+GECKO_HEAD_REV: abd1fe67f4c3b677caecb582d55601a7b1191dc4
 
 ######
 
