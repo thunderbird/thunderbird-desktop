@@ -5,11 +5,10 @@ use core::fmt::{self, Debug, Write};
 
 impl ErrorImpl {
     pub(crate) unsafe fn display(this: Ref<Self>, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", unsafe { Self::error(this) })?;
+        write!(f, "{}", Self::error(this))?;
 
         if f.alternate() {
-            let chain = unsafe { Self::chain(this) };
-            for cause in chain.skip(1) {
+            for cause in Self::chain(this).skip(1) {
                 write!(f, ": {}", cause)?;
             }
         }
@@ -18,7 +17,7 @@ impl ErrorImpl {
     }
 
     pub(crate) unsafe fn debug(this: Ref<Self>, f: &mut fmt::Formatter) -> fmt::Result {
-        let error = unsafe { Self::error(this) };
+        let error = Self::error(this);
 
         if f.alternate() {
             return Debug::fmt(error, f);
@@ -40,12 +39,11 @@ impl ErrorImpl {
             }
         }
 
-        #[cfg(feature = "std")]
+        #[cfg(any(backtrace, feature = "backtrace"))]
         {
-            use alloc::string::ToString;
-            use std::backtrace::BacktraceStatus;
+            use crate::backtrace::BacktraceStatus;
 
-            let backtrace = unsafe { Self::backtrace(this) };
+            let backtrace = Self::backtrace(this);
             if let BacktraceStatus::Captured = backtrace.status() {
                 let mut backtrace = backtrace.to_string();
                 write!(f, "\n\n")?;
@@ -103,7 +101,6 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::string::String;
 
     #[test]
     fn one_digit() {

@@ -3,7 +3,6 @@ name: CI
 on:
   push:
   pull_request:
-  workflow_dispatch:
   schedule: [cron: "40 1 * * *"]
 
 permissions:
@@ -24,29 +23,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [nightly, beta, stable, 1.85.0]
+        rust: [nightly, beta, stable, 1.60.0]
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{matrix.rust}}
           components: rust-src
-      - name: Enable type layout randomization
-        run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
-        if: matrix.rust == 'nightly'
-      - name: Enable nightly-only tests
-        run: echo RUSTFLAGS=${RUSTFLAGS}\ --cfg=anyhow_nightly_testing >> $GITHUB_ENV
-        if: matrix.rust == 'nightly'
       - run: cargo test
       - run: cargo check --no-default-features
-      - run: cargo check
-      - uses: actions/upload-artifact@v7
-        if: matrix.rust == 'nightly' && always()
-        with:
-          name: Cargo.lock
-          path: Cargo.lock
-        continue-on-error: true
+      - run: cargo check --features backtrace
 
   build:
     name: Rust ${{matrix.rust}}
@@ -56,28 +43,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [1.68.0]
+        rust: [1.52.0, 1.51.0, 1.50.0, 1.42.0, 1.39.0]
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{matrix.rust}}
           components: rust-src
-      - run: cargo check --manifest-path tests/crate/Cargo.toml
-      - run: cargo check --manifest-path tests/crate/Cargo.toml --no-default-features
-
-  minimal:
-    name: Minimal versions
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@nightly
-      - run: cargo generate-lockfile -Z minimal-versions
-      - run: cargo check --locked
+      - run: cargo check
+      - run: cargo check --no-default-features
 
   windows:
     name: Windows
@@ -86,27 +61,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rust-src
-      - run: cargo check
-
-  doc:
-    name: Documentation
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    env:
-      RUSTDOCFLAGS: -Dwarnings
-    steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: rust-src
-      - uses: dtolnay/install@cargo-docs-rs
-      - run: cargo docs-rs
+      - run: cargo check --features backtrace
 
   clippy:
     name: Clippy
@@ -114,7 +73,7 @@ jobs:
     if: github.event_name != 'pull_request'
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy, rust-src
@@ -127,9 +86,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@miri
-      - run: cargo miri setup
       - run: cargo miri test
         env:
           MIRIFLAGS: -Zmiri-strict-provenance
@@ -140,7 +98,6 @@ jobs:
     if: github.event_name != 'pull_request'
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@v3
       - uses: dtolnay/install@cargo-outdated
       - run: cargo outdated --workspace --exit-code 1

@@ -132,7 +132,8 @@ impl<T> Queue<T> {
                                 .compare_exchange(tail, next, Release, Relaxed, guard);
                         }
                         guard.defer_destroy(head);
-                        Some(n.data.assume_init_read())
+                        // TODO: Replace with MaybeUninit::read when api is stable
+                        Some(n.data.as_ptr().read())
                     })
                     .map_err(|_| ())
             },
@@ -164,7 +165,7 @@ impl<T> Queue<T> {
                                 .compare_exchange(tail, next, Release, Relaxed, guard);
                         }
                         guard.defer_destroy(head);
-                        Some(n.data.assume_init_read())
+                        Some(n.data.as_ptr().read())
                     })
                     .map_err(|_| ())
             },
@@ -219,7 +220,6 @@ mod test {
     use super::*;
     use crate::pin;
     use crossbeam_utils::thread;
-    use std::vec;
 
     struct Queue<T> {
         queue: super::Queue<T>,

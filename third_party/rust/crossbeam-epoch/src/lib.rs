@@ -48,7 +48,6 @@
 //! For majority of use cases, just use the default garbage collector by invoking [`pin`]. If you
 //! want to create your own garbage collector, use the [`Collector`] API.
 
-#![no_std]
 #![doc(test(
     no_crate_inject,
     attr(
@@ -62,11 +61,12 @@
     rust_2018_idioms,
     unreachable_pub
 )]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(crossbeam_loom)]
 extern crate loom_crate as loom;
-#[cfg(feature = "std")]
-extern crate std;
+
+use cfg_if::cfg_if;
 
 #[cfg(crossbeam_loom)]
 #[allow(unused_imports, dead_code)]
@@ -76,9 +76,8 @@ mod primitive {
     }
     pub(crate) mod sync {
         pub(crate) mod atomic {
-            #[cfg(target_has_atomic = "64")]
-            pub(crate) use loom::sync::atomic::AtomicU64;
-            pub(crate) use loom::sync::atomic::{fence, AtomicPtr, AtomicUsize, Ordering};
+            use core::sync::atomic::Ordering;
+            pub(crate) use loom::sync::atomic::{fence, AtomicUsize};
 
             // FIXME: loom does not support compiler_fence at the moment.
             // https://github.com/tokio-rs/loom/issues/117
@@ -91,10 +90,11 @@ mod primitive {
     }
     pub(crate) use loom::thread_local;
 }
-#[cfg(target_has_atomic = "ptr")]
+#[cfg(not(crossbeam_no_atomic_cas))]
 #[cfg(not(crossbeam_loom))]
 #[allow(unused_imports, dead_code)]
 mod primitive {
+    #[cfg(feature = "alloc")]
     pub(crate) mod cell {
         #[derive(Debug)]
         #[repr(transparent)]
@@ -122,45 +122,48 @@ mod primitive {
             }
         }
     }
+    #[cfg(feature = "alloc")]
     pub(crate) mod sync {
-        #[cfg(feature = "alloc")]
+        pub(crate) mod atomic {
+            pub(crate) use core::sync::atomic::compiler_fence;
+            pub(crate) use core::sync::atomic::fence;
+            pub(crate) use core::sync::atomic::AtomicUsize;
+        }
         pub(crate) use alloc::sync::Arc;
-        pub(crate) use core::sync::atomic;
     }
 
     #[cfg(feature = "std")]
     pub(crate) use std::thread_local;
 }
 
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-extern crate alloc;
+#[cfg(not(crossbeam_no_atomic_cas))]
+cfg_if! {
+    if #[cfg(feature = "alloc")] {
+        extern crate alloc;
 
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod atomic;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod collector;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod deferred;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod epoch;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod guard;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod internal;
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-mod sync;
+        mod atomic;
+        mod collector;
+        mod deferred;
+        mod epoch;
+        mod guard;
+        mod internal;
+        mod sync;
 
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-#[allow(deprecated)]
-pub use crate::atomic::{CompareAndSetError, CompareAndSetOrdering};
-#[cfg(all(feature = "alloc", target_has_atomic = "ptr"))]
-pub use crate::{
-    atomic::{Atomic, CompareExchangeError, Owned, Pointable, Pointer, Shared},
-    collector::{Collector, LocalHandle},
-    guard::{unprotected, Guard},
-};
+        pub use self::atomic::{
+            Pointable, Atomic, CompareExchangeError,
+            Owned, Pointer, Shared,
+        };
+        pub use self::collector::{Collector, LocalHandle};
+        pub use self::guard::{unprotected, Guard};
 
-#[cfg(feature = "std")]
-mod default;
-#[cfg(feature = "std")]
-pub use crate::default::{default_collector, is_pinned, pin};
+        #[allow(deprecated)]
+        pub use self::atomic::{CompareAndSetError, CompareAndSetOrdering};
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "std")] {
+        mod default;
+        pub use self::default::{default_collector, is_pinned, pin};
+    }
+}

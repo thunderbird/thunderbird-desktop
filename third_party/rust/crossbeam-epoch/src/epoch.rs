@@ -7,23 +7,8 @@
 //! If an object became garbage in some epoch, then we can be sure that after two advancements no
 //! participant will hold a reference to it. That is the crux of safe memory reclamation.
 
-use crate::primitive::sync::atomic::Ordering;
-
-// Ideally, we want to always use AtomicU64, but since it is not available on all platforms,
-// we only use it when it is available for now.
-// TODO: On platforms where AtomicU64 is unavailable, we may want to use AtomicCell instead of AtomicUsize.
-#[cfg(target_has_atomic = "64")]
-type AtomicEpochRepr = crate::primitive::sync::atomic::AtomicU64;
-#[cfg(not(target_has_atomic = "64"))]
-type AtomicEpochRepr = crate::primitive::sync::atomic::AtomicUsize;
-#[cfg(target_has_atomic = "64")]
-type EpochRepr = u64;
-#[cfg(not(target_has_atomic = "64"))]
-type EpochRepr = usize;
-#[cfg(target_has_atomic = "64")]
-type EpochReprSigned = i64;
-#[cfg(not(target_has_atomic = "64"))]
-type EpochReprSigned = isize;
+use crate::primitive::sync::atomic::AtomicUsize;
+use core::sync::atomic::Ordering;
 
 /// An epoch that can be marked as pinned or unpinned.
 ///
@@ -32,7 +17,7 @@ type EpochReprSigned = isize;
 #[derive(Copy, Clone, Default, Debug, Eq, PartialEq)]
 pub(crate) struct Epoch {
     /// The least significant bit is set if pinned. The rest of the bits hold the epoch.
-    data: EpochRepr,
+    data: usize,
 }
 
 impl Epoch {
@@ -46,11 +31,11 @@ impl Epoch {
     ///
     /// Internally, epochs are represented as numbers in the range `(isize::MIN / 2) .. (isize::MAX
     /// / 2)`, so the returned distance will be in the same interval.
-    pub(crate) fn wrapping_sub(self, rhs: Self) -> EpochReprSigned {
+    pub(crate) fn wrapping_sub(self, rhs: Self) -> isize {
         // The result is the same with `(self.data & !1).wrapping_sub(rhs.data & !1) as isize >> 1`,
         // because the possible difference of LSB in `(self.data & !1).wrapping_sub(rhs.data & !1)`
         // will be ignored in the shift operation.
-        self.data.wrapping_sub(rhs.data & !1) as EpochReprSigned >> 1
+        self.data.wrapping_sub(rhs.data & !1) as isize >> 1
     }
 
     /// Returns `true` if the epoch is marked as pinned.
@@ -91,15 +76,15 @@ impl Epoch {
 pub(crate) struct AtomicEpoch {
     /// Since `Epoch` is just a wrapper around `usize`, an `AtomicEpoch` is similarly represented
     /// using an `AtomicUsize`.
-    data: AtomicEpochRepr,
+    data: AtomicUsize,
 }
 
 impl AtomicEpoch {
     /// Creates a new atomic epoch.
     #[inline]
     pub(crate) fn new(epoch: Epoch) -> Self {
-        let data = AtomicEpochRepr::new(epoch.data);
-        Self { data }
+        let data = AtomicUsize::new(epoch.data);
+        AtomicEpoch { data }
     }
 
     /// Loads a value from the atomic epoch.

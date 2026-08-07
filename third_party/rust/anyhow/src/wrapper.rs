@@ -1,11 +1,8 @@
 use crate::StdError;
 use core::fmt::{self, Debug, Display};
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
-use alloc::boxed::Box;
-
-#[cfg(error_generic_member_access)]
-use crate::nightly::{self, Request};
+#[cfg(backtrace)]
+use std::any::Demand;
 
 #[repr(transparent)]
 pub struct MessageError<M>(pub M);
@@ -53,32 +50,32 @@ where
 
 impl<M> StdError for DisplayError<M> where M: Display + 'static {}
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 #[repr(transparent)]
 pub struct BoxedError(pub Box<dyn StdError + Send + Sync>);
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 impl Debug for BoxedError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Debug::fmt(&self.0, f)
     }
 }
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 impl Display for BoxedError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(&self.0, f)
     }
 }
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 impl StdError for BoxedError {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         self.0.source()
     }
 
-    #[cfg(error_generic_member_access)]
-    fn provide<'a>(&'a self, request: &mut Request<'a>) {
-        nightly::provide(&*self.0, request);
+    #[cfg(backtrace)]
+    fn provide<'a>(&'a self, demand: &mut Demand<'a>) {
+        self.0.provide(demand);
     }
 }

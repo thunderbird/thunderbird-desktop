@@ -1,13 +1,13 @@
 use self::ChainState::*;
 use crate::StdError;
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
-use alloc::vec::{self, Vec};
+#[cfg(feature = "std")]
+use std::vec;
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 pub(crate) use crate::Chain;
 
-#[cfg(all(not(feature = "std"), anyhow_no_core_error))]
+#[cfg(not(feature = "std"))]
 pub(crate) struct Chain<'a> {
     state: ChainState<'a>,
 }
@@ -17,7 +17,7 @@ pub(crate) enum ChainState<'a> {
     Linked {
         next: Option<&'a (dyn StdError + 'static)>,
     },
-    #[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+    #[cfg(feature = "std")]
     Buffered {
         rest: vec::IntoIter<&'a (dyn StdError + 'static)>,
     },
@@ -42,7 +42,7 @@ impl<'a> Iterator for Chain<'a> {
                 *next = error.source();
                 Some(error)
             }
-            #[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+            #[cfg(feature = "std")]
             Buffered { rest } => rest.next(),
         }
     }
@@ -53,7 +53,7 @@ impl<'a> Iterator for Chain<'a> {
     }
 }
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 impl DoubleEndedIterator for Chain<'_> {
     fn next_back(&mut self) -> Option<Self::Item> {
         match &mut self.state {
@@ -84,13 +84,13 @@ impl ExactSizeIterator for Chain<'_> {
                 }
                 len
             }
-            #[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+            #[cfg(feature = "std")]
             Buffered { rest } => rest.len(),
         }
     }
 }
 
-#[cfg(any(feature = "std", not(anyhow_no_core_error)))]
+#[cfg(feature = "std")]
 impl Default for Chain<'_> {
     fn default() -> Self {
         Chain {

@@ -654,17 +654,12 @@ fn handle_texture_init(
     copy_size: &Extent3d,
     texture: &Arc<Texture>,
 ) -> Result<(), ClearError> {
-    let init_layer_range = if texture.desc.dimension == wgt::TextureDimension::D3 {
-        // Init tracking only considers array layers, not depth/volume slices
-        0..1
-    } else {
-        copy_texture.origin.z..copy_texture.origin.z + copy_size.depth_or_array_layers
-    };
     let init_action = TextureInitTrackerAction {
         texture: texture.clone(),
         range: TextureInitRange {
             mip_range: copy_texture.mip_level..copy_texture.mip_level + 1,
-            layer_range: init_layer_range,
+            layer_range: copy_texture.origin.z
+                ..(copy_texture.origin.z + copy_size.depth_or_array_layers),
         },
         kind: init_kind,
     };

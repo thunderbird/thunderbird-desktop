@@ -138,9 +138,8 @@ impl crate::CommandEncoder for super::CommandEncoder {
         // previous name assigned to this.
         unsafe { self.device.set_object_name(raw, label.unwrap_or_default()) };
 
-        // Reset some state in case the last renderpass was never ended.
+        // Reset this in case the last renderpass was never ended.
         self.rpass_debug_marker_active = false;
-        self.end_of_pass_timer_query = None;
 
         let vk_info = vk::CommandBufferBeginInfo::default()
             .flags(vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT);

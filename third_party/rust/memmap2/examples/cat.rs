@@ -1,3 +1,5 @@
+extern crate memmap2;
+
 use std::env;
 use std::fs::File;
 use std::io::{self, Write};
