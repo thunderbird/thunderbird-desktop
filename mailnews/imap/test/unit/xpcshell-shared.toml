@@ -73,6 +73,8 @@ tags = ["foldernames"]
 
 ["test_imapID.js"]
 
+["test_imapIDLiteralParenGroup.js"]
+
 ["test_imapMove.js"]
 
 ["test_imapPasswordFailure.js"]
