@@ -21,6 +21,4 @@ support-files = ["data/**"]
 
 ["browser_displayVarious.js"]
 
-["browser_handlerSwitchPgpToSmime.js"]
-
 ["browser_nestedSMimeSigs.js"]
