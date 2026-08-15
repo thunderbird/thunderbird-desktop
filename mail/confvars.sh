@@ -7,4 +7,4 @@ MOZ_BRANDING_DIRECTORY=comm/mail/branding/nightly
 
 # This line is present (but intentionally unset) in comm-central to accommodate
 # merge automation branding updates for MSIX repackaging.
-MOZ_OFFICIAL_BRANDING_DIRECTORY=
+MOZ_OFFICIAL_BRANDING_DIRECTORY=comm/mail/branding/tb_beta
