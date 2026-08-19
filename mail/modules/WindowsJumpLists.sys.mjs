@@ -49,7 +49,7 @@ var gTasks = [
     get description() {
       return _getString("taskbar.tasks.composeMessage.description");
     },
-    args: "-compose",
+    args: ["-compose"],
     iconIndex: 2, // Write message icon
   },
 
@@ -61,7 +61,7 @@ var gTasks = [
     get description() {
       return _getString("taskbar.tasks.openAddressBook.description");
     },
-    args: "-addressbook",
+    args: ["-addressbook"],
     iconIndex: 3, // Open address book icon
   },
 ];
