@@ -456,42 +456,6 @@ export var MailMigrator = {
           "chrome://messenger/content/messenger.xhtml",
           "calendar_toggle_show_completed_in_view_command"
         );
-
-        // Thunderbird 9 to 60 stored collapsed="true"/"false" for these
-        // toolbars. The attribute is now boolean, so the presence of any value
-        // collapses the toolbar. Rewrite the legacy values to what the current
-        // code persists: "-moz-missing\n" when visible, "" when collapsed.
-        // Values already in the current form are left alone, so we don't
-        // re-collapse toolbars for users who toggled the setting to work
-        // around this.
-        function updateCollapsedValue(url, id) {
-          if (!Services.xulStore.hasValue(url, id, "collapsed")) {
-            return;
-          }
-          const oldValue = Services.xulStore.getValue(url, id, "collapsed");
-          if (oldValue == "false") {
-            Services.xulStore.setValue(url, id, "collapsed", "-moz-missing\n");
-          } else if (oldValue == "true") {
-            Services.xulStore.setValue(url, id, "collapsed", "");
-          }
-        }
-
-        for (const elementID of [
-          "composeToolbar2",
-          "compose-toolbar-menubar2",
-        ]) {
-          updateCollapsedValue(
-            "chrome://messenger/content/messengercompose/messengercompose.xhtml",
-            elementID
-          );
-        }
-
-        for (const url of [
-          "chrome://messenger/content/messenger.xhtml",
-          "chrome://messenger/content/messageWindow.xhtml",
-        ]) {
-          updateCollapsedValue(url, "mail-bar3");
-        }
       }
 
       // Migration tasks that may take a long time are not run immediately, but
