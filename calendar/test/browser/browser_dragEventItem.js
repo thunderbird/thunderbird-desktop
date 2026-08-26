@@ -70,9 +70,7 @@ function endDrag(day, hour, topOffset) {
   const left = Math.round(hourRect.left + hourRect.width / 2);
 
   EventUtils.synthesizeMouseAtPoint(left, top, { type: "mousemove", shiftKey: true }, window);
-  AccessibilityUtils.setEnv({ mustHaveAccessibleRule: false });
   EventUtils.synthesizeMouseAtPoint(left, top, { type: "mouseup", shiftKey: true }, window);
-  AccessibilityUtils.resetEnv();
 }
 
 /**
