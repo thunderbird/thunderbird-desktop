@@ -1,8 +1,8 @@
 ---
 GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
 GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/releases/mozilla-esr153
-GECKO_HEAD_REF: FIREFOX_153_1_0esr_BUILD1
-GECKO_HEAD_REV: bdb74c45c2e1e3fe593fbf3c5ca6d2ab2046ef08
+GECKO_HEAD_REF: FIREFOX_153_2_0esr_BUILD1
+GECKO_HEAD_REV: 92c5bf513a3e4e39fa70df2df6a565a1049a9920
 
 ######
 
