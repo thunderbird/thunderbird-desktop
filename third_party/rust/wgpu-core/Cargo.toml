@@ -219,6 +219,9 @@ version = "29.0.0"
 path = "platform-deps/windows-linux-android"
 optional = true
 
+[target.'cfg(not(target_family = "wasm"))'.dev-dependencies.proptest]
+version = ">=1, <1.7"
+
 [target.'cfg(not(target_has_atomic = "64"))'.dependencies.portable-atomic]
 version = "1.10"
 optional = true
