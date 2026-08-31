@@ -1,6 +1,6 @@
 ---
 GECKO_BASE_REPOSITORY: https://hg.mozilla.org/mozilla-unified
-GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/mozilla-central
+GECKO_HEAD_REPOSITORY: https://hg.mozilla.org/mozilla-beta
 GECKO_HEAD_REF: default
 ######
 
