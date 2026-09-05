@@ -133,6 +133,8 @@ tags = ["compact"]
 
 ["test_preserveDataOnMove.js"]
 
+["test_refreshPasswordFromStorageForFetch.js"]
+
 ["test_repairMbox.js"]
 
 ["test_saveImapDraft.js"]
