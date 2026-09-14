@@ -23,6 +23,7 @@
 #include "nsIMsgFilterHitNotify.h"
 #include "nsIMsgLocalMailFolder.h"
 #include "nsMsgUtils.h"
+#include "nsIScriptError.h"
 #include "prprf.h"
 #include "prmem.h"
 #include "nsMsgSearchCore.h"
