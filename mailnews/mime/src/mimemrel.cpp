@@ -102,6 +102,7 @@
 #include "mimepbuf.h"
 #include "mimemapl.h"
 #include "mimeleaf.h"
+#include "mozilla/CheckedInt.h"
 #include "nsMailHeaders.h"
 #include "prmem.h"
 #include "prprf.h"
@@ -801,13 +802,25 @@ static int real_write(MimeMultipartRelated* relobj, const char* buf,
 
 static int push_tag(MimeMultipartRelated* relobj, const char* buf,
                     int32_t size) {
-  if (size + relobj->curtag_length > relobj->curtag_max) {
-    relobj->curtag_max += 2 * size;
-    if (relobj->curtag_max < 1024) relobj->curtag_max = 1024;
+  if (size < 0) return MIME_OUT_OF_MEMORY;
 
-    char* newBuf = (char*)PR_Realloc(relobj->curtag, relobj->curtag_max);
+  /* curtag_length and curtag_max are int32_t. Refuse arithmetic that would
+     overflow them, rather than skip the growth and let the memcpy overrun. */
+  mozilla::CheckedInt<int32_t> needed =
+      mozilla::CheckedInt<int32_t>(relobj->curtag_length) + size;
+  if (!needed.isValid()) return MIME_OUT_OF_MEMORY;
+
+  if (needed.value() > relobj->curtag_max) {
+    mozilla::CheckedInt<int32_t> new_max =
+        mozilla::CheckedInt<int32_t>(relobj->curtag_max) +
+        mozilla::CheckedInt<int32_t>(size) * 2;
+    if (!new_max.isValid()) return MIME_OUT_OF_MEMORY;
+    if (new_max.value() < 1024) new_max = 1024;
+
+    char* newBuf = (char*)PR_Realloc(relobj->curtag, new_max.value());
     NS_ENSURE_TRUE(newBuf, MIME_OUT_OF_MEMORY);
     relobj->curtag = newBuf;
+    relobj->curtag_max = new_max.value();
   }
   memcpy(relobj->curtag + relobj->curtag_length, buf, size);
   relobj->curtag_length += size;
