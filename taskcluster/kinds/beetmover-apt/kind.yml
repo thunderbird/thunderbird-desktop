@@ -18,7 +18,7 @@ only-for-build-platforms:
 
 task-defaults:
     run-on-repo-type: [hg]
-    run-on-releases: [nightly, beta, release, ers153]
+    run-on-releases: [nightly, beta, release, esr153]
     from-deps:
         group-by: product
         unique-kinds: false
