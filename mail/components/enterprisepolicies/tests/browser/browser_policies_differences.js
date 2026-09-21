@@ -522,6 +522,7 @@ if (AppConstants.MOZ_ENTERPRISE) {
     "DataLossPrevention",
     "DisableLocalPolicies",
     "SecurityLogging",
+    "SignOut",
     "Sync",
     "Watermark"
   );
@@ -1265,6 +1266,7 @@ const allowedSchemaMissing = [
   "SearchSuggestEnabled",
   "SecurityLogging",
   "ShowHomeButton",
+  "SignOut",
   "SitePolicies",
   "SkipTermsOfUse",
   "StartDownloadsInTempDirectory",
