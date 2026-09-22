@@ -38,14 +38,18 @@ task-defaults:
                 comm-(beta|release|esr.*): true
                 default: false
 
-tasks:
-    thunderbird-comm:
-        name: thunderbird-comm-version-bump
-        worker:
-            repo-param-prefix: comm_
-        shipping-product: thunderbird
-        treeherder:
-            platform: thunderbird-release/opt
-            symbol: Rel(VerBump)
-            tier: 1
-            kind: build
+# Treescript tasks are disabled. The original task definitions are
+# preserved below, commented out.
+tasks: {}
+
+# tasks:
+#     thunderbird-comm:
+#         name: thunderbird-comm-version-bump
+#         worker:
+#             repo-param-prefix: comm_
+#         shipping-product: thunderbird
+#         treeherder:
+#             platform: thunderbird-release/opt
+#             symbol: Rel(VerBump)
+#             tier: 1
+#             kind: build

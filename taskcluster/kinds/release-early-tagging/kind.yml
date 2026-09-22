@@ -26,15 +26,18 @@ task-defaults:
                 comm-(beta|release|esr.*): true
                 default: false
 
+# Treescript tasks are disabled. The original task definitions are
+# preserved below, commented out.
+tasks: {}
 
-tasks:
-    thunderbird:
-        name: thunderbird-tag-buildN
-        worker:
-            repo-param-prefix: comm_
-        shipping-product: thunderbird
-        treeherder:
-            platform: thunderbird-release/opt
-            symbol: Rel(TagBuild)
-            tier: 1
-            kind: build
+# tasks:
+#     thunderbird:
+#         name: thunderbird-tag-buildN
+#         worker:
+#             repo-param-prefix: comm_
+#         shipping-product: thunderbird
+#         treeherder:
+#             platform: thunderbird-release/opt
+#             symbol: Rel(TagBuild)
+#             tier: 1
+#             kind: build
