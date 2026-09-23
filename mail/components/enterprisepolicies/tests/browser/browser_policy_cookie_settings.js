@@ -64,12 +64,12 @@ async function test_cookie_settings({
     expectedThirdPartyCookies = 0;
   }
   is(
-    Services.cookies.countCookiesFromHost(firstPartyURI.host),
+    Services.cookies.countCookiesFromHost(firstPartyURI.host, {}),
     expectedFirstPartyCookies,
     "Number of first-party cookies should match expected"
   );
   is(
-    Services.cookies.countCookiesFromHost(thirdPartyURI.host),
+    Services.cookies.countCookiesFromHost(thirdPartyURI.host, {}),
     expectedThirdPartyCookies,
     "Number of third-party cookies should match expected"
   );
@@ -91,7 +91,7 @@ async function test_cookie_settings({
     expectedCookieCount = 0;
   }
   is(
-    Services.cookies.countCookiesFromHost(firstPartyURI.host),
+    Services.cookies.countCookiesFromHost(firstPartyURI.host, {}),
     expectedCookieCount,
     "Number of cookies was not what expected after restarting session"
   );
