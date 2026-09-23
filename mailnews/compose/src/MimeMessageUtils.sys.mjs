@@ -812,7 +812,7 @@ export var MsgUtils = {
     const smtpServer =
       MailServices.outgoingServer.getServerByIdentity(userIdentity);
     const smtpHostname = smtpServer?.serverURI?.host ?? "";
-    return l10n.formatValueSync(errorName, { hostname: smtpHostname });
+    return composeBundle.formatStringFromName(errorName, [smtpHostname]);
   },
 
   /**
