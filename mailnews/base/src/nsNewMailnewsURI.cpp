@@ -140,11 +140,19 @@ nsresult NS_NewMailnewsURI(nsIURI** aURI, const nsACString& aSpec,
       scheme.EqualsLiteral("graph") || scheme.EqualsLiteral("graph-message") ||
       scheme.EqualsLiteral("x-moz-ews") ||
       scheme.EqualsLiteral("x-moz-graph")) {
-        RefPtr<ExchangeUrl> url = new ExchangeUrl();
-        url->SetSpecInternal(aSpec);
-        url.forget(aURI);
-        return NS_OK;
-      }
+    RefPtr<ExchangeUrl> url = new ExchangeUrl();
+    if (aBaseURI) {
+      nsAutoCString newSpec;
+      rv = aBaseURI->Resolve(aSpec, newSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = url->SetSpecInternal(newSpec);
+    } else {
+      rv = url->SetSpecInternal(aSpec);
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+    url.forget(aURI);
+    return NS_OK;
+  }
 
   rv = NS_ERROR_UNKNOWN_PROTOCOL;  // Let M-C handle it by default.
 
