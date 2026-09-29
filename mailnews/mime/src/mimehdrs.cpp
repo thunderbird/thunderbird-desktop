@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "mozilla/CheckedInt.h"
 #include "nsCOMPtr.h"
 #include "msgCore.h"
 #include "mimei.h"
@@ -84,7 +85,6 @@ void MimeHeaders_free(MimeHeaders* hdrs) {
 int MimeHeaders_parse_line(const char* buffer, int32_t size,
                            MimeHeaders* hdrs) {
   int status = 0;
-  int desired_size;
 
   NS_ASSERTION(hdrs, "1.22 <rhp@netscape.com> 22 Aug 1999 08:48");
   if (!hdrs) return -1;
@@ -100,11 +100,13 @@ int MimeHeaders_parse_line(const char* buffer, int32_t size,
     return MimeHeaders_build_heads_list(hdrs);
   }
 
-  /* Tack this data on to the end of our copy.
-   */
-  desired_size = hdrs->all_headers_fp + size + 1;
-  if (desired_size >= hdrs->all_headers_size) {
-    status = mime_GrowBuffer(desired_size, sizeof(char), 255,
+  /* Tack this data on to the end of our copy. The sum is checked because
+     overflowing it would skip the growth below while the memcpy still ran. */
+  mozilla::CheckedInt<int32_t> desired_size =
+      mozilla::CheckedInt<int32_t>(hdrs->all_headers_fp) + size + 1;
+  if (size < 0 || !desired_size.isValid()) return MIME_OUT_OF_MEMORY;
+  if (desired_size.value() >= hdrs->all_headers_size) {
+    status = mime_GrowBuffer(desired_size.value(), sizeof(char), 255,
                              &hdrs->all_headers, &hdrs->all_headers_size);
     if (status < 0) return status;
   }
