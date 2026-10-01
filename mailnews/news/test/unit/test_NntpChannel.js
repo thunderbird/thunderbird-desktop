@@ -5,9 +5,6 @@
 var { NetUtil } = ChromeUtils.importESModule(
   "resource://gre/modules/NetUtil.sys.mjs"
 );
-var { NntpChannel } = ChromeUtils.importESModule(
-  "resource:///modules/NntpChannel.sys.mjs"
-);
 var { NntpUtils } = ChromeUtils.importESModule(
   "resource:///modules/NntpUtils.sys.mjs"
 );
@@ -49,7 +46,7 @@ add_task(async function test_listIds() {
   const streamListener = new PromiseTestUtils.PromiseStreamListener();
 
   // Run the uri with NntpChannel.
-  const channel = new NntpChannel(uri);
+  const channel = NetUtil.newChannel({ uri, loadUsingSystemPrincipal: true });
   channel.asyncOpen(streamListener);
   await streamListener.promise;
 
@@ -71,7 +68,7 @@ add_task(async function test_fetchArticle() {
   const streamListener = new PromiseTestUtils.PromiseStreamListener();
 
   // Run the uri with NntpChannel.
-  const channel = new NntpChannel(uri);
+  const channel = NetUtil.newChannel({ uri, loadUsingSystemPrincipal: true });
   channel.asyncOpen(streamListener);
   await streamListener.promise;
 

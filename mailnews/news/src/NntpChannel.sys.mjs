@@ -30,7 +30,7 @@ export class NntpChannel extends MailChannel {
 
   /**
    * @param {nsIURI} uri - The uri to construct the channel from.
-   * @param {nsILoadInfo} [loadInfo] - The loadInfo associated with the channel.
+   * @param {nsILoadInfo} loadInfo - The loadInfo associated with the channel.
    */
   constructor(uri, loadInfo) {
     super();
@@ -71,12 +71,7 @@ export class NntpChannel extends MailChannel {
     // nsIChannel attributes.
     this.originalURI = uri;
     this.URI = uri.QueryInterface(Ci.nsIMsgMailNewsUrl);
-    this.loadInfo = loadInfo || {
-      QueryInterface: ChromeUtils.generateQI(["nsILoadInfo"]),
-      loadingPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
-      securityFlags: Ci.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_SEC_CONTEXT_IS_NULL,
-      internalContentPolicy: Ci.nsIContentPolicy.TYPE_OTHER,
-    };
+    this.loadInfo = loadInfo;
     this.contentLength = 0;
   }
 
@@ -165,6 +160,9 @@ export class NntpChannel extends MailChannel {
 
   asyncOpen(listener) {
     this._logger.debug("asyncOpen", this.URI.spec);
+    listener = Cc["@mozilla.org/contentsecuritymanager;1"]
+      .getService(Ci.nsIContentSecurityManager)
+      .performSecurityCheck(this, listener);
     if (
       [this._messageId, this._groupName, this._articleNumber].some(value =>
         /[\r\n\0]/.test(value ?? "")
