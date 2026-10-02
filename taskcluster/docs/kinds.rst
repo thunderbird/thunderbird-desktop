@@ -208,6 +208,10 @@ release-notify-ship
 -------------------
 Sends “ship” phase notifications for a release.
 
+release-notify-smoke-test
+-------------------------
+Notifies testers that a release candidate build is available for smoke testing.
+
 release-notify-started
 ----------------------
 Sends “started” notifications when a release promotion begins.
