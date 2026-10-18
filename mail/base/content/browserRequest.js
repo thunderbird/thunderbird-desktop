@@ -170,6 +170,7 @@ window.browserDOMWindow = new (class nsBrowserAccess {
     const newTab = tabmail.openTab("contentTab", {
       background: loadInBackground,
       csp: aCsp,
+      duplicate: !!aOpenWindowInfo,
       linkHandler: aMessageManagerGroup,
       openWindowInfo: aOpenWindowInfo,
       referrerInfo: aReferrerInfo,
