@@ -21,7 +21,9 @@ use xpcom::{
 use crate::{
     authentication::{ntlm, oauth_listener::OAuthListener},
     error::ProtocolError,
-    operation_sender::send_request::{OperationRequest, send_request},
+    operation_sender::send_request::{
+        OperationRequest, ensure_oauth2_transport_is_trustworthy, send_request,
+    },
 };
 
 /// The credentials to use when authenticating against a server.
@@ -67,6 +69,8 @@ impl Credentials {
             // return value of `to_auth_header_value`, and checking that it does
             // not result in a 401 Unauthorized response.
             Credentials::Basic { .. } | Credentials::OAuth2 { .. } => {
+                ensure_oauth2_transport_is_trustworthy(self, op_request)?;
+
                 // Get the value for the `Authorization` header.
                 let auth_hdr_value = match self.to_auth_header_value().await {
                     Ok(value) => value,

@@ -21,7 +21,9 @@ use crate::{
     authentication::{credentials::Credentials, ntlm},
     error::ProtocolError,
     observers::UrlPrefObserver,
-    operation_sender::send_request::{OperationRequest, send_request},
+    operation_sender::send_request::{
+        OperationRequest, ensure_oauth2_transport_is_trustworthy, send_request,
+    },
 };
 
 pub mod observable_server;
@@ -368,6 +370,7 @@ impl<ServerT: ServerType + 'static> OperationSender<ServerT> {
         // add one to `OperationSender` with some carefully crafted and
         // configured observers.
         let credentials = self.server().await?.get_credentials()?;
+        ensure_oauth2_transport_is_trustworthy(&credentials, op_request)?;
         let auth_header_value = credentials.to_auth_header_value().await?;
 
         let resp = send_request(&self.client, op_request, auth_header_value).await?;

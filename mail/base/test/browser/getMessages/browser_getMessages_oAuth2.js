@@ -94,7 +94,7 @@ add_setup(async function () {
   );
   ewsAccount.incomingServer.setStringValue(
     "ews_url",
-    "http://test.test/EWS/Exchange.asmx"
+    "https://test.test/EWS/Exchange.asmx"
   );
   ewsAccount.incomingServer.prettyName = "EWS Account";
   ewsAccount.incomingServer.authMethod = Ci.nsMsgAuthMethod.OAuth2;

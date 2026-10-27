@@ -412,9 +412,9 @@ const serverDefs = {
     },
     oAuth: {
       type: "ews",
-      baseOptions: {},
+      baseOptions: { tlsCertFile: "valid" },
       hostname: "test.test",
-      port: 80,
+      port: 443,
     },
   },
   graph: {

@@ -6,10 +6,10 @@ use std::env;
 
 use http::Request;
 use moz_http::Response;
-use url::Url;
+use url::{Host, Url};
 use uuid::Uuid;
 
-use crate::error::ProtocolError;
+use crate::{authentication::credentials::Credentials, error::ProtocolError};
 
 /// An internal wrapper to carry the metadata we use for logging sending a
 /// request (and receiving its response) alongside the request itself.
@@ -102,4 +102,45 @@ pub(crate) async fn send_request<'or>(
     }
 
     Ok(response)
+}
+
+/// Refuses to proceed if the given credentials are OAuth2 and the request isn't
+/// sent over a potentially trustworthy connection.
+///
+/// This must be called before retrieving an OAuth2 token, since doing so might
+/// prompt the user to sign in.
+pub(crate) fn ensure_oauth2_transport_is_trustworthy(
+    credentials: &Credentials,
+    op_request: &OperationRequest<'_>,
+) -> Result<(), ProtocolError> {
+    if !matches!(credentials, Credentials::OAuth2 { .. }) {
+        return Ok(());
+    }
+
+    let url = Url::parse(&op_request.request.uri().to_string())?;
+    if !is_potentially_trustworthy(&url) {
+        return Err(ProtocolError::Processing {
+            message: format!(
+                "refusing to send an OAuth2 token over an unencrypted connection to {}",
+                url.host_str().unwrap_or_default()
+            ),
+        });
+    }
+
+    Ok(())
+}
+
+/// Whether the given URL uses an encrypted transport, or points to a loopback
+/// address.
+fn is_potentially_trustworthy(url: &Url) -> bool {
+    if url.scheme() == "https" {
+        return true;
+    }
+
+    match url.host() {
+        Some(Host::Domain(domain)) => domain == "localhost" || domain.ends_with(".localhost"),
+        Some(Host::Ipv4(addr)) => addr.is_loopback(),
+        Some(Host::Ipv6(addr)) => addr.is_loopback(),
+        None => false,
+    }
 }
