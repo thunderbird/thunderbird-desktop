@@ -183,7 +183,14 @@ class ICSDetectionSession {
    * @see {nsIAuthPrompt2}
    */
   promptAuth(aChannel, aLevel, aAuthInfo) {
-    if (!this.password) {
+    // FIXME: Proxies that ask for Basic or Digest credentials can't be used
+    // for detection. NTLM and Negotiate proxies are answered by necko with the
+    // system credentials and never get here.
+    if (
+      !this.password ||
+      aAuthInfo.flags & Ci.nsIAuthInformation.AUTH_PROXY ||
+      !cal.provider.detection.isPasswordSite(this.passwordSites, aChannel.URI)
+    ) {
       return false;
     }
 
