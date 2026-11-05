@@ -97,7 +97,15 @@ tags = ["foldernames"]
 
 ["test_imapUndo.js"]
 
+["test_imapUnsolicitedXDuringIdle.js"]
+
+["test_imapUrlFolderPath.js"]
+
+["test_imapUrlMessageIds.js"]
+
 ["test_imapUrls.js"]
+
+["test_imapVirtualFolderReuse.js"]
 
 ["test_largeOfflineStore.js"]
 run-if = [
