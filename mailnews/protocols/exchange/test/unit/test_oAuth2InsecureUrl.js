@@ -5,6 +5,10 @@
 // Tests that an OAuth2 token is never sent over an unencrypted connection,
 // unless the server is on a loopback address.
 
+var { MailServices } = ChromeUtils.importESModule(
+  "resource:///modules/MailServices.sys.mjs"
+);
+
 const { NetworkTestUtils } = ChromeUtils.importESModule(
   "resource://testing-common/mailnews/NetworkTestUtils.sys.mjs"
 );
