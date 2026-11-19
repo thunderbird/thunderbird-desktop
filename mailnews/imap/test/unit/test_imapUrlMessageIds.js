@@ -7,9 +7,15 @@
  * makes the URL invalid, since the list is sent to the server as is.
  */
 
+// On esr153, newURI() fails unless an IMAP server matches the URL.
+setupIMAPPump();
+registerCleanupFunction(teardownIMAPPump);
+
 function imapUrl(path) {
   return Services.io
-    .newURI(`imap://localhost:143/fetch%3EUID%3E%2FINBOX%3E${path}`)
+    .newURI(
+      `imap://localhost:${IMAPPump.server.port}/fetch%3EUID%3E%2FINBOX%3E${path}`
+    )
     .QueryInterface(Ci.nsIImapUrl);
 }
 
